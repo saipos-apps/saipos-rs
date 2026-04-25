@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saipos - Gestão de R&S</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --primary: #263C85; --primary-dark: #051928; --primary-light: #3a54b0;
+    --primary-faint: #e8ecf7; --white: #ffffff; --bg: #f0f3fa;
+    --text: #1a1f36; --text-muted: #6b7280; --text-light: #9ca3af; --border: #e5e9f2;
+    --success: #10b981; --success-bg: #d1fae5; --warning: #f59e0b; --warning-bg: #fef3c7;
+    --danger: #ef4444; --danger-bg: #fee2e2; --info: #3b82f6; --info-bg: #dbeafe;
+    --sidebar-w: 240px; --radius: 14px; --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(38,60,133,0.08); --shadow-md: 0 4px 24px rgba(38,60,133,0.12);
+  }
+  html, body { height: 100%; font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); }
+
+  /* ── LOGIN ── */
+  #login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 60%,var(--primary-light) 100%); position:relative; overflow:hidden; }
+  #login-screen::before { content:''; position:absolute; width:600px; height:600px; border-radius:50%; background:rgba(255,255,255,0.04); top:-200px; right:-150px; }
+  #login-screen::after { content:''; position:absolute; width:400px; height:400px; border-radius:50%; background:rgba(255,255,255,0.04); bottom:-100px; left:-100px; }
+  .login-card { background:var(--white); border-radius:24px; padding:44px 44px 40px; width:420px; box-shadow:0 20px 60px rgba(5,25,40,0.4); position:relative; z-index:1; animation:fadeUp 0.5s ease; display:flex; flex-direction:column; align-items:center; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+  .login-logo { display:flex; justify-content:center; margin-bottom:28px; }
+  .login-logo img { height:56px; object-fit:contain; }
+  .login-title { font-size:22px; font-weight:700; color:var(--primary); margin-bottom:6px; text-align:center; }
+  .login-sub { font-size:13px; color:var(--text-muted); margin-bottom:28px; text-align:center; }
+  .login-fields { width:100%; }
+  .form-group { margin-bottom:16px; }
+  .form-group label { display:block; font-size:12px; font-weight:600; color:var(--text); margin-bottom:7px; }
+  .form-group input { width:100%; padding:12px 16px; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-family:'Poppins',sans-serif; font-size:14px; color:var(--text); transition:border-color 0.2s,box-shadow 0.2s; outline:none; }
+  .form-group input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(38,60,133,0.12); }
+  .btn-login { width:100%; padding:13px; background:var(--primary); color:white; border:none; border-radius:var(--radius-sm); font-family:'Poppins',sans-serif; font-size:14px; font-weight:600; cursor:pointer; margin-top:6px; transition:background 0.2s; }
+  .btn-login:hover { background:var(--primary-dark); }
+  .divider { display:flex; align-items:center; gap:12px; margin:18px 0; width:100%; }
+  .divider::before,.divider::after { content:''; flex:1; height:1px; background:var(--border); }
+  .divider span { font-size:11px; color:var(--text-light); font-weight:500; }
+  .google-btn { width:100%; padding:12px; background:white; color:var(--text); border:1.5px solid var(--border); border-radius:var(--radius-sm); font-family:'Poppins',sans-serif; font-size:13px; font-weight:500; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:background 0.2s; }
+  .google-btn:hover { background:var(--bg); }
+
+  /* ── APP SHELL ── */
+  #app { display:none; height:100vh; overflow:hidden; }
+  .sidebar { position:fixed; left:0; top:0; bottom:0; width:var(--sidebar-w); background:var(--primary-dark); display:flex; flex-direction:column; z-index:100; }
+  .sidebar-header { padding:20px 18px 16px; border-bottom:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; gap:10px; }
+  .sidebar-logo { height:28px; filter:brightness(0) invert(1); object-fit:contain; }
+  .sidebar-brand { font-size:13px; font-weight:600; color:white; }
+  .sidebar-user { padding:14px 18px; display:flex; align-items:center; gap:10px; border-bottom:1px solid rgba(255,255,255,0.06); cursor:pointer; transition:background 0.15s; }
+  .sidebar-user:hover { background:rgba(255,255,255,0.04); }
+  .avatar { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:white; flex-shrink:0; overflow:hidden; }
+  .avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+  .avatar.sm { width:28px; height:28px; font-size:10px; }
+  .avatar.lg { width:40px; height:40px; font-size:14px; }
+  .sidebar-user-name { font-size:13px; font-weight:600; color:white; }
+  .sidebar-user-role { font-size:11px; color:rgba(255,255,255,0.45); }
+  .sidebar-nav { flex:1; padding:10px; overflow-y:auto; }
+  .nav-section-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.3); letter-spacing:0.1em; text-transform:uppercase; padding:8px 8px 4px; margin-top:6px; }
+  .nav-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:var(--radius-sm); cursor:pointer; transition:background 0.15s; margin-bottom:2px; color:rgba(255,255,255,0.6); font-size:13px; font-weight:500; }
+  .nav-item:hover { background:rgba(255,255,255,0.06); color:white; }
+  .nav-item.active { background:rgba(255,255,255,0.12); color:white; }
+  .nav-item svg { width:16px; height:16px; flex-shrink:0; }
+  .nav-badge { margin-left:auto; background:var(--danger); color:white; font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; }
+  .sidebar-footer { padding:12px 18px 16px; border-top:1px solid rgba(255,255,255,0.06); display:flex; flex-direction:column; gap:6px; }
+  .sidebar-version { font-size:10px; color:rgba(255,255,255,0.25); }
+  .logout-btn { display:flex; align-items:center; gap:8px; font-size:12px; color:rgba(255,255,255,0.4); cursor:pointer; transition:color 0.2s; }
+  .logout-btn:hover { color:rgba(255,255,255,0.8); }
+
+  /* ── MAIN ── */
+  .main { margin-left:var(--sidebar-w); height:100vh; overflow-y:auto; padding:28px 32px; }
+  .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
+  .topbar-left h1 { font-size:20px; font-weight:700; }
+  .topbar-left p { font-size:13px; color:var(--text-muted); margin-top:2px; }
+  .topbar-right { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .filter-chip { display:flex; align-items:center; gap:6px; padding:8px 14px; background:white; border:1.5px solid var(--border); border-radius:10px; font-size:12px; font-weight:500; cursor:pointer; transition:border-color 0.2s; white-space:nowrap; }
+  .filter-chip:hover { border-color:var(--primary); color:var(--primary); }
+  .filter-chip svg { width:14px; height:14px; }
+  .btn-primary { display:flex; align-items:center; gap:6px; padding:9px 18px; background:var(--primary); color:white; border:none; border-radius:10px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; transition:background 0.2s; white-space:nowrap; }
+  .btn-primary:hover { background:var(--primary-dark); }
+
+  /* ── KPI CARDS ── */
+  .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+  .kpi-card { background:white; border-radius:var(--radius); padding:20px 22px; box-shadow:var(--shadow); border:1px solid var(--border); transition:transform 0.15s,box-shadow 0.15s; }
+  .kpi-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); }
+  .kpi-label { font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:10px; }
+  .kpi-value { font-size:30px; font-weight:700; color:var(--primary); line-height:1; margin-bottom:8px; }
+  .kpi-delta { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; padding:3px 8px; border-radius:20px; }
+  .kpi-delta.up { background:var(--success-bg); color:#059669; }
+  .kpi-delta.down { background:var(--danger-bg); color:var(--danger); }
+  .kpi-delta.neutral { background:var(--primary-faint); color:var(--primary); }
+  .kpi-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .kpi-icon svg { width:20px; height:20px; }
+
+  /* ── CARDS / TABLES ── */
+  .card { background:white; border-radius:var(--radius); padding:22px 24px; box-shadow:var(--shadow); border:1px solid var(--border); }
+  .section-title { font-size:15px; font-weight:700; color:var(--text); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .chart-grid { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:24px; }
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
+  .recruiter-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
+  .recruiter-card { background:white; border-radius:var(--radius); padding:20px 22px; box-shadow:var(--shadow); border:1px solid var(--border); }
+  .recruiter-header { display:flex; align-items:center; gap:12px; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--border); }
+  .recruiter-info h3 { font-size:14px; font-weight:700; }
+  .recruiter-info p { font-size:12px; color:var(--text-muted); margin-top:2px; }
+  .stat-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--bg); }
+  .stat-row:last-child { border-bottom:none; }
+  .stat-label { font-size:12px; color:var(--text-muted); }
+  .stat-value { font-size:13px; font-weight:600; }
+  .progress-wrap { margin-top:12px; }
+  .progress-label { display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); margin-bottom:6px; }
+  .progress-bar { height:6px; background:var(--bg); border-radius:99px; overflow:hidden; }
+  .progress-fill { height:100%; border-radius:99px; background:var(--primary); transition:width 0.8s ease; }
+  .badge { display:inline-flex; align-items:center; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; }
+  .badge-success { background:var(--success-bg); color:#059669; }
+  .badge-warning { background:var(--warning-bg); color:#d97706; }
+  .badge-danger { background:var(--danger-bg); color:#dc2626; }
+  .badge-info { background:var(--info-bg); color:#2563eb; }
+  .badge-primary { background:var(--primary-faint); color:var(--primary); }
+  .table-wrap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; }
+  thead th { font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; padding:10px 14px; background:var(--bg); text-align:left; border-bottom:1px solid var(--border); }
+  thead th:first-child { border-radius:8px 0 0 8px; }
+  thead th:last-child { border-radius:0 8px 8px 0; }
+  tbody td { padding:12px 14px; font-size:13px; border-bottom:1px solid var(--bg); vertical-align:middle; }
+  tbody tr:hover td { background:#f8faff; }
+  tbody tr:last-child td { border-bottom:none; }
+  .panel { display:none; }
+  .panel.active { display:block; animation:slideIn 0.25s ease; }
+  @keyframes slideIn { from{opacity:0;transform:translateX(-12px);} to{opacity:1;transform:translateX(0);} }
+
+  /* ── FORM FIELDS ── */
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .form-field label { display:block; font-size:11px; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.04em; }
+  .form-field input, .form-field select, .form-field textarea { width:100%; padding:10px 12px; border:1.5px solid var(--border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text); outline:none; background:white; }
+  .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(38,60,133,0.08); }
+  .sheet-id-field { display:flex; align-items:center; gap:8px; }
+  .sheet-id-field input { flex:1; font-family:monospace; font-size:12px; }
+  .btn-test { padding:9px 14px; background:var(--success-bg); color:#059669; border:1.5px solid #a7f3d0; border-radius:8px; font-family:'Poppins',sans-serif; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
+  .status-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .status-dot.ok { background:var(--success); }
+
+  /* ── CONFIG PHOTO ── */
+  .photo-upload { position:relative; cursor:pointer; display:inline-block; }
+  .photo-upload input { display:none; }
+  .photo-upload-btn { position:absolute; bottom:0; right:0; width:18px; height:18px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .recruiter-config-card { background:white; border-radius:var(--radius); padding:20px 22px; box-shadow:var(--shadow); border:1px solid var(--border); margin-bottom:14px; }
+  .recruiter-config-header { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+
+  /* ── RELATÓRIOS ── */
+  .report-preview { background:var(--bg); border-radius:10px; padding:16px; margin-top:14px; border:1px solid var(--border); }
+  .report-row { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border); font-size:12px; }
+  .report-row:last-child { border-bottom:none; }
+  .btn-export { display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:10px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid; }
+  .btn-export.pdf { background:var(--danger-bg); color:#dc2626; border-color:#fca5a5; }
+  .btn-export.pdf:hover { background:#fecaca; }
+  .btn-export.excel { background:var(--success-bg); color:#059669; border-color:#a7f3d0; }
+  .btn-export.excel:hover { background:#bbf7d0; }
+  .btn-export.email { background:var(--info-bg); color:#2563eb; border-color:#93c5fd; }
+  .btn-export.email:hover { background:#bfdbfe; }
+
+  /* ── ACELERADOR TABLE ── */
+  .acc-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .acc-table th { background:var(--primary-faint); color:var(--primary); font-weight:600; padding:8px 12px; text-align:left; }
+  .acc-table td { padding:8px 12px; border-bottom:1px solid var(--border); }
+  .acc-table tr:last-child td { border-bottom:none; }
+  .acc-table tr.active-row td { background:#eef4ff; font-weight:600; color:var(--primary); }
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="https://repediu.com.br/wp-content/webp-express/webp-images/uploads/2024/11/Saipos_logo-1024x863.png.webp" alt="Saipos" onerror="this.style.display='none'">
+    </div>
+    <div class="login-title">Seja bem-vindo(a)!</div>
+    <div class="login-sub">Faça login para acessar a Gestão de R&S</div>
+    <div class="login-fields">
+      <div class="form-group"><label>E-mail corporativo</label><input type="email" value="heitor@saipos.com"></div>
+      <div class="form-group"><label>Senha</label><input type="password" value="demo"></div>
+      <button class="btn-login" onclick="doLogin()">Entrar no sistema</button>
+      <div class="divider"><span>ou</span></div>
+      <button class="google-btn" onclick="doLogin()">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Entrar com Google
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="app">
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <img class="sidebar-logo" src="https://repediu.com.br/wp-content/webp-express/webp-images/uploads/2024/11/Saipos_logo-1024x863.png.webp" alt="Saipos" onerror="this.style.display='none'">
+      <div class="sidebar-brand">Gestão de R&S</div>
+    </div>
+    <div class="sidebar-user" onclick="showPanel('configuracoes',null)">
+      <div class="avatar" style="background:#3a54b0;">HK</div>
+      <div><div class="sidebar-user-name">Heitor Kersting</div><div class="sidebar-user-role">Líder de Recrutamento</div></div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+      <div class="nav-item active" data-panel="dashboard" onclick="showPanel('dashboard',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" data-panel="recrutadores" onclick="showPanel('recrutadores',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Recrutadores
+      </div>
+      <div class="nav-item" data-panel="vagas" onclick="showPanel('vagas',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+        Vagas<span class="nav-badge">12</span>
+      </div>
+      <div class="nav-item" data-panel="comissoes" onclick="showPanel('comissoes',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Comissões
+      </div>
+      <div class="nav-section-label">Gestão</div>
+      <div class="nav-item" data-panel="metas" onclick="showPanel('metas',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        Metas
+      </div>
+      <div class="nav-item" data-panel="relatorios" onclick="showPanel('relatorios',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Relatórios
+      </div>
+      <div class="nav-section-label">Configurações</div>
+      <div class="nav-item" data-panel="configuracoes" onclick="showPanel('configuracoes',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Configurações
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="sidebar-version">v1.0 — Fase 1</div>
+      <div class="logout-btn" onclick="doLogout()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sair
+      </div>
+    </div>
+  </nav>
+
+  <main class="main">
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div id="panel-dashboard" class="panel active">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Dashboard</h1><p>Visão geral do time</p></div>
+        <div class="topbar-right">
+          <div class="filter-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Abril 2026</div>
+          <div class="filter-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Todos os recrutadores</div>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:#e8ecf7;"><svg viewBox="0 0 24 24" fill="none" stroke="#263C85" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/></svg></div>
+          <div class="kpi-label">Entrevistas no mês</div>
+          <div class="kpi-value">87</div>
+          <span class="kpi-delta up">↑ 12% vs mar</span>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:#d1fae5;"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="kpi-label">Taxa de aprovação</div>
+          <div class="kpi-value" style="color:#059669;">64%</div>
+          <span class="kpi-delta up">↑ 4pts vs mar</span>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:#fef3c7;"><svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
+          <div class="kpi-label">Vagas abertas</div>
+          <div class="kpi-value" style="color:#d97706;">12</div>
+          <span class="kpi-delta up">↑ +3 vs mês anterior</span>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:#dbeafe;"><svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+          <div class="kpi-label">Comissões do mês</div>
+          <div class="kpi-value" style="color:#2563eb;font-size:24px;">R$ 2.940</div>
+          <span class="kpi-delta neutral">Mês anterior: R$ 2.100</span>
+        </div>
+      </div>
+
+      <!-- Gráfico + Status -->
+      <div class="chart-grid">
+        <div class="card">
+          <div class="section-title">Evolução de entrevistas · 2026</div>
+          <div style="display:flex;gap:16px;margin-bottom:12px;font-size:11px;">
+            <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:3px;background:#263C85;border-radius:2px;display:inline-block;"></span>Entrevistas</span>
+            <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:3px;background:#10b981;border-radius:2px;display:inline-block;"></span>Aprovações</span>
+          </div>
+          <div style="position:relative;height:220px;"><canvas id="chart-evolution"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="section-title">Status das vagas</div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
+            <span style="font-size:11px;display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:2px;background:#263C85;display:inline-block;"></span>Abertas (12)</span>
+            <span style="font-size:11px;display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:2px;background:#10b981;display:inline-block;"></span>Fechadas (7)</span>
+          </div>
+          <div style="position:relative;height:180px;"><canvas id="chart-status"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Detalhamento de comissão + Lista de vagas abertas -->
+      <div class="two-col">
+        <!-- Detalhamento comissão -->
+        <div class="card">
+          <div class="section-title">💰 Detalhamento de comissão · Abril 2026</div>
+          <table>
+            <thead><tr><th>Recrutador</th><th>Vagas fechadas</th><th>Acelerador</th><th>Total</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar sm" style="background:#059669;">MS</div><strong>Matheus Souza</strong></div></td>
+                <td>2</td>
+                <td><span class="badge badge-success">1.4x</span></td>
+                <td><strong style="color:#2563eb;">R$ 1.300</strong></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar sm" style="background:#7c3aed;">AA</div><strong>Amanda Antunes</strong></div></td>
+                <td>2</td>
+                <td><span class="badge badge-success">1.4x</span></td>
+                <td><strong style="color:#2563eb;">R$ 880</strong></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar sm" style="background:#0891b2;">LG</div><strong>Lithielle Goulardt</strong></div></td>
+                <td>1</td>
+                <td><span class="badge badge-success">1.4x</span></td>
+                <td><strong style="color:#2563eb;">R$ 760</strong></td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="margin-top:14px;padding:10px 14px;background:var(--primary-faint);border-radius:8px;font-size:12px;color:var(--primary);">
+            Total pago em comissões: <strong>R$ 2.940</strong> · Acelerador 1.4x ativo (81% das vagas)
+          </div>
+        </div>
+
+        <!-- Lista vagas abertas -->
+        <div class="card">
+          <div class="section-title">📋 Vagas abertas agora</div>
+          <div style="display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto;">
+            <div style="display:grid;grid-template-columns:1fr auto;align-items:center;padding:10px 12px;background:var(--bg);border-radius:8px;gap:8px;">
+              <div><div style="font-size:13px;font-weight:600;">Dev FullStack Sr + DevOps</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Tecnologia · Matheus · 3 candidatos</div></div>
+              <span class="badge badge-primary">Aberta</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr auto;align-items:center;padding:10px 12px;background:var(--bg);border-radius:8px;gap:8px;">
+              <div><div style="font-size:13px;font-weight:600;">PM Sênior — Financeiro (L6)</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Produto · Amanda · 2 candidatos</div></div>
+              <span class="badge badge-primary">Aberta</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr auto;align-items:center;padding:10px 12px;background:var(--bg);border-radius:8px;gap:8px;">
+              <div><div style="font-size:13px;font-weight:600;">DevOps Sênior (L7)</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Tecnologia · Lithielle · 1 candidato</div></div>
+              <span class="badge badge-primary">Aberta</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr auto;align-items:center;padding:10px 12px;background:var(--bg);border-radius:8px;gap:8px;">
+              <div><div style="font-size:13px;font-weight:600;">PM Pleno Operações (L5)</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Produto · Matheus · 4 candidatos</div></div>
+              <span class="badge badge-primary">Aberta</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr auto;align-items:center;padding:10px 12px;background:var(--bg);border-radius:8px;gap:8px;">
+              <div><div style="font-size:13px;font-weight:600;">Analista de Dados Pleno</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Dados · Amanda · 6 candidatos</div></div>
+              <span class="badge badge-primary">Aberta</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr auto;align-items:center;padding:10px 12px;background:var(--bg);border-radius:8px;gap:8px;">
+              <div><div style="font-size:13px;font-weight:600;">Designer UX Sênior</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Design · Lithielle · 2 candidatos</div></div>
+              <span class="badge badge-primary">Aberta</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ RECRUTADORES ═══ -->
+    <div id="panel-recrutadores" class="panel">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Recrutadores</h1><p>Desempenho individual · Abril 2026</p></div>
+        <div class="topbar-right"><div class="filter-chip">Abril 2026</div></div>
+      </div>
+
+      <!-- Comparativo taxa de aprovação -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="section-title">Comparativo · Taxa de aprovação vs Meta (%)</div>
+        <div style="display:flex;gap:16px;margin-bottom:12px;font-size:11px;">
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:3px;background:rgba(38,60,133,0.2);border-radius:2px;display:inline-block;"></span>Meta (%)</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:3px;background:#263C85;border-radius:2px;display:inline-block;"></span>Realizado (%)</span>
+        </div>
+        <div style="position:relative;height:220px;"><canvas id="chart-recrutadores"></canvas></div>
+      </div>
+
+      <div class="recruiter-grid">
+        <div class="recruiter-card">
+          <div class="recruiter-header">
+            <div class="avatar lg" style="background:#7c3aed;" id="avatar-aa">AA</div>
+            <div class="recruiter-info"><h3>Amanda Antunes</h3><p>Recrutadora · Pleno</p></div>
+            <span class="badge badge-warning" style="margin-left:auto;">58% taxa</span>
+          </div>
+          <div class="stat-row"><span class="stat-label">Entrevistas no mês</span><span class="stat-value">31</span></div>
+          <div class="stat-row"><span class="stat-label">Aprovações</span><span class="stat-value">18</span></div>
+          <div class="stat-row"><span class="stat-label">Taxa de aprovação</span><span class="stat-value">58%</span></div>
+          <div class="stat-row"><span class="stat-label">Vagas sob responsabilidade</span><span class="stat-value">4</span></div>
+          <div class="stat-row"><span class="stat-label">Comissão acumulada</span><span class="stat-value" style="color:#2563eb;">R$ 880</span></div>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>Meta: 70% aprovação</span><span>58%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:83%;background:#f59e0b;"></div></div>
+          </div>
+        </div>
+        <div class="recruiter-card">
+          <div class="recruiter-header">
+            <div class="avatar lg" style="background:#0891b2;" id="avatar-lg">LG</div>
+            <div class="recruiter-info"><h3>Lithielle Goulardt</h3><p>Recrutadora · Pleno</p></div>
+            <span class="badge badge-danger" style="margin-left:auto;">50% taxa</span>
+          </div>
+          <div class="stat-row"><span class="stat-label">Entrevistas no mês</span><span class="stat-value">28</span></div>
+          <div class="stat-row"><span class="stat-label">Aprovações</span><span class="stat-value">14</span></div>
+          <div class="stat-row"><span class="stat-label">Taxa de aprovação</span><span class="stat-value">50%</span></div>
+          <div class="stat-row"><span class="stat-label">Vagas sob responsabilidade</span><span class="stat-value">3</span></div>
+          <div class="stat-row"><span class="stat-label">Comissão acumulada</span><span class="stat-value" style="color:#2563eb;">R$ 760</span></div>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>Meta: 70% aprovação</span><span>50%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:71%;background:#ef4444;"></div></div>
+          </div>
+        </div>
+        <div class="recruiter-card">
+          <div class="recruiter-header">
+            <div class="avatar lg" style="background:#059669;" id="avatar-ms">MS</div>
+            <div class="recruiter-info"><h3>Matheus Souza</h3><p>Recrutador · Sênior</p></div>
+            <span class="badge badge-success" style="margin-left:auto;">✓ 79% taxa</span>
+          </div>
+          <div class="stat-row"><span class="stat-label">Entrevistas no mês</span><span class="stat-value">28</span></div>
+          <div class="stat-row"><span class="stat-label">Aprovações</span><span class="stat-value">22</span></div>
+          <div class="stat-row"><span class="stat-label">Taxa de aprovação</span><span class="stat-value">79%</span></div>
+          <div class="stat-row"><span class="stat-label">Vagas sob responsabilidade</span><span class="stat-value">5</span></div>
+          <div class="stat-row"><span class="stat-label">Comissão acumulada</span><span class="stat-value" style="color:#2563eb;">R$ 1.300</span></div>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>Meta: 70% aprovação</span><span>79% ✓</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:100%;background:#10b981;"></div></div>
+          </div>
+        </div>
+        <div class="recruiter-card" style="background:var(--bg);">
+          <div class="section-title">🔔 Retornos pendentes</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Entrevistas sem status há mais de 48h</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="background:white;border-radius:8px;padding:12px 14px;border:1px solid var(--border);"><div style="font-size:13px;font-weight:600;">Lithielle Goulardt</div><div style="font-size:12px;color:var(--text-muted);">3 entrevistas · Mais antiga: 5 dias</div></div>
+            <div style="background:white;border-radius:8px;padding:12px 14px;border:1px solid var(--border);"><div style="font-size:13px;font-weight:600;">Amanda Antunes</div><div style="font-size:12px;color:var(--text-muted);">1 entrevista · Mais antiga: 3 dias</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ VAGAS ═══ -->
+    <div id="panel-vagas" class="panel">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Vagas</h1><p>Todas as vagas e candidatos em andamento</p></div>
+        <div class="topbar-right">
+          <div class="filter-chip">Status</div>
+          <div class="filter-chip">Por área</div>
+          <div class="filter-chip">Por recrutador</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Vaga</th><th>Área</th><th>Recrutador responsável</th><th>Candidatos</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Dev FullStack Sr + DevOps</strong></td><td>Tecnologia</td><td><div style="display:flex;align-items:center;gap:6px;"><div class="avatar sm" style="background:#059669;">MS</div>Matheus Souza</div></td><td>3</td><td><span class="badge badge-primary">Aberta</span></td></tr>
+              <tr><td><strong>PM Sênior — Financeiro (L6)</strong></td><td>Produto</td><td><div style="display:flex;align-items:center;gap:6px;"><div class="avatar sm" style="background:#7c3aed;">AA</div>Amanda Antunes</div></td><td>2</td><td><span class="badge badge-primary">Aberta</span></td></tr>
+              <tr><td><strong>DevOps Sênior (L7)</strong></td><td>Tecnologia</td><td><div style="display:flex;align-items:center;gap:6px;"><div class="avatar sm" style="background:#0891b2;">LG</div>Lithielle Goulardt</div></td><td>1</td><td><span class="badge badge-primary">Aberta</span></td></tr>
+              <tr><td><strong>PM Pleno Operações (L5)</strong></td><td>Produto</td><td><div style="display:flex;align-items:center;gap:6px;"><div class="avatar sm" style="background:#059669;">MS</div>Matheus Souza</div></td><td>4</td><td><span class="badge badge-primary">Aberta</span></td></tr>
+              <tr><td><strong>Analista de Dados Pleno</strong></td><td>Dados</td><td><div style="display:flex;align-items:center;gap:6px;"><div class="avatar sm" style="background:#7c3aed;">AA</div>Amanda Antunes</div></td><td>6</td><td><span class="badge badge-primary">Aberta</span></td></tr>
+              <tr><td><strong>Designer UX Sênior</strong></td><td>Design</td><td><div style="display:flex;align-items:center;gap:6px;"><div class="avatar sm" style="background:#0891b2;">LG</div>Lithielle Goulardt</div></td><td>2</td><td><span class="badge badge-primary">Aberta</span></td></tr>
+              <tr><td><strong>Engenheiro de Dados Sr</strong></td><td>Dados</td><td><div style="display:flex;align-items:center;gap:6px;"><div class="avatar sm" style="background:#059669;">MS</div>Matheus Souza</div></td><td>1</td><td><span class="badge badge-success">Fechada</span></td></tr>
+              <tr><td><strong>Tech Lead Backend</strong></td><td>Tecnologia</td><td><div style="display:flex;align-items:center;gap:6px;"><div class="avatar sm" style="background:#7c3aed;">AA</div>Amanda Antunes</div></td><td>5</td><td><span class="badge badge-success">Fechada</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ COMISSÕES ═══ -->
+    <div id="panel-comissoes" class="panel">
+      <div class="topbar"><div class="topbar-left"><h1>Comissões</h1><p>Cálculo e acompanhamento · Abril 2026</p></div></div>
+
+      <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px;">
+        <div class="kpi-card">
+          <div class="kpi-label">Total do time</div>
+          <div class="kpi-value" style="color:#2563eb;font-size:26px;">R$ 2.940</div>
+          <span class="kpi-delta neutral">Mês anterior: R$ 2.100</span>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Segurança mínima</div>
+          <div class="kpi-value" style="font-size:26px;">R$ 350</div>
+          <span class="kpi-delta up">Garantida a todos</span>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">% vagas entregues</div>
+          <div class="kpi-value" style="color:#059669;font-size:26px;">81%</div>
+          <span class="kpi-delta up">Acelerador: 1.4x ativo</span>
+        </div>
+      </div>
+
+      <!-- Detalhamento -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="section-title">Detalhamento por recrutador · Abril 2026</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Recrutador</th>
+              <th>Vagas fechadas</th>
+              <th>Valor de comissão</th>
+              <th>Multiplicador</th>
+              <th>Valor do acelerador</th>
+              <th>Total a receber</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar sm" style="background:#059669;">MS</div><strong>Matheus Souza</strong></div></td>
+              <td>2 vagas</td>
+              <td>R$ 540</td>
+              <td><span class="badge badge-success">1.4x</span></td>
+              <td>+ R$ 216</td>
+              <td><strong style="color:#2563eb;font-size:14px;">R$ 1.300</strong></td>
+            </tr>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar sm" style="background:#7c3aed;">AA</div><strong>Amanda Antunes</strong></div></td>
+              <td>2 vagas</td>
+              <td>R$ 540</td>
+              <td><span class="badge badge-success">1.4x</span></td>
+              <td>+ R$ 216</td>
+              <td><strong style="color:#2563eb;font-size:14px;">R$ 880</strong></td>
+            </tr>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar sm" style="background:#0891b2;">LG</div><strong>Lithielle Goulardt</strong></div></td>
+              <td>1 vaga</td>
+              <td>R$ 300</td>
+              <td><span class="badge badge-success">1.4x</span></td>
+              <td>+ R$ 120</td>
+              <td><strong style="color:#2563eb;font-size:14px;">R$ 760</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:14px;padding:12px 16px;background:var(--primary-faint);border-radius:10px;font-size:12px;color:var(--primary);">
+          <strong>Regra ativa:</strong> 81% das vagas entregues → multiplicador 1.4x. Segurança mínima de R$350 garantida a todos os recrutadores.
+        </div>
+      </div>
+
+      <!-- Bônus -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="section-title">🎁 Bônus extras</div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Registre bônus pontuais para recrutadores. O líder informa o valor, o recrutador e o motivo.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:end;margin-bottom:16px;">
+          <div class="form-field"><label>Recrutador</label>
+            <select id="bonus-recruiter"><option value="">Selecione...</option><option>Matheus Souza</option><option>Amanda Antunes</option><option>Lithielle Goulardt</option></select>
+          </div>
+          <div class="form-field"><label>Valor (R$)</label><input type="number" id="bonus-valor" placeholder="Ex: 200"></div>
+          <div class="form-field"><label>Motivo</label><input type="text" id="bonus-motivo" placeholder="Ex: Fechamento acima da meta"></div>
+          <button class="btn-primary" onclick="addBonus()" style="height:42px;">Salvar bônus</button>
+        </div>
+        <div id="bonus-list">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;padding:10px 12px;background:var(--bg);border-radius:8px;font-size:13px;align-items:center;">
+            <span><div class="avatar sm" style="background:#059669;display:inline-flex;margin-right:6px;">MS</div>Matheus Souza</span>
+            <span style="font-weight:600;color:#2563eb;">R$ 300</span>
+            <span style="color:var(--text-muted);">Melhor recrutador do trimestre</span>
+            <span style="font-size:11px;color:var(--text-light);">Mar/2026</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabela acelerador -->
+      <div class="card">
+        <div class="section-title">📊 Tabela de acelerador · Regra do mês</div>
+        <table class="acc-table">
+          <thead><tr><th>Fechamento de vagas</th><th>Multiplicador</th></tr></thead>
+          <tbody>
+            <tr><td>Até 60% das vagas</td><td>—</td></tr>
+            <tr><td>61% – 80% das vagas</td><td>1.2x</td></tr>
+            <tr class="active-row"><td>81% – 90% das vagas ← atual (81%)</td><td>1.4x</td></tr>
+            <tr><td>91% – 95% das vagas</td><td>1.8x</td></tr>
+            <tr><td>96% – 100% das vagas</td><td>2.0x</td></tr>
+            <tr><td>+ 100% das vagas</td><td>2.5x</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ METAS ═══ -->
+    <div id="panel-metas" class="panel">
+      <div class="topbar"><div class="topbar-left"><h1>Metas</h1><p>Configure as metas mensais do time</p></div><div class="topbar-right"><button class="btn-primary">Salvar todas as metas</button></div></div>
+
+      <!-- Metas de taxa de aprovação -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="section-title">✅ Meta de taxa de aprovação por recrutador · Maio 2026</div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">Principal métrica individual. Atualize todo mês.</p>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--bg);border-radius:10px;">
+            <div class="avatar" style="background:#059669;">MS</div>
+            <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Matheus Souza</div><div style="font-size:11px;color:var(--text-muted);">Realizado em Abril: 79%</div></div>
+            <div style="display:flex;align-items:center;gap:8px;"><input type="number" value="70" min="1" max="100" style="width:70px;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;color:var(--primary);outline:none;"><span style="font-size:12px;color:var(--text-muted);">% de aprovação</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--bg);border-radius:10px;">
+            <div class="avatar" style="background:#7c3aed;">AA</div>
+            <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Amanda Antunes</div><div style="font-size:11px;color:var(--text-muted);">Realizado em Abril: 58%</div></div>
+            <div style="display:flex;align-items:center;gap:8px;"><input type="number" value="70" min="1" max="100" style="width:70px;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;color:var(--primary);outline:none;"><span style="font-size:12px;color:var(--text-muted);">% de aprovação</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--bg);border-radius:10px;">
+            <div class="avatar" style="background:#0891b2;">LG</div>
+            <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Lithielle Goulardt</div><div style="font-size:11px;color:var(--text-muted);">Realizado em Abril: 50%</div></div>
+            <div style="display:flex;align-items:center;gap:8px;"><input type="number" value="70" min="1" max="100" style="width:70px;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;color:var(--primary);outline:none;"><span style="font-size:12px;color:var(--text-muted);">% de aprovação</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metas do time -->
+      <div class="card">
+        <div class="section-title">🎯 Metas do time · Maio 2026</div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">Defina as metas coletivas mensais do time de recrutamento.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+          <div style="padding:16px;background:var(--bg);border-radius:10px;">
+            <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;margin-bottom:10px;">Meta de entrevistas/mês</div>
+            <div style="display:flex;align-items:center;gap:8px;"><input type="number" value="100" style="width:80px;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:16px;font-weight:700;color:var(--primary);outline:none;"><span style="font-size:12px;color:var(--text-muted);">entrevistas</span></div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">Abril: 87 realizadas</div>
+          </div>
+          <div style="padding:16px;background:var(--bg);border-radius:10px;">
+            <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;margin-bottom:10px;">Meta de vagas entregues</div>
+            <div style="display:flex;align-items:center;gap:8px;"><input type="number" value="90" style="width:80px;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:16px;font-weight:700;color:var(--primary);outline:none;"><span style="font-size:12px;color:var(--text-muted);">%</span></div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">Abril: 81% entregues</div>
+          </div>
+          <div style="padding:16px;background:var(--bg);border-radius:10px;">
+            <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;margin-bottom:10px;">Meta de taxa de aprovação</div>
+            <div style="display:flex;align-items:center;gap:8px;"><input type="number" value="70" style="width:80px;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:16px;font-weight:700;color:var(--primary);outline:none;"><span style="font-size:12px;color:var(--text-muted);">%</span></div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">Abril: 64% do time</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ RELATÓRIOS ═══ -->
+    <div id="panel-relatorios" class="panel">
+      <div class="topbar"><div class="topbar-left"><h1>Relatórios</h1><p>Exporte e envie dados do time</p></div><div class="topbar-right"><div class="filter-chip">Abril 2026</div></div></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+        <!-- Geral -->
+        <div class="card">
+          <div class="section-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#263C85" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Relatório Geral do Time</div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Resumo completo com KPIs, aprovações e comissões de todos os recrutadores.</p>
+          <div class="report-preview">
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Prévia · Abril 2026</div>
+            <div class="report-row"><span>Total de entrevistas</span><strong>87</strong></div>
+            <div class="report-row"><span>Total de aprovações</span><strong>54</strong></div>
+            <div class="report-row"><span>Taxa de aprovação</span><strong>64%</strong></div>
+            <div class="report-row"><span>Vagas abertas</span><strong>12</strong></div>
+            <div class="report-row"><span>Comissão total</span><strong style="color:#2563eb;">R$ 2.940</strong></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:16px;">
+            <button class="btn-export pdf" onclick="toast('PDF exportado! (Fase 2: dados reais)')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Exportar PDF
+            </button>
+            <button class="btn-export excel" onclick="toast('Excel exportado! (Fase 2: dados reais)')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Excel
+            </button>
+          </div>
+        </div>
+
+        <!-- Individual -->
+        <div class="card">
+          <div class="section-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#263C85" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Relatório Individual</div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Gere o relatório de desempenho de um recrutador específico.</p>
+          <div style="margin-bottom:14px;"><label style="font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">Recrutador</label>
+          <select id="report-recruiter" onchange="updateIndividualReport()" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;color:var(--text);outline:none;background:white;">
+            <option value="ms">Matheus Souza</option><option value="aa">Amanda Antunes</option><option value="lg">Lithielle Goulardt</option>
+          </select></div>
+          <div class="report-preview" id="individual-preview">
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Matheus Souza · Abril 2026</div>
+            <div class="report-row"><span>Entrevistas</span><strong>28</strong></div>
+            <div class="report-row"><span>Aprovações</span><strong>22</strong></div>
+            <div class="report-row"><span>Taxa de aprovação</span><strong>79%</strong></div>
+            <div class="report-row"><span>Meta de aprovação</span><strong style="color:#059669;">✓ 70% → 79%</strong></div>
+            <div class="report-row"><span>Comissão</span><strong style="color:#2563eb;">R$ 1.300</strong></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:16px;">
+            <button class="btn-export pdf" onclick="toast('PDF individual exportado!')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Exportar PDF
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Relatório de comissões para Financeiro -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="section-title">💸 Relatório de Comissões · Para o time de Financeiro</div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Gera um PDF consolidado com todos os recrutadores e valores a pagar. Envie diretamente para o Financeiro.</p>
+        <div style="background:var(--bg);border-radius:10px;padding:16px;margin-bottom:16px;border:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">Prévia · Pagamento Abril 2026</div>
+          <table>
+            <thead><tr><th>Recrutador</th><th>Vagas fechadas</th><th>Comissão base</th><th>Acelerador</th><th>Bônus</th><th>Total a pagar</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Matheus Souza</strong></td><td>2</td><td>R$ 540</td><td>R$ 216 (1.4x)</td><td>R$ 300</td><td><strong style="color:#2563eb;">R$ 1.600</strong></td></tr>
+              <tr><td><strong>Amanda Antunes</strong></td><td>2</td><td>R$ 540</td><td>R$ 216 (1.4x)</td><td>—</td><td><strong style="color:#2563eb;">R$ 880</strong></td></tr>
+              <tr><td><strong>Lithielle Goulardt</strong></td><td>1</td><td>R$ 300</td><td>R$ 120 (1.4x)</td><td>—</td><td><strong style="color:#2563eb;">R$ 760</strong></td></tr>
+              <tr style="background:var(--primary-faint);"><td colspan="5"><strong>Total geral</strong></td><td><strong style="color:var(--primary);font-size:15px;">R$ 3.240</strong></td></tr>
+            </tbody>
+          </table>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:10px;">Segurança mínima R$350 aplicada. Acelerador 1.4x (81% fechamento). Competência: Abril/2026.</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-export pdf" style="font-size:14px;padding:12px 24px;" onclick="toast('PDF de comissões gerado! Pronto para enviar ao Financeiro.')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Gerar PDF para Financeiro
+          </button>
+          <button class="btn-export email" onclick="toast('E-mail enviado ao Financeiro! (Fase 2)')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Enviar por e-mail
+          </button>
+        </div>
+      </div>
+
+      <!-- Histórico -->
+      <div class="card">
+        <div class="section-title">Histórico de relatórios</div>
+        <table><thead><tr><th>Relatório</th><th>Período</th><th>Tipo</th><th>Data</th><th>Ação</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Comissões — Financeiro</strong></td><td>Março 2026</td><td><span class="badge badge-danger">PDF</span></td><td>01/04/2026</td><td><span style="color:var(--primary);font-size:12px;font-weight:600;cursor:pointer;">↓ Baixar</span></td></tr>
+          <tr><td><strong>Relatório Geral</strong></td><td>Março 2026</td><td><span class="badge badge-success">Excel</span></td><td>01/04/2026</td><td><span style="color:var(--primary);font-size:12px;font-weight:600;cursor:pointer;">↓ Baixar</span></td></tr>
+          <tr><td><strong>Comissões — Financeiro</strong></td><td>Fevereiro 2026</td><td><span class="badge badge-danger">PDF</span></td><td>02/03/2026</td><td><span style="color:var(--primary);font-size:12px;font-weight:600;cursor:pointer;">↓ Baixar</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <!-- ═══ CONFIGURAÇÕES ═══ -->
+    <div id="panel-configuracoes" class="panel">
+      <div class="topbar"><div class="topbar-left"><h1>Configurações</h1><p>Gerencie recrutadores e planilhas</p></div><div class="topbar-right"><button class="btn-primary">+ Novo recrutador</button></div></div>
+      <div style="margin-bottom:14px;font-size:14px;font-weight:700;padding-bottom:10px;border-bottom:1px solid var(--border);">Recrutadores cadastrados</div>
+
+      <!-- Matheus -->
+      <div class="recruiter-config-card">
+        <div class="recruiter-config-header">
+          <label class="photo-upload" title="Clique para trocar a foto">
+            <div class="avatar lg" style="background:#059669;position:relative;" id="cfg-ms">MS</div>
+            <div class="photo-upload-btn"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            <input type="file" accept="image/*" onchange="updatePhoto(this,'ms')">
+          </label>
+          <div style="flex:1;"><div style="font-size:14px;font-weight:700;">Matheus Souza</div><div style="font-size:12px;color:var(--text-muted);">Recrutador ativo</div></div>
+          <div style="display:flex;align-items:center;gap:6px;"><div class="status-dot ok"></div><span style="font-size:12px;color:#059669;font-weight:600;">Planilha conectada</span></div>
+        </div>
+        <div class="form-row" style="margin-bottom:12px;">
+          <div class="form-field"><label>Nome completo</label><input type="text" value="Matheus Souza"></div>
+          <div class="form-field"><label>Cargo</label><input type="text" value="Recrutador Sênior"></div>
+          <div class="form-field"><label>E-mail</label><input type="email" value="matheus@saipos.com"></div>
+          <div class="form-field"><label>Nível (L)</label><select><option>L4 — Pleno</option><option selected>L5 — Pleno</option><option>L6 — Sênior</option><option>L7 — Especialista</option></select></div>
+        </div>
+        <div class="form-field" style="margin-bottom:12px;">
+          <label>ID da planilha Google Sheets</label>
+          <div class="sheet-id-field"><input type="text" value="[Planilha restrita — aguardando acesso]" style="color:var(--text-muted);"><button class="btn-test">Testar conexão</button></div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">URL: docs.google.com/spreadsheets/d/<strong>[ID]</strong>/edit</div>
+        </div>
+        <div style="display:flex;gap:8px;"><button class="btn-primary" style="font-size:12px;padding:8px 16px;">Salvar</button><button style="padding:8px 16px;background:var(--danger-bg);color:#dc2626;border:1.5px solid #fca5a5;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;">Remover</button></div>
+      </div>
+
+      <!-- Amanda -->
+      <div class="recruiter-config-card">
+        <div class="recruiter-config-header">
+          <label class="photo-upload" title="Clique para trocar a foto">
+            <div class="avatar lg" style="background:#7c3aed;position:relative;" id="cfg-aa">AA</div>
+            <div class="photo-upload-btn"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            <input type="file" accept="image/*" onchange="updatePhoto(this,'aa')">
+          </label>
+          <div style="flex:1;"><div style="font-size:14px;font-weight:700;">Amanda Antunes</div><div style="font-size:12px;color:var(--text-muted);">Recrutadora ativa</div></div>
+          <div style="display:flex;align-items:center;gap:6px;"><div class="status-dot ok"></div><span style="font-size:12px;color:#059669;font-weight:600;">Planilha conectada</span></div>
+        </div>
+        <div class="form-row" style="margin-bottom:12px;">
+          <div class="form-field"><label>Nome completo</label><input type="text" value="Amanda Antunes"></div>
+          <div class="form-field"><label>Cargo</label><input type="text" value="Recrutadora Pleno"></div>
+          <div class="form-field"><label>E-mail</label><input type="email" value="amanda@saipos.com"></div>
+          <div class="form-field"><label>Nível (L)</label><select><option>L4 — Pleno</option><option selected>L5 — Pleno</option><option>L6 — Sênior</option></select></div>
+        </div>
+        <div class="form-field" style="margin-bottom:12px;">
+          <label>ID da planilha Google Sheets</label>
+          <div class="sheet-id-field"><input type="text" value="[Planilha restrita — aguardando acesso]" style="color:var(--text-muted);"><button class="btn-test">Testar conexão</button></div>
+        </div>
+        <div style="display:flex;gap:8px;"><button class="btn-primary" style="font-size:12px;padding:8px 16px;">Salvar</button><button style="padding:8px 16px;background:var(--danger-bg);color:#dc2626;border:1.5px solid #fca5a5;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;">Remover</button></div>
+      </div>
+
+      <!-- Lithielle -->
+      <div class="recruiter-config-card">
+        <div class="recruiter-config-header">
+          <label class="photo-upload" title="Clique para trocar a foto">
+            <div class="avatar lg" style="background:#0891b2;position:relative;" id="cfg-lg">LG</div>
+            <div class="photo-upload-btn"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            <input type="file" accept="image/*" onchange="updatePhoto(this,'lg')">
+          </label>
+          <div style="flex:1;"><div style="font-size:14px;font-weight:700;">Lithielle Goulardt</div><div style="font-size:12px;color:var(--text-muted);">Recrutadora ativa</div></div>
+          <div style="display:flex;align-items:center;gap:6px;"><div class="status-dot ok"></div><span style="font-size:12px;color:#059669;font-weight:600;">Planilha conectada</span></div>
+        </div>
+        <div class="form-row" style="margin-bottom:12px;">
+          <div class="form-field"><label>Nome completo</label><input type="text" value="Lithielle Goulardt"></div>
+          <div class="form-field"><label>Cargo</label><input type="text" value="Recrutadora Pleno"></div>
+          <div class="form-field"><label>E-mail</label><input type="email" value="lithielle@saipos.com"></div>
+          <div class="form-field"><label>Nível (L)</label><select><option>L4 — Pleno</option><option selected>L5 — Pleno</option><option>L6 — Sênior</option></select></div>
+        </div>
+        <div class="form-field" style="margin-bottom:12px;">
+          <label>ID da planilha Google Sheets</label>
+          <div class="sheet-id-field"><input type="text" value="[Planilha restrita — aguardando acesso]" style="color:var(--text-muted);"><button class="btn-test">Testar conexão</button></div>
+        </div>
+        <div style="display:flex;gap:8px;"><button class="btn-primary" style="font-size:12px;padding:8px 16px;">Salvar</button><button style="padding:8px 16px;background:var(--danger-bg);color:#dc2626;border:1.5px solid #fca5a5;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;">Remover</button></div>
+      </div>
+
+      <div style="padding:14px 18px;background:var(--warning-bg);border:1px solid #fcd34d;border-radius:12px;font-size:13px;color:#92400e;margin-top:4px;">
+        <strong>⚠️ Planilhas restritas:</strong> Para conectar os dados reais, solicite acesso de leitura (viewer) para o e-mail de serviço que será configurado na Fase 2.
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast notification -->
+<div id="toast" style="position:fixed;bottom:28px;right:28px;background:var(--primary-dark);color:white;padding:12px 22px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:var(--shadow-md);z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;"></div>
+
+<script>
+function doLogin() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  setTimeout(renderCharts, 120);
+}
+function doLogout() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+function showPanel(name, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  if (el && el.classList && el.classList.contains('nav-item')) el.classList.add('active');
+}
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.opacity = '1';
+  setTimeout(() => { t.style.opacity = '0'; }, 3000);
+}
+
+let chartsRendered = false;
+function renderCharts() {
+  if (chartsRendered) return;
+  chartsRendered = true;
+  const f = { family:'Poppins', size:11 };
+  const g = '#e5e9f2';
+
+  new Chart(document.getElementById('chart-evolution'), {
+    type:'line',
+    data:{ labels:['Jan','Fev','Mar','Abr'], datasets:[
+      { label:'Entrevistas', data:[62,74,78,87], borderColor:'#263C85', backgroundColor:'rgba(38,60,133,0.08)', borderWidth:2.5, tension:0.4, fill:true, pointBackgroundColor:'#263C85', pointRadius:5 },
+      { label:'Aprovações', data:[38,48,52,56], borderColor:'#10b981', backgroundColor:'rgba(16,185,129,0.05)', borderWidth:2, tension:0.4, fill:true, pointBackgroundColor:'#10b981', pointRadius:5, borderDash:[5,4] }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{grid:{color:g},ticks:{font:f}},y:{grid:{color:g},ticks:{font:f}}} }
+  });
+
+  new Chart(document.getElementById('chart-status'), {
+    type:'doughnut',
+    data:{ labels:['Abertas','Fechadas'], datasets:[{ data:[12,7], backgroundColor:['#263C85','#10b981'], borderWidth:0, hoverOffset:6 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, cutout:'65%' }
+  });
+
+  // Comparativo taxa de aprovação vs meta
+  new Chart(document.getElementById('chart-recrutadores'), {
+    type:'bar',
+    data:{
+      labels:['Amanda Antunes','Lithielle Goulardt','Matheus Souza'],
+      datasets:[
+        { label:'Meta (%)', data:[70,70,70], backgroundColor:'rgba(38,60,133,0.15)', borderRadius:6, borderSkipped:false },
+        { label:'Realizado (%)', data:[58,50,79], backgroundColor:['#7c3aed','#0891b2','#059669'], borderRadius:6, borderSkipped:false }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{display:false},ticks:{font:f}},
+        y:{grid:{color:g},ticks:{font:f,callback: v => v+'%'},max:100}
+      }
+    }
+  });
+}
+
+const rData = {
+  ms:{name:'Matheus Souza',e:28,a:22,t:'79%',meta:'70% → 79% ✓',mc:'#059669',c:'R$ 1.300'},
+  aa:{name:'Amanda Antunes',e:31,a:18,t:'58%',meta:'70% → 58%',mc:'#d97706',c:'R$ 880'},
+  lg:{name:'Lithielle Goulardt',e:28,a:14,t:'50%',meta:'70% → 50%',mc:'#dc2626',c:'R$ 760'}
+};
+function updateIndividualReport() {
+  const d = rData[document.getElementById('report-recruiter').value];
+  document.getElementById('individual-preview').innerHTML = `
+    <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">${d.name} · Abril 2026</div>
+    <div class="report-row"><span>Entrevistas</span><strong>${d.e}</strong></div>
+    <div class="report-row"><span>Aprovações</span><strong>${d.a}</strong></div>
+    <div class="report-row"><span>Taxa de aprovação</span><strong>${d.t}</strong></div>
+    <div class="report-row"><span>Meta de aprovação</span><strong style="color:${d.mc};">${d.meta}</strong></div>
+    <div class="report-row"><span>Comissão</span><strong style="color:#2563eb;">${d.c}</strong></div>`;
+}
+
+function addBonus() {
+  const r = document.getElementById('bonus-recruiter').value;
+  const v = document.getElementById('bonus-valor').value;
+  const m = document.getElementById('bonus-motivo').value;
+  if (!r || !v || !m) { toast('Preencha todos os campos do bônus'); return; }
+  const list = document.getElementById('bonus-list');
+  const colors = {'Matheus Souza':'#059669','Amanda Antunes':'#7c3aed','Lithielle Goulardt':'#0891b2'};
+  const initials = {'Matheus Souza':'MS','Amanda Antunes':'AA','Lithielle Goulardt':'LG'};
+  const div = document.createElement('div');
+  div.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;padding:10px 12px;background:var(--bg);border-radius:8px;font-size:13px;align-items:center;margin-top:8px;';
+  div.innerHTML = `<span><div class="avatar sm" style="background:${colors[r]};display:inline-flex;margin-right:6px;">${initials[r]}</div>${r}</span><span style="font-weight:600;color:#2563eb;">R$ ${parseFloat(v).toFixed(2)}</span><span style="color:var(--text-muted);">${m}</span><span style="font-size:11px;color:var(--text-light);">Abr/2026</span>`;
+  list.appendChild(div);
+  document.getElementById('bonus-recruiter').value='';
+  document.getElementById('bonus-valor').value='';
+  document.getElementById('bonus-motivo').value='';
+  toast(`Bônus de R$ ${v} salvo para ${r}!`);
+}
+
+function updatePhoto(input, key) {
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    ['cfg-'+key,'avatar-'+key].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.innerHTML=`<img src="${e.target.result}" alt="foto">`; el.style.background='transparent'; }
+    });
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+</script>
+</body>
+</html>
