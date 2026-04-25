@@ -24,7 +24,7 @@ export default async function handler(req, res) {
       }),
       sheets.spreadsheets.values.get({
         spreadsheetId: sheetId,
-        range: 'Comissão!A:H',
+        range: 'Comissões!A:H',
       }),
       sheets.spreadsheets.values.get({
         spreadsheetId: sheetId,
