@@ -16,23 +16,27 @@ export default async function handler(req, res) {
     const sheets = google.sheets({ version: 'v4', auth });
     const sheetId = process.env.SHEET_ID_MATHEUS;
 
-    // Busca as 3 abas
-    const [entrevistas, comissao, vagas] = await Promise.all([
-      sheets.spreadsheets.values.get({
-        spreadsheetId: sheetId,
-        range: 'Entrevistas!A:F',
-      }),
-      sheets.spreadsheets.values.get({
-        spreadsheetId: sheetId,
-        range: 'Comissões!A:H',
-      }),
-      sheets.spreadsheets.values.get({
-        spreadsheetId: sheetId,
-        range: 'Abril!A:N',
-      }),
+    const [entrevistas, comissao, vagas, vagasMeta, vagasEntregues] = await Promise.all([
+      sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Entrevistas!A:F' }),
+      sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Comissões!A:H' }),
+      sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Abril!A:N' }),
+      // C1 = total de vagas do mês
+      sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Abril!C1' }),
+      // M1 = vagas entregues
+      sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Abril!M1' }),
     ]);
 
-    // Processa entrevistas (pula cabeçalho)
+    // Total vagas (célula C1)
+    const totalVagasC1 = parseInt(
+      (vagasMeta.data.values?.[0]?.[0] || '0').toString().replace(/\D/g, '')
+    ) || 0;
+
+    // Vagas entregues (célula M1)
+    const vagasEntreguesM1 = parseInt(
+      (vagasEntregues.data.values?.[0]?.[0] || '0').toString().replace(/\D/g, '')
+    ) || 0;
+
+    // Entrevistas (pula cabeçalho linha 1)
     const entrevistasData = (entrevistas.data.values || []).slice(1).map(row => ({
       dia:       row[0] || '',
       recruiter: row[1] || '',
@@ -42,7 +46,7 @@ export default async function handler(req, res) {
       status:    row[5] || '',
     })).filter(r => r.dia);
 
-    // Processa comissão (pula cabeçalho)
+    // Comissão (pula cabeçalho linha 1, ignora linha "RECRUITER")
     const comissaoData = (comissao.data.values || []).slice(1).map(row => ({
       recruiter:    row[0] || '',
       mes:          row[1] || '',
@@ -52,9 +56,9 @@ export default async function handler(req, res) {
       meta:         row[5] || '',
       entregue:     row[6] || '',
       percentual:   row[7] || '',
-    })).filter(r => r.recruiter);
+    })).filter(r => r.recruiter && r.recruiter.toUpperCase() !== 'RECRUITER' && r.recruiter.toUpperCase() !== 'RECRUTADOR');
 
-    // Processa vagas (pula 2 linhas de cabeçalho)
+    // Vagas (pula 2 linhas de cabeçalho)
     const vagasData = (vagas.data.values || []).slice(2).map(row => ({
       mes:         row[0] || '',
       quantidade:  row[1] || '',
@@ -74,6 +78,8 @@ export default async function handler(req, res) {
 
     res.status(200).json({
       ok: true,
+      totalVagasC1,
+      vagasEntreguesM1,
       entrevistas: entrevistasData,
       comissao: comissaoData,
       vagas: vagasData,
