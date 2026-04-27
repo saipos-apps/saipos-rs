@@ -16,6 +16,7 @@
     --danger:#ef4444; --danger-bg:#fee2e2; --info:#3b82f6; --info-bg:#dbeafe;
     --sidebar-w:240px; --radius:14px; --radius-sm:8px;
     --shadow:0 2px 12px rgba(38,60,133,0.08); --shadow-md:0 4px 24px rgba(38,60,133,0.12);
+    --c-ms:#059669; --c-aa:#7c3aed; --c-lg:#0891b2;
   }
   html,body { height:100%; font-family:'Poppins',sans-serif; background:var(--bg); color:var(--text); overflow:hidden; }
 
@@ -30,128 +31,113 @@
   .login-fields { width:100%; }
   .form-group { margin-bottom:14px; }
   .form-group label { display:block; font-size:12px; font-weight:600; color:var(--text); margin-bottom:6px; }
-  .form-group input { width:100%; padding:12px 16px; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-family:'Poppins',sans-serif; font-size:14px; color:var(--text); outline:none; transition:border-color 0.2s,box-shadow 0.2s; }
+  .form-group input { width:100%; padding:12px 16px; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-family:'Poppins',sans-serif; font-size:14px; color:var(--text); outline:none; transition:border-color 0.2s; }
   .form-group input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(38,60,133,0.1); }
   .login-error { font-size:12px; color:var(--danger); margin-bottom:10px; text-align:center; display:none; }
-  .btn-login { width:100%; padding:13px; background:var(--primary); color:white; border:none; border-radius:var(--radius-sm); font-family:'Poppins',sans-serif; font-size:14px; font-weight:600; cursor:pointer; margin-top:6px; transition:background 0.2s; text-align:center; }
+  .btn-login { width:100%; padding:13px; background:var(--primary); color:white; border:none; border-radius:var(--radius-sm); font-family:'Poppins',sans-serif; font-size:14px; font-weight:600; cursor:pointer; transition:background 0.2s; }
   .btn-login:hover { background:var(--primary-dark); }
 
   /* APP */
   #app { display:none; height:100vh; width:100vw; overflow:hidden; }
   .sidebar { position:fixed; left:0; top:0; bottom:0; width:var(--sidebar-w); background:var(--primary-dark); display:flex; flex-direction:column; z-index:100; overflow:hidden; }
-  .sidebar-header { padding:20px 18px 16px; border-bottom:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  .sidebar-header { padding:18px 16px; border-bottom:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; gap:10px; flex-shrink:0; }
   .sidebar-logo { height:26px; filter:brightness(0) invert(1); }
   .sidebar-brand { font-size:13px; font-weight:600; color:white; }
-  .sidebar-user { padding:12px 18px; display:flex; align-items:center; gap:10px; border-bottom:1px solid rgba(255,255,255,0.06); cursor:pointer; flex-shrink:0; transition:background 0.15s; }
+  .sidebar-user { padding:12px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid rgba(255,255,255,0.06); cursor:pointer; flex-shrink:0; transition:background 0.15s; }
   .sidebar-user:hover { background:rgba(255,255,255,0.04); }
   .sidebar-user-name { font-size:13px; font-weight:600; color:white; }
   .sidebar-user-role { font-size:11px; color:rgba(255,255,255,0.45); }
   .sidebar-nav { flex:1; padding:8px; overflow-y:auto; }
-  .nav-section-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.3); letter-spacing:0.1em; text-transform:uppercase; padding:8px 8px 4px; margin-top:4px; }
+  .nav-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.3); letter-spacing:0.1em; text-transform:uppercase; padding:8px 8px 4px; margin-top:4px; }
   .nav-item { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:var(--radius-sm); cursor:pointer; transition:background 0.15s; margin-bottom:2px; color:rgba(255,255,255,0.6); font-size:13px; font-weight:500; }
   .nav-item:hover { background:rgba(255,255,255,0.06); color:white; }
   .nav-item.active { background:rgba(255,255,255,0.12); color:white; }
   .nav-item svg { width:15px; height:15px; flex-shrink:0; }
-  .nav-badge { margin-left:auto; background:var(--danger); color:white; font-size:10px; font-weight:700; padding:2px 6px; border-radius:20px; }
-  .sidebar-footer { padding:10px 18px 14px; border-top:1px solid rgba(255,255,255,0.06); flex-shrink:0; }
+  .sidebar-footer { padding:10px 16px 14px; border-top:1px solid rgba(255,255,255,0.06); flex-shrink:0; }
   .sidebar-version { font-size:10px; color:rgba(255,255,255,0.25); margin-bottom:6px; }
   .logout-btn { display:flex; align-items:center; gap:8px; font-size:12px; color:rgba(255,255,255,0.4); cursor:pointer; transition:color 0.2s; }
   .logout-btn:hover { color:rgba(255,255,255,0.8); }
   .avatar { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:white; flex-shrink:0; overflow:hidden; }
   .avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
   .avatar.sm { width:26px; height:26px; font-size:10px; }
-  .avatar.lg { width:42px; height:42px; font-size:14px; }
+  .avatar.lg { width:40px; height:40px; font-size:14px; }
 
   /* MAIN */
-  .main { margin-left:var(--sidebar-w); height:100vh; overflow-y:auto; padding:24px 28px; }
-  .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:10px; }
+  .main { margin-left:var(--sidebar-w); height:100vh; overflow-y:auto; padding:22px 26px; }
+  .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
   .topbar-left h1 { font-size:19px; font-weight:700; }
   .topbar-left p { font-size:12px; color:var(--text-muted); margin-top:2px; }
   .topbar-right { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-  .filter-chip { display:flex; align-items:center; gap:6px; padding:7px 13px; background:white; border:1.5px solid var(--border); border-radius:10px; font-size:12px; font-weight:500; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
-  .filter-chip:hover { border-color:var(--primary); color:var(--primary); }
-  .filter-chip.active { border-color:var(--primary); color:var(--primary); background:var(--primary-faint); }
-  .btn-primary { display:flex; align-items:center; gap:6px; padding:8px 16px; background:var(--primary); color:white; border:none; border-radius:10px; font-family:'Poppins',sans-serif; font-size:12px; font-weight:600; cursor:pointer; transition:background 0.2s; white-space:nowrap; }
+  .chip { display:flex; align-items:center; gap:5px; padding:7px 12px; background:white; border:1.5px solid var(--border); border-radius:10px; font-size:12px; font-weight:500; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+  .chip:hover, .chip.active { border-color:var(--primary); color:var(--primary); background:var(--primary-faint); }
+  .chip svg { width:13px; height:13px; }
+  .btn-primary { display:flex; align-items:center; gap:6px; padding:8px 16px; background:var(--primary); color:white; border:none; border-radius:10px; font-family:'Poppins',sans-serif; font-size:12px; font-weight:600; cursor:pointer; transition:background 0.2s; }
   .btn-primary:hover { background:var(--primary-dark); }
-  select.mes-select { padding:7px 13px; background:white; border:1.5px solid var(--border); border-radius:10px; font-family:'Poppins',sans-serif; font-size:12px; font-weight:500; color:var(--text); outline:none; cursor:pointer; }
+  .btn-export { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; font-family:'Poppins',sans-serif; font-size:12px; font-weight:600; cursor:pointer; border:1.5px solid; }
+  .btn-export.pdf { background:var(--danger-bg); color:#dc2626; border-color:#fca5a5; }
+  .btn-export.excel { background:var(--success-bg); color:#059669; border-color:#a7f3d0; }
+  .btn-export.email { background:var(--info-bg); color:#2563eb; border-color:#93c5fd; }
 
   /* KPIs */
-  .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px; }
-  .kpi-card { background:white; border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); border:1px solid var(--border); transition:transform 0.15s,box-shadow 0.15s; }
+  .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px; }
+  .kpi-card { background:white; border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow); border:1px solid var(--border); transition:transform 0.15s; }
   .kpi-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); }
-  .kpi-label { font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px; }
-  .kpi-value { font-size:28px; font-weight:700; color:var(--primary); line-height:1; margin-bottom:6px; }
-  .kpi-delta { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; padding:2px 8px; border-radius:20px; }
-  .kpi-delta.up { background:var(--success-bg); color:#059669; }
-  .kpi-delta.down { background:var(--danger-bg); color:var(--danger); }
-  .kpi-delta.neutral { background:var(--primary-faint); color:var(--primary); }
-  .kpi-icon { width:36px; height:36px; border-radius:9px; display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
-  .kpi-icon svg { width:18px; height:18px; }
+  .kpi-lbl { font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:7px; }
+  .kpi-val { font-size:26px; font-weight:700; color:var(--primary); line-height:1; margin-bottom:6px; }
+  .kpi-d { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; padding:2px 8px; border-radius:20px; }
+  .kpi-d.up { background:var(--success-bg); color:#059669; }
+  .kpi-d.neutral { background:var(--primary-faint); color:var(--primary); }
+  .kpi-d.down { background:var(--danger-bg); color:var(--danger); }
+  .kpi-icon { width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
+  .kpi-icon svg { width:17px; height:17px; }
 
   /* CARDS */
-  .card { background:white; border-radius:var(--radius); padding:20px 22px; box-shadow:var(--shadow); border:1px solid var(--border); }
-  .section-title { font-size:14px; font-weight:700; color:var(--text); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
-  .chart-grid { display:grid; grid-template-columns:2fr 1fr; gap:14px; margin-bottom:20px; }
-  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px; }
-  .rec-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px; }
-  .rec-card { background:white; border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); border:1px solid var(--border); }
-  .rec-header { display:flex; align-items:center; gap:10px; margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--border); }
-  .rec-info h3 { font-size:14px; font-weight:700; }
-  .rec-info p { font-size:11px; color:var(--text-muted); margin-top:2px; }
-  .stat-row { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--bg); }
-  .stat-row:last-child { border-bottom:none; }
-  .stat-label { font-size:12px; color:var(--text-muted); }
-  .stat-value { font-size:13px; font-weight:600; }
-  .progress-wrap { margin-top:10px; }
-  .progress-label { display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); margin-bottom:5px; }
-  .progress-bar { height:6px; background:var(--bg); border-radius:99px; overflow:hidden; }
-  .progress-fill { height:100%; border-radius:99px; background:var(--primary); transition:width 0.8s ease; }
+  .card { background:white; border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); border:1px solid var(--border); }
+  .sec-title { font-size:14px; font-weight:700; color:var(--text); margin-bottom:12px; display:flex; align-items:center; gap:7px; }
+  .grid-2-1 { display:grid; grid-template-columns:2fr 1fr; gap:14px; margin-bottom:18px; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
+  .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:18px; }
+  table { width:100%; border-collapse:collapse; }
+  thead th { font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; padding:8px 12px; background:var(--bg); text-align:left; border-bottom:1px solid var(--border); }
+  thead th:first-child { border-radius:8px 0 0 8px; } thead th:last-child { border-radius:0 8px 8px 0; }
+  tbody td { padding:10px 12px; font-size:13px; border-bottom:1px solid var(--bg); vertical-align:middle; }
+  tbody tr:hover td { background:#f8faff; } tbody tr:last-child td { border-bottom:none; }
   .badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:600; }
   .badge-success { background:var(--success-bg); color:#059669; }
   .badge-warning { background:var(--warning-bg); color:#d97706; }
   .badge-danger { background:var(--danger-bg); color:#dc2626; }
   .badge-primary { background:var(--primary-faint); color:var(--primary); }
-  table { width:100%; border-collapse:collapse; }
-  thead th { font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; padding:9px 12px; background:var(--bg); text-align:left; border-bottom:1px solid var(--border); }
-  thead th:first-child { border-radius:8px 0 0 8px; }
-  thead th:last-child { border-radius:0 8px 8px 0; }
-  tbody td { padding:11px 12px; font-size:13px; border-bottom:1px solid var(--bg); vertical-align:middle; }
-  tbody tr:hover td { background:#f8faff; }
-  tbody tr:last-child td { border-bottom:none; }
+  .badge-purple { background:#f3e8ff; color:#7c3aed; }
+  .badge-cyan { background:#e0f2fe; color:#0891b2; }
   .panel { display:none; }
   .panel.active { display:block; animation:slideIn 0.2s ease; }
   @keyframes slideIn { from{opacity:0;transform:translateX(-10px);} to{opacity:1;transform:translateX(0);} }
-  .loading-wrap { display:flex; align-items:center; justify-content:center; padding:32px; gap:10px; color:var(--text-muted); font-size:13px; }
+  .spin-wrap { display:flex; align-items:center; justify-content:center; padding:30px; gap:10px; color:var(--text-muted); font-size:13px; }
   .spinner { width:18px; height:18px; border:2px solid var(--border); border-top-color:var(--primary); border-radius:50%; animation:spin 0.7s linear infinite; flex-shrink:0; }
   @keyframes spin { to{transform:rotate(360deg);} }
-  .form-field label { display:block; font-size:11px; font-weight:600; color:var(--text-muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.04em; }
-  .form-field input,.form-field select,.form-field textarea { width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text); outline:none; background:white; }
-  .form-field input:focus,.form-field select:focus { border-color:var(--primary); }
+  .ff { display:block; font-size:11px; font-weight:600; color:var(--text-muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.04em; }
+  .fi { width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text); outline:none; background:white; }
+  .fi:focus { border-color:var(--primary); }
   .form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .photo-upload { position:relative; cursor:pointer; display:inline-block; }
-  .photo-upload input { display:none; }
-  .photo-upload-btn { position:absolute; bottom:0; right:0; width:16px; height:16px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; }
-  .cfg-card { background:white; border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); border:1px solid var(--border); margin-bottom:12px; }
-  .cfg-header { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
-  .status-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-  .status-dot.ok { background:var(--success); }
-  .status-dot.warn { background:var(--warning); }
-  .report-preview { background:var(--bg); border-radius:10px; padding:14px; margin-top:12px; border:1px solid var(--border); }
-  .report-row { display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid var(--border); font-size:12px; }
-  .report-row:last-child { border-bottom:none; }
-  .btn-export { display:inline-flex; align-items:center; gap:6px; padding:9px 16px; border-radius:10px; font-family:'Poppins',sans-serif; font-size:12px; font-weight:600; cursor:pointer; border:1.5px solid; }
-  .btn-export.pdf { background:var(--danger-bg); color:#dc2626; border-color:#fca5a5; }
-  .btn-export.pdf:hover { background:#fecaca; }
-  .btn-export.excel { background:var(--success-bg); color:#059669; border-color:#a7f3d0; }
-  .btn-export.email { background:var(--info-bg); color:#2563eb; border-color:#93c5fd; }
+  .progress-bar { height:6px; background:var(--bg); border-radius:99px; overflow:hidden; margin-top:4px; }
+  .progress-fill { height:100%; border-radius:99px; transition:width 0.8s ease; }
   .acc-table { width:100%; border-collapse:collapse; font-size:12px; }
   .acc-table th { background:var(--primary-faint); color:var(--primary); font-weight:600; padding:7px 12px; text-align:left; }
   .acc-table td { padding:7px 12px; border-bottom:1px solid var(--border); }
   .acc-table tr:last-child td { border-bottom:none; }
   .acc-table tr.active-row td { background:#eef4ff; font-weight:600; color:var(--primary); }
-  #toast { position:fixed; bottom:24px; right:24px; background:var(--primary-dark); color:white; padding:11px 20px; border-radius:12px; font-size:13px; font-weight:500; box-shadow:var(--shadow-md); z-index:9999; opacity:0; transition:opacity 0.3s; pointer-events:none; }
-  .info-banner { padding:9px 14px; background:var(--info-bg); border:1px solid #93c5fd; border-radius:8px; font-size:12px; color:#1d4ed8; margin-bottom:14px; }
-  .divider-label { font-size:13px; font-weight:700; padding-bottom:10px; border-bottom:1px solid var(--border); margin-bottom:14px; }
+  .photo-upload { position:relative; cursor:pointer; display:inline-block; }
+  .photo-upload input { display:none; }
+  .photo-upload-btn { position:absolute; bottom:0; right:0; width:16px; height:16px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .cfg-card { background:white; border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow); border:1px solid var(--border); margin-bottom:12px; }
+  .cfg-hdr { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+  .dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .dot-ok { background:var(--success); } .dot-warn { background:var(--warning); }
+  .report-preview { background:var(--bg); border-radius:10px; padding:13px; margin-top:10px; border:1px solid var(--border); }
+  .rr { display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid var(--border); font-size:12px; }
+  .rr:last-child { border-bottom:none; }
+  #toast { position:fixed; bottom:22px; right:22px; background:var(--primary-dark); color:white; padding:10px 18px; border-radius:12px; font-size:13px; font-weight:500; box-shadow:var(--shadow-md); z-index:9999; opacity:0; transition:opacity 0.3s; pointer-events:none; }
+  .divider-lbl { font-size:13px; font-weight:700; padding-bottom:10px; border-bottom:1px solid var(--border); margin-bottom:14px; }
 </style>
 </head>
 <body>
@@ -163,9 +149,9 @@
     <div class="login-title">Seja bem-vindo(a)!</div>
     <div class="login-sub">Faça login para acessar a Gestão de R&S</div>
     <div class="login-fields">
-      <div class="form-group"><label>E-mail</label><input type="email" id="login-email" placeholder="seu@email.com"></div>
-      <div class="form-group"><label>Senha</label><input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
-      <div class="login-error" id="login-error">E-mail ou senha incorretos</div>
+      <div class="form-group"><label>E-mail</label><input type="email" id="lin-email" placeholder="seu@email.com"></div>
+      <div class="form-group"><label>Senha</label><input type="password" id="lin-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="login-error" id="lin-err">E-mail ou senha incorretos</div>
       <button class="btn-login" onclick="doLogin()">Entrar</button>
     </div>
   </div>
@@ -179,40 +165,24 @@
       <div class="sidebar-brand">Gestão de R&S</div>
     </div>
     <div class="sidebar-user" onclick="showPanel('configuracoes',null)">
-      <div class="avatar" style="background:#3a54b0;" id="user-avatar">HK</div>
-      <div><div class="sidebar-user-name" id="user-name">Heitor Kersting</div><div class="sidebar-user-role" id="user-role">Líder de Recrutamento</div></div>
+      <div class="avatar" style="background:#3a54b0;" id="u-avatar">HK</div>
+      <div><div class="sidebar-user-name" id="u-name">Heitor Kersting</div><div class="sidebar-user-role" id="u-role">Líder de Recrutamento</div></div>
     </div>
     <div class="sidebar-nav">
-      <div class="nav-section-label">Principal</div>
-      <div class="nav-item active" data-panel="dashboard" onclick="showPanel('dashboard',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard
-      </div>
-      <div class="nav-item" data-panel="recrutadores" onclick="showPanel('recrutadores',this)" id="nav-rec">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Recrutadores
-      </div>
-      <div class="nav-item" data-panel="vagas" onclick="showPanel('vagas',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Vagas
-      </div>
-      <div class="nav-item" data-panel="comissoes" onclick="showPanel('comissoes',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Comissões
-      </div>
-      <div class="nav-section-label">Gestão</div>
-      <div class="nav-item" data-panel="metas" onclick="showPanel('metas',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Metas
-      </div>
-      <div class="nav-item" data-panel="relatorios" onclick="showPanel('relatorios',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>Relatórios
-      </div>
-      <div class="nav-section-label">Configurações</div>
-      <div class="nav-item" data-panel="configuracoes" onclick="showPanel('configuracoes',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Configurações
-      </div>
+      <div class="nav-label">Principal</div>
+      <div class="nav-item active" onclick="showPanel('dashboard',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
+      <div class="nav-item" id="nav-rec" onclick="showPanel('recrutadores',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Recrutadores</div>
+      <div class="nav-item" onclick="showPanel('vagas',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Vagas</div>
+      <div class="nav-item" onclick="showPanel('comissoes',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Comissões</div>
+      <div class="nav-label">Gestão</div>
+      <div class="nav-item" onclick="showPanel('metas',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Metas</div>
+      <div class="nav-item" onclick="showPanel('relatorios',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>Relatórios</div>
+      <div class="nav-label">Configurações</div>
+      <div class="nav-item" onclick="showPanel('configuracoes',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Configurações</div>
     </div>
     <div class="sidebar-footer">
       <div class="sidebar-version">v1.0 — Fase 1</div>
-      <div class="logout-btn" onclick="doLogout()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sair
-      </div>
+      <div class="logout-btn" onclick="doLogout()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sair</div>
     </div>
   </nav>
 
@@ -221,126 +191,99 @@
     <!-- DASHBOARD -->
     <div id="panel-dashboard" class="panel active">
       <div class="topbar">
-        <div class="topbar-left"><h1>Dashboard</h1><p>Visão geral do time · <span id="mes-atual"></span></p></div>
+        <div class="topbar-left"><h1>Dashboard</h1><p>Visão geral do time · <span id="mes-label">Abril 2026</span></p></div>
         <div class="topbar-right">
-          <select class="mes-select" id="mes-select" onchange="onMesChange()">
-            <option value="Abril">Abril 2026</option>
-            <option value="Maio">Maio 2026</option>
-            <option value="Junho">Junho 2026</option>
-          </select>
-          <div class="filter-chip" onclick="loadData()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Atualizar
-          </div>
+          <div class="chip" onclick="loadData()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Atualizar</div>
         </div>
       </div>
-      <div id="dash-loading" class="loading-wrap"><div class="spinner"></div>Carregando dados...</div>
-      <div id="dash-content" style="display:none;">
-        <div class="info-banner">📊 Dados de <strong>1 de 3</strong> recrutadores conectados. Amanda e Lithielle serão adicionados em breve.</div>
+      <div id="dash-load" class="spin-wrap"><div class="spinner"></div>Carregando dados das 3 planilhas...</div>
+      <div id="dash-body" style="display:none;">
         <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="kpi-icon" style="background:#e8ecf7;"><svg viewBox="0 0 24 24" fill="none" stroke="#263C85" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
-            <div class="kpi-label">Entrevistas no mês</div>
-            <div class="kpi-value" id="kpi-ent">—</div>
-            <span class="kpi-delta up" id="kpi-ent-d"></span>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-icon" style="background:#d1fae5;"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
-            <div class="kpi-label">Taxa de aprovação</div>
-            <div class="kpi-value" style="color:#059669;" id="kpi-taxa">—</div>
-            <span class="kpi-delta up" id="kpi-taxa-d"></span>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-icon" style="background:#fef3c7;"><svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
-            <div class="kpi-label">Vagas abertas</div>
-            <div class="kpi-value" style="color:#d97706;" id="kpi-vagas">—</div>
-            <span class="kpi-delta neutral" id="kpi-vagas-d"></span>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-icon" style="background:#dbeafe;"><svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
-            <div class="kpi-label">Comissões do mês</div>
-            <div class="kpi-value" style="color:#2563eb;font-size:22px;" id="kpi-com">—</div>
-            <span class="kpi-delta neutral" id="kpi-com-d"></span>
-          </div>
+          <div class="kpi-card"><div class="kpi-icon" style="background:#e8ecf7;"><svg viewBox="0 0 24 24" fill="none" stroke="#263C85" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="kpi-lbl">Entrevistas no mês</div><div class="kpi-val" id="k-ent">—</div><span class="kpi-d up" id="k-ent-d"></span></div>
+          <div class="kpi-card"><div class="kpi-icon" style="background:#d1fae5;"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="kpi-lbl">Taxa de aprovação</div><div class="kpi-val" style="color:#059669;" id="k-taxa">—</div><span class="kpi-d up" id="k-taxa-d"></span></div>
+          <div class="kpi-card"><div class="kpi-icon" style="background:#fef3c7;"><svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div><div class="kpi-lbl">Vagas abertas</div><div class="kpi-val" style="color:#d97706;" id="k-vag">—</div><span class="kpi-d neutral" id="k-vag-d"></span></div>
+          <div class="kpi-card"><div class="kpi-icon" style="background:#dbeafe;"><svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="kpi-lbl">Comissões do mês</div><div class="kpi-val" style="color:#2563eb;font-size:22px;" id="k-com">—</div><span class="kpi-d neutral" id="k-com-d"></span></div>
         </div>
-        <div class="chart-grid">
+        <div class="grid-2-1">
           <div class="card">
-            <div class="section-title">Evolução · Abril 2026 em diante</div>
-            <div style="position:relative;height:190px;"><canvas id="chart-evol"></canvas></div>
+            <div class="sec-title">Evolução · Abril 2026 em diante</div>
+            <div style="display:flex;gap:14px;margin-bottom:10px;font-size:11px;">
+              <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:3px;background:#263C85;border-radius:2px;display:inline-block;"></span>Entrevistas</span>
+              <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:3px;background:#10b981;border-radius:2px;display:inline-block;"></span>Aprovações</span>
+            </div>
+            <div style="position:relative;height:180px;"><canvas id="ch-evol"></canvas></div>
           </div>
           <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
-            <div class="section-title" style="margin-bottom:8px;">Vagas entregues vs Meta</div>
-            <div style="position:relative;height:170px;width:100%;"><canvas id="chart-vagas-meta"></canvas></div>
-            <div id="vagas-meta-label" style="font-size:12px;color:var(--text-muted);margin-top:6px;text-align:center;"></div>
+            <div class="sec-title">Vagas entregues vs Meta</div>
+            <div style="position:relative;height:160px;width:100%;"><canvas id="ch-vmet"></canvas></div>
+            <div id="vmet-label" style="font-size:12px;color:var(--text-muted);margin-top:6px;text-align:center;"></div>
           </div>
         </div>
-        <div class="two-col">
-          <div class="card">
-            <div class="section-title">💰 Detalhamento de comissão</div>
-            <div id="com-dash"></div>
-          </div>
-          <div class="card">
-            <div class="section-title">📋 Vagas abertas agora</div>
-            <div id="vagas-dash" style="display:flex;flex-direction:column;gap:7px;max-height:280px;overflow-y:auto;"></div>
-          </div>
+        <div class="grid-2">
+          <div class="card"><div class="sec-title">💰 Detalhamento de comissão</div><div id="com-dash"></div></div>
+          <div class="card"><div class="sec-title">📋 Vagas abertas agora</div><div id="vag-dash" style="display:flex;flex-direction:column;gap:7px;max-height:270px;overflow-y:auto;"></div></div>
         </div>
       </div>
     </div>
 
     <!-- RECRUTADORES -->
     <div id="panel-recrutadores" class="panel">
-      <div class="topbar"><div class="topbar-left"><h1>Recrutadores</h1><p>Desempenho individual · <span class="mes-ref"></span></p></div></div>
-      <div class="card" style="margin-bottom:18px;">
-        <div class="section-title">Taxa de aprovação vs Meta (%)</div>
-        <div style="position:relative;height:200px;"><canvas id="chart-rec"></canvas></div>
+      <div class="topbar"><div class="topbar-left"><h1>Recrutadores</h1><p>Desempenho individual · Abril 2026</p></div></div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="sec-title">Taxa de aprovação vs Meta (%)</div>
+        <div style="position:relative;height:200px;"><canvas id="ch-rec"></canvas></div>
       </div>
-      <div class="rec-grid" id="rec-cards">
-        <div class="loading-wrap" style="grid-column:1/-1;"><div class="spinner"></div>Carregando...</div>
+      <div class="grid-3" id="rec-cards"><div class="spin-wrap" style="grid-column:1/-1;"><div class="spinner"></div>Carregando...</div></div>
+      <div class="grid-2">
+        <div class="card" style="background:var(--bg);"><div class="sec-title">🔔 Retornos pendentes</div><div id="rec-pend" style="display:flex;flex-direction:column;gap:8px;"></div></div>
+        <div class="card">
+          <div class="sec-title">📊 Comparativo de entrevistas</div>
+          <div style="position:relative;height:180px;"><canvas id="ch-ent-comp"></canvas></div>
+        </div>
       </div>
     </div>
 
     <!-- VAGAS -->
     <div id="panel-vagas" class="panel">
       <div class="topbar">
-        <div class="topbar-left"><h1>Vagas</h1><p>Todas as vagas do mês</p></div>
+        <div class="topbar-left"><h1>Vagas</h1><p>Todas as vagas do time</p></div>
         <div class="topbar-right">
-          <div class="filter-chip active" id="f-aberta" onclick="filtrarVagas('Aberta')">Abertas</div>
-          <div class="filter-chip" id="f-fechada" onclick="filtrarVagas('Fechada')">Fechadas</div>
-          <div class="filter-chip" id="f-todas" onclick="filtrarVagas('Todas')">Todas</div>
+          <div class="chip active" id="f-ab" onclick="filtrarVagas('Aberta')">Abertas</div>
+          <div class="chip" id="f-fe" onclick="filtrarVagas('Fechada')">Fechadas</div>
+          <div class="chip" id="f-to" onclick="filtrarVagas('Todas')">Todas</div>
         </div>
       </div>
       <div class="card">
-        <table><thead><tr><th>Vaga</th><th>Status</th></tr></thead>
-        <tbody id="vagas-tbody"><tr><td colspan="2"><div class="loading-wrap"><div class="spinner"></div></div></td></tr></tbody></table>
+        <table><thead><tr><th>Vaga</th><th>Recrutador</th><th>Status</th></tr></thead>
+        <tbody id="vag-tbody"></tbody></table>
       </div>
     </div>
 
     <!-- COMISSÕES -->
     <div id="panel-comissoes" class="panel">
-      <div class="topbar"><div class="topbar-left"><h1>Comissões</h1><p><span class="mes-ref"></span></p></div></div>
-      <div class="kpi-grid" style="grid-template-columns:1fr 1fr;margin-bottom:18px;">
-        <div class="kpi-card"><div class="kpi-label">Total do time</div><div class="kpi-value" style="color:#2563eb;font-size:24px;" id="com-total">—</div></div>
-        <div class="kpi-card"><div class="kpi-label">Segurança mínima</div><div class="kpi-value" style="font-size:24px;">R$ 350</div><span class="kpi-delta up">Garantida a todos</span></div>
+      <div class="topbar"><div class="topbar-left"><h1>Comissões</h1><p>Abril 2026</p></div></div>
+      <div class="kpi-grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px;">
+        <div class="kpi-card"><div class="kpi-lbl">Total do time</div><div class="kpi-val" style="color:#2563eb;font-size:22px;" id="com-tot">—</div></div>
+        <div class="kpi-card"><div class="kpi-lbl">Segurança mínima</div><div class="kpi-val" style="font-size:22px;">R$ 350</div><span class="kpi-d up">Garantida a todos</span></div>
       </div>
-      <div class="card" style="margin-bottom:18px;">
-        <div class="section-title">Detalhamento por recrutador</div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="sec-title">Detalhamento por recrutador</div>
         <table><thead><tr><th>Recrutador</th><th>Vagas fechadas</th><th>Valor de comissão</th><th>Multiplicador</th><th>Valor do acelerador</th><th>Total a receber</th></tr></thead>
         <tbody id="com-tbody"></tbody></table>
       </div>
-      <div class="card" style="margin-bottom:18px;">
-        <div class="section-title">🎁 Bônus extras</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:14px;">
-          <div class="form-field"><label>Recrutador</label>
-            <select id="bonus-rec"><option value="">Selecione...</option><option>Matheus Souza</option><option>Amanda Antunes</option><option>Lithielle Goulardt</option></select>
-          </div>
-          <div class="form-field"><label>Valor (R$)</label><input type="number" id="bonus-val" placeholder="200"></div>
-          <div class="form-field"><label>Motivo</label><input type="text" id="bonus-mot" placeholder="Meta batida"></div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="sec-title">🎁 Bônus extras</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:12px;">
+          <div><label class="ff">Recrutador</label><select class="fi" id="bon-rec"><option value="">Selecione...</option><option>Matheus Souza</option><option>Amanda Antunes</option><option>Lithielle Goulardt</option></select></div>
+          <div><label class="ff">Valor (R$)</label><input type="number" class="fi" id="bon-val" placeholder="200"></div>
+          <div><label class="ff">Motivo</label><input type="text" class="fi" id="bon-mot" placeholder="Meta batida"></div>
           <button class="btn-primary" onclick="addBonus()" style="height:40px;">Salvar</button>
         </div>
-        <div id="bonus-list"></div>
+        <div id="bon-list"></div>
       </div>
       <div class="card">
-        <div class="section-title">📊 Tabela de acelerador</div>
-        <table class="acc-table" id="acc-table">
+        <div class="sec-title">📊 Tabela de acelerador</div>
+        <table class="acc-table" id="acc-tbl">
           <thead><tr><th>Fechamento de vagas</th><th>Multiplicador</th></tr></thead>
           <tbody>
             <tr><td>Até 60%</td><td>—</td></tr>
@@ -359,85 +302,73 @@
       <div class="topbar">
         <div class="topbar-left"><h1>Metas</h1><p>Configure e envie as metas mensais</p></div>
         <div class="topbar-right">
-          <button class="btn-export email" onclick="enviarMetasPorEmail()" style="font-size:12px;">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Enviar metas por e-mail
-          </button>
-          <button class="btn-primary" onclick="salvarMetas()">Salvar metas</button>
+          <button class="btn-export email" onclick="enviarMetasEmail()">Enviar metas por e-mail</button>
+          <button class="btn-primary" onclick="toast('Metas salvas!')">Salvar metas</button>
         </div>
       </div>
-      <div class="card" style="margin-bottom:18px;">
-        <div class="section-title">✅ Meta de taxa de aprovação · Individual</div>
-        <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Atualize todo mês. Meta em % de aprovação.</p>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="sec-title">✅ Meta de taxa de aprovação · Individual</div>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Atualize todo mês.</p>
         <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg);border-radius:10px;">
-            <div class="avatar" style="background:#059669;">MS</div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg);border-radius:10px;">
+            <div class="avatar" style="background:var(--c-ms);">MS</div>
             <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Matheus Souza</div><div style="font-size:11px;color:var(--text-muted);" id="real-ms">—</div></div>
-            <div style="display:flex;align-items:center;gap:6px;"><input type="number" value="70" min="1" max="100" id="meta-aprov-ms" style="width:65px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;color:var(--primary);outline:none;"><span style="font-size:12px;color:var(--text-muted);">%</span></div>
+            <div style="display:flex;align-items:center;gap:6px;"><input type="number" value="70" min="1" max="100" id="m-ms" style="width:62px;padding:6px 9px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;color:var(--primary);outline:none;"><span style="font-size:12px;color:var(--text-muted);">%</span></div>
           </div>
-          <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg);border-radius:10px;">
-            <div class="avatar" style="background:#7c3aed;">AA</div>
-            <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Amanda Antunes</div><div style="font-size:11px;color:var(--text-muted);">Planilha a conectar</div></div>
-            <div style="display:flex;align-items:center;gap:6px;"><input type="number" value="70" min="1" max="100" id="meta-aprov-aa" style="width:65px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;color:var(--primary);outline:none;"><span style="font-size:12px;color:var(--text-muted);">%</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg);border-radius:10px;">
+            <div class="avatar" style="background:var(--c-aa);">AA</div>
+            <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Amanda Antunes</div><div style="font-size:11px;color:var(--text-muted);" id="real-aa">—</div></div>
+            <div style="display:flex;align-items:center;gap:6px;"><input type="number" value="70" min="1" max="100" id="m-aa" style="width:62px;padding:6px 9px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;color:var(--primary);outline:none;"><span style="font-size:12px;color:var(--text-muted);">%</span></div>
           </div>
-          <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg);border-radius:10px;">
-            <div class="avatar" style="background:#0891b2;">LG</div>
-            <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Lithielle Goulardt</div><div style="font-size:11px;color:var(--text-muted);">Planilha a conectar</div></div>
-            <div style="display:flex;align-items:center;gap:6px;"><input type="number" value="70" min="1" max="100" id="meta-aprov-lg" style="width:65px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;color:var(--primary);outline:none;"><span style="font-size:12px;color:var(--text-muted);">%</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg);border-radius:10px;">
+            <div class="avatar" style="background:var(--c-lg);">LG</div>
+            <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Lithielle Goulardt</div><div style="font-size:11px;color:var(--text-muted);" id="real-lg">—</div></div>
+            <div style="display:flex;align-items:center;gap:6px;"><input type="number" value="70" min="1" max="100" id="m-lg" style="width:62px;padding:6px 9px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;color:var(--primary);outline:none;"><span style="font-size:12px;color:var(--text-muted);">%</span></div>
           </div>
         </div>
       </div>
       <div class="card">
-        <div class="section-title">🎯 Metas do time · <span class="mes-ref"></span></div>
+        <div class="sec-title">🎯 Metas do time</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
-          <div style="padding:14px;background:var(--bg);border-radius:10px;">
-            <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px;">Meta de entrevistas/mês</div>
-            <div style="display:flex;align-items:center;gap:6px;"><input type="number" value="100" id="meta-ent-num" style="width:75px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;color:var(--primary);outline:none;"><span style="font-size:12px;color:var(--text-muted);">entrevistas</span></div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:6px;" id="ref-ent"></div>
-          </div>
-          <div style="padding:14px;background:var(--bg);border-radius:10px;">
-            <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px;">Meta de vagas entregues</div>
-            <div style="display:flex;align-items:center;gap:6px;"><input type="number" value="20" id="meta-vagas-num" style="width:75px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;color:var(--primary);outline:none;" onchange="recalcular()"><span style="font-size:12px;color:var(--text-muted);">vagas</span></div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:6px;" id="ref-vagas"></div>
-          </div>
-          <div style="padding:14px;background:var(--bg);border-radius:10px;">
-            <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px;">Meta de vagas por recrutador</div>
-            <div style="display:flex;align-items:center;gap:6px;"><input type="number" value="7" id="meta-vagas-rec" style="width:75px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;color:var(--primary);outline:none;" onchange="recalcular()"><span style="font-size:12px;color:var(--text-muted);">vagas/rec</span></div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Usado no acelerador</div>
-          </div>
+          <div style="padding:12px 14px;background:var(--bg);border-radius:10px;"><div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px;">Entrevistas/mês</div><div style="display:flex;align-items:center;gap:6px;"><input type="number" value="100" id="m-ent" style="width:72px;padding:6px 9px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;color:var(--primary);outline:none;" onchange="recalc()"><span style="font-size:12px;color:var(--text-muted);">entrevistas</span></div><div style="font-size:11px;color:var(--text-muted);margin-top:6px;" id="ref-ent"></div></div>
+          <div style="padding:12px 14px;background:var(--bg);border-radius:10px;"><div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px;">Vagas entregues</div><div style="display:flex;align-items:center;gap:6px;"><input type="number" value="20" id="m-vag" style="width:72px;padding:6px 9px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;color:var(--primary);outline:none;" onchange="recalc()"><span style="font-size:12px;color:var(--text-muted);">vagas</span></div><div style="font-size:11px;color:var(--text-muted);margin-top:6px;" id="ref-vag"></div></div>
+          <div style="padding:12px 14px;background:var(--bg);border-radius:10px;"><div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px;">Vagas por recrutador</div><div style="display:flex;align-items:center;gap:6px;"><input type="number" value="7" id="m-vagrec" style="width:72px;padding:6px 9px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;color:var(--primary);outline:none;" onchange="recalc()"><span style="font-size:12px;color:var(--text-muted);">vagas/rec</span></div><div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Usado no acelerador</div></div>
         </div>
       </div>
     </div>
 
     <!-- RELATÓRIOS -->
     <div id="panel-relatorios" class="panel">
-      <div class="topbar"><div class="topbar-left"><h1>Relatórios</h1><p>Exporte os dados do time</p></div></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+      <div class="topbar"><div class="topbar-left"><h1>Relatórios</h1></div></div>
+      <div class="grid-2" style="margin-bottom:16px;">
         <div class="card">
-          <div class="section-title">Relatório Geral do Time</div>
-          <div class="report-preview" id="rel-geral"><div class="loading-wrap"><div class="spinner"></div></div></div>
-          <div style="display:flex;gap:8px;margin-top:14px;">
-            <button class="btn-export pdf" onclick="exportarPDF('geral')">Exportar PDF</button>
-            <button class="btn-export excel" onclick="exportarExcel()">Excel</button>
+          <div class="sec-title">Relatório Geral do Time</div>
+          <div class="report-preview" id="rel-geral"></div>
+          <div style="display:flex;gap:8px;margin-top:12px;">
+            <button class="btn-export pdf" onclick="exportPDF()">Exportar PDF</button>
+            <button class="btn-export excel" onclick="exportCSV()">Excel (CSV)</button>
           </div>
         </div>
         <div class="card">
-          <div class="section-title">Relatório Individual</div>
-          <div style="margin-bottom:12px;"><label style="font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;">Recrutador</label>
-          <select id="rel-rec" onchange="updateRelInd()" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;outline:none;background:white;">
-            <option value="ms">Matheus Souza</option><option value="aa">Amanda Antunes</option><option value="lg">Lithielle Goulardt</option>
-          </select></div>
+          <div class="sec-title">Relatório Individual</div>
+          <label class="ff" style="margin-bottom:5px;">Recrutador</label>
+          <select class="fi" id="rel-rec-sel" onchange="updateRelInd()" style="margin-bottom:12px;">
+            <option value="ms">Matheus Souza</option>
+            <option value="aa">Amanda Antunes</option>
+            <option value="lg">Lithielle Goulardt</option>
+          </select>
           <div class="report-preview" id="rel-ind"></div>
-          <div style="display:flex;gap:8px;margin-top:14px;"><button class="btn-export pdf" onclick="exportarPDF('individual')">Exportar PDF</button></div>
+          <div style="margin-top:12px;"><button class="btn-export pdf" onclick="exportPDF()">Exportar PDF</button></div>
         </div>
       </div>
       <div class="card">
-        <div class="section-title">💸 Relatório de Comissões · Financeiro</div>
-        <div style="background:var(--bg);border-radius:10px;padding:14px;margin-bottom:14px;border:1px solid var(--border);" id="rel-financeiro-wrap">
+        <div class="sec-title">💸 Relatório de Comissões · Financeiro</div>
+        <div style="background:var(--bg);border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid var(--border);">
           <table><thead><tr><th>Recrutador</th><th>Vagas fechadas</th><th>Comissão base</th><th>Acelerador</th><th>Bônus</th><th>Total a pagar</th></tr></thead>
-          <tbody id="rel-fin-tbody"></tbody></table>
+          <tbody id="rel-fin"></tbody></table>
         </div>
         <div style="display:flex;gap:8px;">
-          <button class="btn-export pdf" style="font-size:13px;padding:10px 20px;" onclick="exportarPDF('financeiro')">Gerar PDF para Financeiro</button>
+          <button class="btn-export pdf" style="font-size:13px;padding:10px 18px;" onclick="exportPDF()">Gerar PDF para Financeiro</button>
           <button class="btn-export email" onclick="toast('E-mail enviado! (Fase 2)')">Enviar por e-mail</button>
         </div>
       </div>
@@ -445,71 +376,54 @@
 
     <!-- CONFIGURAÇÕES -->
     <div id="panel-configuracoes" class="panel">
-      <div class="topbar"><div class="topbar-left"><h1>Configurações</h1><p>Perfil, recrutadores e acessos</p></div></div>
-
-      <!-- Perfil do líder -->
-      <div class="divider-label">Meu perfil</div>
-      <div class="cfg-card" style="margin-bottom:20px;">
-        <div class="cfg-header">
-          <label class="photo-upload">
-            <div class="avatar lg" style="background:#3a54b0;position:relative;" id="cfg-lider">HK</div>
-            <div class="photo-upload-btn"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-            <input type="file" accept="image/*" onchange="updatePhoto(this,'lider')">
-          </label>
-          <div><div style="font-size:14px;font-weight:700;" id="lider-nome-display">Heitor Kersting</div><div style="font-size:12px;color:var(--text-muted);">Líder de Recrutamento</div></div>
+      <div class="topbar"><div class="topbar-left"><h1>Configurações</h1></div></div>
+      <div class="divider-lbl">Meu perfil</div>
+      <div class="cfg-card" style="margin-bottom:18px;">
+        <div class="cfg-hdr">
+          <label class="photo-upload"><div class="avatar lg" style="background:#3a54b0;position:relative;" id="cfg-lider">HK</div><div class="photo-upload-btn"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><input type="file" accept="image/*" onchange="updatePhoto(this,'lider')"></label>
+          <div><div style="font-size:14px;font-weight:700;" id="lider-name-d">Heitor Kersting</div><div style="font-size:12px;color:var(--text-muted);">Líder de Recrutamento</div></div>
         </div>
         <div class="form-row" style="margin-bottom:12px;">
-          <div class="form-field"><label>Nome completo</label><input type="text" id="lider-nome" value="Heitor Kersting"></div>
-          <div class="form-field"><label>Cargo</label><input type="text" id="lider-cargo" value="Líder de Recrutamento"></div>
-          <div class="form-field"><label>E-mail</label><input type="email" id="lider-email" value="heitor@saipos.com"></div>
-          <div class="form-field"><label>Nova senha</label><input type="password" id="lider-senha" placeholder="Deixe em branco para manter"></div>
+          <div><label class="ff">Nome</label><input type="text" class="fi" id="lider-nome" value="Heitor Kersting"></div>
+          <div><label class="ff">Cargo</label><input type="text" class="fi" id="lider-cargo" value="Líder de Recrutamento"></div>
+          <div><label class="ff">E-mail</label><input type="email" class="fi" id="lider-email" value="heitor@saipos.com"></div>
+          <div><label class="ff">Nova senha</label><input type="password" class="fi" id="lider-senha" placeholder="Deixe em branco para manter"></div>
         </div>
         <button class="btn-primary" style="font-size:12px;padding:8px 16px;" onclick="salvarPerfil()">Salvar perfil</button>
       </div>
-
-      <!-- Criar acesso de recrutador -->
-      <div class="divider-label">Criar acesso de recrutador</div>
-      <div class="cfg-card" style="margin-bottom:20px;">
-        <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">O recrutador receberá um e-mail com o link de acesso e poderá ver apenas os próprios dados.</p>
+      <div class="divider-lbl">Criar acesso de recrutador</div>
+      <div class="cfg-card" style="margin-bottom:18px;">
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Crie o login para que o recrutador acesse o sistema e veja apenas os próprios dados.</p>
         <div class="form-row" style="margin-bottom:12px;">
-          <div class="form-field"><label>Nome completo</label><input type="text" id="new-rec-nome" placeholder="Ex: Amanda Antunes"></div>
-          <div class="form-field"><label>E-mail de acesso</label><input type="email" id="new-rec-email" placeholder="amanda@saipos.com"></div>
-          <div class="form-field"><label>Senha inicial</label><input type="password" id="new-rec-senha" placeholder="Senha para o recrutador"></div>
-          <div class="form-field"><label>Cargo</label><input type="text" id="new-rec-cargo" placeholder="Ex: Recrutadora Pleno"></div>
+          <div><label class="ff">Nome completo</label><input type="text" class="fi" id="nr-nome" placeholder="Ex: Amanda Antunes"></div>
+          <div><label class="ff">E-mail de acesso</label><input type="email" class="fi" id="nr-email" placeholder="amanda@saipos.com"></div>
+          <div><label class="ff">Senha inicial</label><input type="password" class="fi" id="nr-senha" placeholder="Senha para o recrutador"></div>
+          <div><label class="ff">Cargo</label><input type="text" class="fi" id="nr-cargo" placeholder="Ex: Recrutadora Pleno"></div>
         </div>
         <button class="btn-primary" style="font-size:12px;padding:8px 16px;" onclick="criarAcesso()">Criar acesso</button>
-        <div id="acessos-criados" style="margin-top:14px;display:flex;flex-direction:column;gap:8px;"></div>
+        <div id="acessos-list" style="margin-top:12px;display:flex;flex-direction:column;gap:8px;"></div>
       </div>
-
-      <!-- Recrutadores cadastrados -->
-      <div class="divider-label">Recrutadores cadastrados</div>
+      <div class="divider-lbl">Recrutadores cadastrados</div>
       <div class="cfg-card">
-        <div class="cfg-header">
-          <label class="photo-upload"><div class="avatar lg" style="background:#059669;position:relative;" id="cfg-ms">MS</div><div class="photo-upload-btn"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><input type="file" accept="image/*" onchange="updatePhoto(this,'ms')"></label>
+        <div class="cfg-hdr">
+          <label class="photo-upload"><div class="avatar lg" style="background:var(--c-ms);position:relative;" id="cfg-ms">MS</div><div class="photo-upload-btn"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><input type="file" accept="image/*" onchange="updatePhoto(this,'ms')"></label>
           <div style="flex:1;"><div style="font-size:14px;font-weight:700;">Matheus Souza</div><div style="font-size:12px;color:var(--text-muted);">Recrutador ativo</div></div>
-          <div style="display:flex;align-items:center;gap:5px;"><div class="status-dot ok"></div><span style="font-size:12px;color:#059669;font-weight:600;">Planilha conectada ✓</span></div>
+          <div style="display:flex;align-items:center;gap:5px;"><div class="dot dot-ok"></div><span style="font-size:12px;color:#059669;font-weight:600;">Conectada ✓</span></div>
         </div>
-        <div class="form-row" style="margin-bottom:10px;">
-          <div class="form-field"><label>Nome</label><input type="text" value="Matheus Souza"></div>
-          <div class="form-field"><label>Cargo</label><input type="text" value="Recrutador Sênior"></div>
-        </div>
-        <button class="btn-primary" style="font-size:12px;padding:7px 14px;" onclick="toast('Salvo!')">Salvar</button>
       </div>
-      <div class="cfg-card" style="margin-top:12px;">
-        <div class="cfg-header">
-          <div class="avatar lg" style="background:#7c3aed;">AA</div>
+      <div class="cfg-card" style="margin-top:10px;">
+        <div class="cfg-hdr">
+          <label class="photo-upload"><div class="avatar lg" style="background:var(--c-aa);position:relative;" id="cfg-aa">AA</div><div class="photo-upload-btn"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><input type="file" accept="image/*" onchange="updatePhoto(this,'aa')"></label>
           <div style="flex:1;"><div style="font-size:14px;font-weight:700;">Amanda Antunes</div><div style="font-size:12px;color:var(--text-muted);">Recrutadora ativa</div></div>
-          <div style="display:flex;align-items:center;gap:5px;"><div class="status-dot warn"></div><span style="font-size:12px;color:#d97706;font-weight:600;">Planilha pendente</span></div>
+          <div style="display:flex;align-items:center;gap:5px;"><div class="dot dot-ok"></div><span style="font-size:12px;color:#059669;font-weight:600;">Conectada ✓</span></div>
         </div>
-        <div style="padding:10px;background:var(--warning-bg);border-radius:8px;font-size:12px;color:#92400e;">Planilha ainda não configurada.</div>
       </div>
-      <div class="cfg-card" style="margin-top:12px;">
-        <div class="cfg-header">
-          <div class="avatar lg" style="background:#0891b2;">LG</div>
+      <div class="cfg-card" style="margin-top:10px;">
+        <div class="cfg-hdr">
+          <label class="photo-upload"><div class="avatar lg" style="background:var(--c-lg);position:relative;" id="cfg-lg">LG</div><div class="photo-upload-btn"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><input type="file" accept="image/*" onchange="updatePhoto(this,'lg')"></label>
           <div style="flex:1;"><div style="font-size:14px;font-weight:700;">Lithielle Goulardt</div><div style="font-size:12px;color:var(--text-muted);">Recrutadora ativa</div></div>
-          <div style="display:flex;align-items:center;gap:5px;"><div class="status-dot warn"></div><span style="font-size:12px;color:#d97706;font-weight:600;">Planilha pendente</span></div>
+          <div style="display:flex;align-items:center;gap:5px;"><div class="dot dot-ok"></div><span style="font-size:12px;color:#059669;font-weight:600;">Conectada ✓</span></div>
         </div>
-        <div style="padding:10px;background:var(--warning-bg);border-radius:8px;font-size:12px;color:#92400e;">Planilha ainda não configurada.</div>
       </div>
     </div>
 
@@ -520,144 +434,123 @@
 <script>
 // ── USUÁRIOS ──
 let USERS = {
-  'heitor@saipos.com': { senha:'saipos2026', nome:'Heitor Kersting', role:'Líder de Recrutamento', initials:'HK', color:'#3a54b0', isLider:true },
+  'heitor@saipos.com':{ senha:'saipos2026', nome:'Heitor Kersting', role:'Líder de Recrutamento', initials:'HK', color:'#3a54b0', isLider:true },
+};
+let bonusData = [];
+let G = null;
+
+const REC_CFG = {
+  ms:{ nome:'Matheus Souza', color:'var(--c-ms)', ini:'MS', key:'ms' },
+  aa:{ nome:'Amanda Antunes', color:'var(--c-aa)', ini:'AA', key:'aa' },
+  lg:{ nome:'Lithielle Goulardt', color:'var(--c-lg)', ini:'LG', key:'lg' },
 };
 
-// ── LOGIN ──
+// ── AUTH ──
 function doLogin() {
-  const email = document.getElementById('login-email').value.trim().toLowerCase();
-  const senha = document.getElementById('login-pass').value;
-  const user = USERS[email];
-  if (!user || user.senha !== senha) { document.getElementById('login-error').style.display='block'; return; }
-  document.getElementById('login-error').style.display='none';
+  const email=document.getElementById('lin-email').value.trim().toLowerCase();
+  const senha=document.getElementById('lin-pass').value;
+  const user=USERS[email];
+  if(!user||user.senha!==senha){document.getElementById('lin-err').style.display='block';return;}
+  document.getElementById('lin-err').style.display='none';
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').style.display='flex';
-  document.getElementById('user-name').textContent = user.nome;
-  document.getElementById('user-role').textContent = user.role;
-  document.getElementById('user-avatar').textContent = user.initials;
-  document.getElementById('user-avatar').style.background = user.color;
-  if (!user.isLider) document.getElementById('nav-rec').style.display='none';
-  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  const m = meses[new Date().getMonth()] + ' ' + new Date().getFullYear();
-  document.getElementById('mes-atual').textContent = m;
-  document.querySelectorAll('.mes-ref').forEach(el => el.textContent = m);
+  document.getElementById('u-name').textContent=user.nome;
+  document.getElementById('u-role').textContent=user.role;
+  document.getElementById('u-avatar').textContent=user.initials;
+  document.getElementById('u-avatar').style.background=user.color;
+  if(!user.isLider) document.getElementById('nav-rec').style.display='none';
   loadData();
 }
-function doLogout() { document.getElementById('login-screen').style.display='flex'; document.getElementById('app').style.display='none'; }
+function doLogout(){document.getElementById('login-screen').style.display='flex';document.getElementById('app').style.display='none';}
 
-// ── NAVEGAÇÃO ──
-function showPanel(name, el) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+function showPanel(name,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
-  if (el && el.classList?.contains('nav-item')) el.classList.add('active');
-}
-
-// ── DADOS GLOBAIS ──
-let G = null;
-let bonusData = [];
-
-// ── SELETOR DE MÊS ──
-function onMesChange() {
-  const mes = document.getElementById('mes-select').value;
-  toast(`Filtrando por ${mes} 2026... (Fase 2: histórico por mês)`);
+  if(el&&el.classList?.contains('nav-item')) el.classList.add('active');
 }
 
 // ── LOAD ──
-async function loadData() {
-  document.getElementById('dash-loading').style.display='flex';
-  document.getElementById('dash-content').style.display='none';
-  try {
-    const res = await fetch('/api/sheets');
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error);
-    G = data;
+async function loadData(){
+  document.getElementById('dash-load').style.display='flex';
+  document.getElementById('dash-body').style.display='none';
+  try{
+    const res=await fetch('/api/sheets');
+    const data=await res.json();
+    if(!data.ok) throw new Error(data.error);
+    G=data;
     renderAll();
-    document.getElementById('dash-loading').style.display='none';
-    document.getElementById('dash-content').style.display='block';
-  } catch(e) {
-    document.getElementById('dash-loading').innerHTML=`<span style="color:var(--danger);">Erro: ${e.message}</span>`;
+    document.getElementById('dash-load').style.display='none';
+    document.getElementById('dash-body').style.display='block';
+  }catch(e){
+    document.getElementById('dash-load').innerHTML=`<span style="color:var(--danger);">Erro: ${e.message}</span>`;
   }
 }
-
-function recalcular() { if (G) renderAll(); }
-
-function renderAll() {
-  renderDash(); renderRec(); renderVagas(G); renderCom(); renderRel();
-}
+function recalc(){if(G) renderAll();}
+function renderAll(){renderDash();renderRec();renderVagas();renderCom();renderRel();}
 
 // ── HELPERS ──
-function brl(v) { return 'R$ '+parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-function calcAcl(pct) {
-  if (pct<=60) return 1; if (pct<=80) return 1.2; if (pct<=90) return 1.4;
-  if (pct<=95) return 1.8; if (pct<=100) return 2.0; return 2.5;
+function brl(v){return 'R$ '+parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function calcAcl(pct){if(pct<=60)return 1;if(pct<=80)return 1.2;if(pct<=90)return 1.4;if(pct<=95)return 1.8;if(pct<=100)return 2.0;return 2.5;}
+function isOffer(v){return (v.offer||'').toString().toUpperCase().includes('ACEI');}
+function calcRec(recData){
+  const ent=recData.entrevistas||[];
+  const com=recData.comissao||[];
+  const vag=recData.vagas||[];
+  const total=ent.length;
+  const aprov=ent.filter(e=>(e.resultado||'').toUpperCase()==='APROVADO').length;
+  const taxa=total>0?Math.round((aprov/total)*100):0;
+  const pend=ent.filter(e=>!(e.resultado||'').trim()&&(e.status||'').toUpperCase()!=='AGUARDANDO').length;
+  const comBase=com.filter(c=>c.recruiter&&!['RECRUITER','RECRUTADOR'].includes((c.recruiter||'').toUpperCase().trim()))
+    .reduce((a,c)=>{const v=parseFloat((c.valor||'0').toString().replace('R$','').replace(/\./g,'').replace(',','.'))||0;return a+v;},0);
+  const vagAb=vag.filter(v=>!isOffer(v)).length;
+  const vagFe=vag.filter(isOffer).length;
+  return {total,aprov,taxa,pend,comBase,vagAb,vagFe,
+    vagasEntregues:recData.vagasEntreguesM1||0,
+    totalVagasC1:recData.totalVagasC1||0};
 }
-function isOffer(v) { return (v.offer||'').toString().toUpperCase().includes('ACEI'); }
-function agruparCom(com) {
-  const m = {};
-  com.forEach(c => {
-    const n = (c.recruiter||'').trim();
-    if (!n || ['RECRUITER','RECRUTADOR'].includes(n.toUpperCase())) return;
-    if (!m[n]) m[n] = { recruiter:n, vagas:[], totalBase:0 };
-    const val = parseFloat((c.valor||'0').toString().replace('R$','').replace(/\./g,'').replace(',','.')) || 0;
-    m[n].vagas.push({ vaga:c.vagaEntregue, valor:val });
-    m[n].totalBase += val;
-  });
-  return Object.values(m);
-}
-function getMetas() {
-  return {
-    aprov: parseInt(document.getElementById('meta-aprov-ms')?.value||70),
-    entrevistas: parseInt(document.getElementById('meta-ent-num')?.value||100),
-    vagasTotal: parseInt(document.getElementById('meta-vagas-num')?.value||20),
-    vagasRec: parseInt(document.getElementById('meta-vagas-rec')?.value||7),
-  };
-}
+function getMetas(){return{aprov:parseInt(document.getElementById('m-ms')?.value||70),entrevistas:parseInt(document.getElementById('m-ent')?.value||100),vagasTotal:parseInt(document.getElementById('m-vag')?.value||20),vagasRec:parseInt(document.getElementById('m-vagrec')?.value||7)};}
 
 // ── DASHBOARD ──
-let chEvol=null, chVagas=null;
-function renderDash() {
-  const ent = G.entrevistas||[];
-  const com = G.comissao||[];
-  const vag = G.vagas||[];
-  const metas = getMetas();
+let chEvol=null,chVmet=null;
+function renderDash(){
+  const ent=G.entrevistas||[];
+  const metas=getMetas();
+  const total=ent.length;
+  const aprov=ent.filter(e=>(e.resultado||'').toUpperCase()==='APROVADO').length;
+  const taxa=total>0?Math.round((aprov/total)*100):0;
+  const vagEnt=G.vagasEntreguesM1||0;
+  const vagTot=G.totalVagasC1||0;
+  const vagAb=vagTot-vagEnt;
+  const pctVag=metas.vagasTotal>0?Math.round((vagEnt/metas.vagasTotal)*100):0;
+  const acl=calcAcl(pctVag);
 
-  const total = ent.length;
-  const aprov = ent.filter(e=>(e.resultado||'').toUpperCase()==='APROVADO').length;
-  const taxa = total>0?Math.round((aprov/total)*100):0;
+  // Comissão total dos 3 recrutadores
+  let comTotal=0;
+  ['ms','aa','lg'].forEach(k=>{
+    const r=G.porRecrutador?.[k];
+    if(!r) return;
+    const {comBase}=calcRec(r);
+    comTotal+=Math.max(comBase*acl,350);
+  });
 
-  // Vagas: usa C1 da planilha como total de vagas do mês
-  const totalVagasC1 = G.totalVagasC1 || vag.length;
-  const vagasEntreguesM1 = G.vagasEntreguesM1 || vag.filter(isOffer).length;
-  const vagasAbertas = vag.filter(v=>!isOffer(v));
-  const vagasFechadas = vag.filter(isOffer);
-
-  // Acelerador baseado em vagas entregues / meta
-  const pctVagas = metas.vagasTotal>0 ? Math.round((vagasEntreguesM1/metas.vagasTotal)*100) : 0;
-  const acl = calcAcl(pctVagas);
-  const recs = agruparCom(com);
-  let totalCom = 0;
-  recs.forEach(r => { totalCom += Math.max(r.totalBase*acl,350); });
-
-  document.getElementById('kpi-ent').textContent = total;
-  document.getElementById('kpi-ent-d').textContent = `${aprov} aprovados`;
-  document.getElementById('kpi-taxa').textContent = taxa+'%';
-  document.getElementById('kpi-taxa-d').textContent = `${aprov} de ${total} entrevistas`;
-  document.getElementById('kpi-vagas').textContent = totalVagasC1 - vagasEntreguesM1;
-  document.getElementById('kpi-vagas-d').textContent = `${vagasEntreguesM1} fechadas no mês`;
-  document.getElementById('kpi-com').textContent = brl(totalCom);
-  document.getElementById('kpi-com-d').textContent = `Acelerador: ${acl}x`;
+  document.getElementById('k-ent').textContent=total;
+  document.getElementById('k-ent-d').textContent=`${aprov} aprovados`;
+  document.getElementById('k-taxa').textContent=taxa+'%';
+  document.getElementById('k-taxa-d').textContent=`${aprov} de ${total}`;
+  document.getElementById('k-vag').textContent=vagAb;
+  document.getElementById('k-vag-d').textContent=`${vagEnt} fechadas no mês`;
+  document.getElementById('k-com').textContent=brl(comTotal);
+  document.getElementById('k-com-d').textContent=`Acelerador: ${acl}x`;
 
   // Metas refs
-  if(document.getElementById('ref-ent')) document.getElementById('ref-ent').textContent=`Atual: ${total} realizadas`;
-  if(document.getElementById('ref-vagas')) document.getElementById('ref-vagas').textContent=`Atual: ${vagasEntreguesM1} entregues`;
-  if(document.getElementById('real-ms')) document.getElementById('real-ms').textContent=`Realizado: ${taxa}%`;
+  if(document.getElementById('ref-ent')) document.getElementById('ref-ent').textContent=`Atual: ${total}`;
+  if(document.getElementById('ref-vag')) document.getElementById('ref-vag').textContent=`Atual: ${vagEnt} entregues`;
 
-  // Gráfico evolução (apenas Abril em diante)
+  // Gráfico evolução
   if(chEvol) chEvol.destroy();
-  chEvol = new Chart(document.getElementById('chart-evol'),{
-    type:'line',
-    data:{labels:['Abril','Maio','Junho','Julho','Agosto','Setembro'],
+  chEvol=new Chart(document.getElementById('ch-evol'),{type:'line',
+    data:{labels:['Abril','Maio','Jun','Jul','Ago','Set'],
       datasets:[
         {label:'Entrevistas',data:[total,null,null,null,null,null],borderColor:'#263C85',backgroundColor:'rgba(38,60,133,0.08)',borderWidth:2.5,tension:0.4,fill:true,pointBackgroundColor:'#263C85',pointRadius:5,spanGaps:false},
         {label:'Aprovações',data:[aprov,null,null,null,null,null],borderColor:'#10b981',backgroundColor:'rgba(16,185,129,0.05)',borderWidth:2,tension:0.4,fill:true,pointBackgroundColor:'#10b981',pointRadius:5,borderDash:[5,4],spanGaps:false}
@@ -665,317 +558,318 @@ function renderDash() {
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#e5e9f2'},ticks:{font:{family:'Poppins',size:10}}},y:{grid:{color:'#e5e9f2'},ticks:{font:{family:'Poppins',size:10}}}}}
   });
 
-  // Gráfico vagas entregues vs meta (usa M1)
-  if(chVagas) chVagas.destroy();
-  chVagas = new Chart(document.getElementById('chart-vagas-meta'),{
-    type:'doughnut',
+  // Gráfico vagas meta
+  if(chVmet) chVmet.destroy();
+  chVmet=new Chart(document.getElementById('ch-vmet'),{type:'doughnut',
     data:{labels:['Entregues','Restantes'],
-      datasets:[{data:[vagasEntreguesM1, Math.max(metas.vagasTotal-vagasEntreguesM1,0)],backgroundColor:['#263C85','#e5e9f2'],borderWidth:0,hoverOffset:4}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.raw}}}}
+      datasets:[{data:[vagEnt,Math.max(metas.vagasTotal-vagEnt,0)],backgroundColor:['#263C85','#e5e9f2'],borderWidth:0,hoverOffset:4}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}
   });
-  document.getElementById('vagas-meta-label').textContent = `${vagasEntreguesM1} de ${metas.vagasTotal} vagas · ${pctVagas}%`;
+  document.getElementById('vmet-label').textContent=`${vagEnt} de ${metas.vagasTotal} vagas · ${pctVag}%`;
 
-  // Destaca acelerador
-  document.querySelectorAll('#acc-table tbody tr').forEach((tr,i)=>{
+  // Acelerador highlight
+  document.querySelectorAll('#acc-tbl tbody tr').forEach((tr,i)=>{
     tr.classList.remove('active-row');
     const ranges=[[0,60],[61,80],[81,90],[91,95],[96,100],[101,9999]];
-    if(pctVagas>=ranges[i][0]&&pctVagas<=ranges[i][1]) tr.classList.add('active-row');
+    if(pctVag>=ranges[i][0]&&pctVag<=ranges[i][1]) tr.classList.add('active-row');
   });
 
-  // Detalhamento comissão dash
-  const comDash = document.getElementById('com-dash');
-  if(!recs.length) { comDash.innerHTML='<p style="font-size:12px;color:var(--text-muted);">Sem dados de comissão.</p>'; }
-  else {
-    comDash.innerHTML=`<table><thead><tr><th>Recrutador</th><th>Vagas fechadas</th><th>Acelerador</th><th>Total</th></tr></thead><tbody>${
-      recs.map(r=>{
-        const t=brl(Math.max(r.totalBase*acl,350));
-        const ini=r.recruiter.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
-        return `<tr><td><div style="display:flex;align-items:center;gap:6px;"><div class="avatar sm" style="background:#059669;">${ini}</div><strong>${r.recruiter}</strong></div></td><td>${r.vagas.length}</td><td><span class="badge badge-success">${acl}x</span></td><td><strong style="color:#2563eb;">${t}</strong></td></tr>`;
-      }).join('')
-    }</tbody></table>`;
-  }
+  // Comissão dash
+  const comDash=document.getElementById('com-dash');
+  const recRows=['ms','aa','lg'].map(k=>{
+    const r=G.porRecrutador?.[k]; if(!r) return '';
+    const cfg=REC_CFG[k];
+    const {comBase}=calcRec(r);
+    const t=brl(Math.max(comBase*acl,350));
+    return `<tr><td><div style="display:flex;align-items:center;gap:6px;"><div class="avatar sm" style="background:${cfg.color};">${cfg.ini}</div><strong>${cfg.nome}</strong></div></td><td>${r.vagasEntreguesM1||0}</td><td><span class="badge badge-success">${acl}x</span></td><td><strong style="color:#2563eb;">${t}</strong></td></tr>`;
+  }).join('');
+  comDash.innerHTML=`<table><thead><tr><th>Recrutador</th><th>Vagas fechadas</th><th>Acelerador</th><th>Total</th></tr></thead><tbody>${recRows}</tbody></table>`;
 
   // Vagas abertas dash
-  const vagDash = document.getElementById('vagas-dash');
-  vagDash.innerHTML = vagasAbertas.length===0
-    ? '<p style="font-size:13px;color:var(--text-muted);">Nenhuma vaga aberta.</p>'
-    : vagasAbertas.map(v=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--bg);border-radius:8px;"><div style="font-size:13px;font-weight:600;">${v.vaga}</div><span class="badge badge-primary">Aberta</span></div>`).join('');
+  const vagDash=document.getElementById('vag-dash');
+  const vagAbertas=(G.vagas||[]).filter(v=>!isOffer(v));
+  vagDash.innerHTML=vagAbertas.length===0
+    ?'<p style="font-size:13px;color:var(--text-muted);">Nenhuma vaga aberta.</p>'
+    :vagAbertas.map(v=>{
+      const isMS=v.recruiter==='Matheus Souza',isAA=v.recruiter==='Amanda Antunes';
+      const c=isMS?'var(--c-ms)':isAA?'var(--c-aa)':'var(--c-lg)';
+      const ini=isMS?'MS':isAA?'AA':'LG';
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 11px;background:var(--bg);border-radius:8px;"><div><div style="font-size:13px;font-weight:600;">${v.vaga}</div><div style="display:flex;align-items:center;gap:4px;margin-top:2px;"><div class="avatar sm" style="background:${c};width:16px;height:16px;font-size:8px;">${ini}</div><span style="font-size:11px;color:var(--text-muted);">${v.recruiter}</span></div></div><span class="badge badge-primary">Aberta</span></div>`;
+    }).join('');
 }
 
 // ── RECRUTADORES ──
-let chRec=null;
-function renderRec() {
-  const ent=G.entrevistas||[];
-  const com=G.comissao||[];
+let chRec=null,chEntComp=null;
+function renderRec(){
   const metas=getMetas();
-  const total=ent.length;
-  const aprov=ent.filter(e=>(e.resultado||'').toUpperCase()==='APROVADO').length;
-  const taxa=total>0?Math.round((aprov/total)*100):0;
-  const pend=ent.filter(e=>!(e.resultado||'').trim()).length;
-  const vagasEntreguesM1=G.vagasEntreguesM1||0;
-  const pctVagas=metas.vagasTotal>0?Math.round((vagasEntreguesM1/metas.vagasTotal)*100):0;
-  const acl=calcAcl(pctVagas);
-  const recs=agruparCom(com);
-  const totalBase=recs.reduce((a,r)=>a+r.totalBase,0);
-  const comFinal=brl(Math.max(totalBase*acl,350));
-  const metaAprov=metas.aprov;
-  const progPct=metaAprov>0?Math.min(Math.round((taxa/metaAprov)*100),100):0;
-  const taxaColor=taxa>=metaAprov?'#059669':taxa>=metaAprov*0.8?'#d97706':'#dc2626';
-  const taxaBadge=taxa>=metaAprov?'badge-success':taxa>=metaAprov*0.8?'badge-warning':'badge-danger';
-  const progColor=taxa>=metaAprov?'#10b981':taxa>=metaAprov*0.8?'#f59e0b':'#ef4444';
+  const recKeys=['ms','aa','lg'];
+  const stats=recKeys.map(k=>{const r=G.porRecrutador?.[k];return r?{...calcRec(r),...REC_CFG[k]}:{...REC_CFG[k],total:0,aprov:0,taxa:0,pend:0,comBase:0,vagAb:0,vagFe:0,vagasEntregues:0};});
+  const pctVag=metas.vagasTotal>0?Math.round(((G.vagasEntreguesM1||0)/metas.vagasTotal)*100):0;
+  const acl=calcAcl(pctVag);
 
+  // Atualiza metas refs
+  stats.forEach((s,i)=>{
+    const k=recKeys[i];
+    const el=document.getElementById('real-'+k);
+    if(el) el.textContent=`Realizado: ${s.taxa}%`;
+  });
+
+  // Gráfico barras taxa
   if(chRec) chRec.destroy();
-  chRec=new Chart(document.getElementById('chart-rec'),{
-    type:'bar',
-    data:{labels:['Matheus Souza','Amanda (pendente)','Lithielle (pendente)'],
+  chRec=new Chart(document.getElementById('ch-rec'),{type:'bar',
+    data:{labels:stats.map(s=>s.nome),
       datasets:[
-        {label:'Meta',data:[metaAprov,metaAprov,metaAprov],backgroundColor:'rgba(38,60,133,0.15)',borderRadius:6,borderSkipped:false},
-        {label:'Realizado',data:[taxa,0,0],backgroundColor:['#059669','rgba(124,58,237,0.3)','rgba(8,145,178,0.3)'],borderRadius:6,borderSkipped:false}
+        {label:'Meta',data:stats.map(()=>metas.aprov),backgroundColor:'rgba(38,60,133,0.15)',borderRadius:6,borderSkipped:false},
+        {label:'Realizado',data:stats.map(s=>s.taxa),backgroundColor:['#059669','#7c3aed','#0891b2'],borderRadius:6,borderSkipped:false}
       ]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{family:'Poppins',size:11}}},y:{grid:{color:'#e5e9f2'},ticks:{font:{family:'Poppins',size:10},callback:v=>v+'%'},max:100}}}
   });
 
-  document.getElementById('rec-cards').innerHTML=`
-    <div class="rec-card">
-      <div class="rec-header">
-        <div class="avatar lg" style="background:#059669;">MS</div>
-        <div class="rec-info"><h3>Matheus Souza</h3><p>Recrutador · Sênior</p></div>
-        <span class="badge ${taxaBadge}" style="margin-left:auto;">${taxa}% taxa</span>
+  // Cards individuais
+  const grid=document.getElementById('rec-cards');
+  grid.innerHTML=stats.map(s=>{
+    const metaA=metas.aprov;
+    const prog=metaA>0?Math.min(Math.round((s.taxa/metaA)*100),100):0;
+    const tc=s.taxa>=metaA?'#059669':s.taxa>=metaA*0.8?'#d97706':'#dc2626';
+    const badge=s.taxa>=metaA?'badge-success':s.taxa>=metaA*0.8?'badge-warning':'badge-danger';
+    const pc=s.taxa>=metaA?'#10b981':s.taxa>=metaA*0.8?'#f59e0b':'#ef4444';
+    const comF=brl(Math.max(s.comBase*acl,350));
+    return `<div class="cfg-card" style="border-radius:var(--radius);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+        <div class="avatar lg" style="background:${s.color};">${s.ini}</div>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:700;">${s.nome}</div></div>
+        <span class="badge ${badge}">${s.taxa}% taxa</span>
       </div>
-      <div class="stat-row"><span class="stat-label">Entrevistas no mês</span><span class="stat-value">${total}</span></div>
-      <div class="stat-row"><span class="stat-label">Aprovações</span><span class="stat-value">${aprov}</span></div>
-      <div class="stat-row"><span class="stat-label">Taxa de aprovação</span><span class="stat-value" style="color:${taxaColor};">${taxa}%</span></div>
-      <div class="stat-row"><span class="stat-label">Retornos pendentes</span><span class="stat-value" style="color:${pend>0?'#dc2626':'#059669'}">${pend}</span></div>
-      <div class="stat-row"><span class="stat-label">Comissão acumulada</span><span class="stat-value" style="color:#2563eb;">${comFinal}</span></div>
-      <div class="progress-wrap">
-        <div class="progress-label"><span>Meta: ${metaAprov}%</span><span>${taxa}%</span></div>
-        <div class="progress-bar"><div class="progress-fill" style="width:${progPct}%;background:${progColor};"></div></div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text-muted);">Entrevistas</span><strong>${s.total}</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text-muted);">Aprovações</span><strong>${s.aprov}</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text-muted);">Taxa de aprovação</span><strong style="color:${tc};">${s.taxa}%</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text-muted);">Retornos pendentes</span><strong style="color:${s.pend>0?'#dc2626':'#059669'}">${s.pend}</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text-muted);">Comissão acumulada</span><strong style="color:#2563eb;">${comF}</strong></div>
       </div>
-    </div>
-    <div class="rec-card" style="background:var(--bg);">
-      <div class="section-title">🔔 Retornos pendentes</div>
-      <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">Entrevistas sem resultado registrado</p>
-      ${pend===0
-        ?'<div style="padding:10px;background:var(--success-bg);border-radius:8px;font-size:13px;color:#059669;font-weight:600;">✓ Todas com retorno!</div>'
-        :`<div style="background:white;border-radius:8px;padding:10px 12px;border:1px solid var(--border);"><div style="font-size:13px;font-weight:600;">Matheus Souza</div><div style="font-size:12px;color:var(--text-muted);">${pend} sem retorno</div></div>`}
-      <div style="margin-top:12px;padding:10px;background:var(--warning-bg);border-radius:8px;font-size:12px;color:#92400e;">Amanda e Lithielle: planilhas a conectar.</div>
+      <div style="margin-top:10px;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:4px;"><span>Meta: ${metaA}%</span><span>${s.taxa}%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${prog}%;background:${pc};"></div></div>
+      </div>
     </div>`;
+  }).join('');
+
+  // Pendentes
+  const pend=document.getElementById('rec-pend');
+  const temPend=stats.filter(s=>s.pend>0);
+  pend.innerHTML=temPend.length===0
+    ?'<div style="padding:10px;background:var(--success-bg);border-radius:8px;font-size:13px;color:#059669;font-weight:600;">✓ Todas com retorno!</div>'
+    :temPend.map(s=>`<div style="background:white;border-radius:8px;padding:10px 12px;border:1px solid var(--border);display:flex;align-items:center;gap:8px;"><div class="avatar sm" style="background:${s.color};">${s.ini}</div><div><div style="font-size:13px;font-weight:600;">${s.nome}</div><div style="font-size:12px;color:var(--text-muted);">${s.pend} sem retorno</div></div></div>`).join('');
+
+  // Gráfico comparativo entrevistas
+  if(chEntComp) chEntComp.destroy();
+  chEntComp=new Chart(document.getElementById('ch-ent-comp'),{type:'bar',
+    data:{labels:stats.map(s=>s.nome),
+      datasets:[
+        {label:'Entrevistas',data:stats.map(s=>s.total),backgroundColor:['#059669','#7c3aed','#0891b2'],borderRadius:6},
+        {label:'Aprovações',data:stats.map(s=>s.aprov),backgroundColor:['rgba(16,185,129,0.3)','rgba(124,58,237,0.3)','rgba(8,145,178,0.3)'],borderRadius:6}
+      ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{family:'Poppins',size:10}}},y:{grid:{color:'#e5e9f2'},ticks:{font:{family:'Poppins',size:10}}}}}
+  });
 }
 
 // ── VAGAS ──
-let todasVagas=[], filtroV='Aberta';
-function renderVagas(data) { todasVagas=data.vagas||[]; renderVagasTab(); }
-function filtrarVagas(s) {
+let filtroV='Aberta';
+function renderVagas(){renderVagasTab();}
+function filtrarVagas(s){
   filtroV=s;
-  ['aberta','fechada','todas'].forEach(x=>{const el=document.getElementById('f-'+x);if(el){el.classList.remove('active');}});
-  document.getElementById('f-'+s.toLowerCase())?.classList.add('active');
+  ['ab','fe','to'].forEach(x=>{document.getElementById('f-'+x)?.classList.remove('active');});
+  const map={Aberta:'ab',Fechada:'fe',Todas:'to'};
+  document.getElementById('f-'+map[s])?.classList.add('active');
   renderVagasTab();
 }
-function renderVagasTab() {
-  const f=filtroV==='Todas'?todasVagas:filtroV==='Fechada'?todasVagas.filter(isOffer):todasVagas.filter(v=>!isOffer(v));
-  const tb=document.getElementById('vagas-tbody');
-  if(!f.length){tb.innerHTML='<tr><td colspan="2" style="text-align:center;color:var(--text-muted);padding:20px;">Nenhuma vaga.</td></tr>';return;}
-  tb.innerHTML=f.map(v=>`<tr><td><strong>${v.vaga}</strong></td><td>${isOffer(v)?'<span class="badge badge-success">Fechada</span>':'<span class="badge badge-primary">Aberta</span>'}</td></tr>`).join('');
+function renderVagasTab(){
+  const all=G?.vagas||[];
+  const f=filtroV==='Todas'?all:filtroV==='Fechada'?all.filter(isOffer):all.filter(v=>!isOffer(v));
+  const tb=document.getElementById('vag-tbody');
+  if(!f.length){tb.innerHTML='<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:20px;">Nenhuma vaga.</td></tr>';return;}
+  tb.innerHTML=f.map(v=>{
+    const isMS=v.recruiter==='Matheus Souza',isAA=v.recruiter==='Amanda Antunes';
+    const c=isMS?'var(--c-ms)':isAA?'var(--c-aa)':'var(--c-lg)';
+    const ini=isMS?'MS':isAA?'AA':'LG';
+    return `<tr><td><strong>${v.vaga}</strong></td><td><div style="display:flex;align-items:center;gap:6px;"><div class="avatar sm" style="background:${c};">${ini}</div>${v.recruiter}</div></td><td>${isOffer(v)?'<span class="badge badge-success">Fechada</span>':'<span class="badge badge-primary">Aberta</span>'}</td></tr>`;
+  }).join('');
 }
 
 // ── COMISSÕES ──
-function renderCom() {
-  const com=G.comissao||[];
+function renderCom(){
+  if(!G) return;
   const metas=getMetas();
-  const vagasEntreguesM1=G.vagasEntreguesM1||0;
-  const pctVagas=metas.vagasTotal>0?Math.round((vagasEntreguesM1/metas.vagasTotal)*100):0;
-  const acl=calcAcl(pctVagas);
-  const recs=agruparCom(com);
+  const pctVag=metas.vagasTotal>0?Math.round(((G.vagasEntreguesM1||0)/metas.vagasTotal)*100):0;
+  const acl=calcAcl(pctVag);
   let totalG=0;
 
-  const rows=recs.map(r=>{
-    const t=Math.max(r.totalBase*acl,350);
-    const va=t-r.totalBase;
+  const rows=['ms','aa','lg'].map(k=>{
+    const r=G.porRecrutador?.[k]; if(!r) return '';
+    const cfg=REC_CFG[k];
+    const {comBase}=calcRec(r);
+    const t=Math.max(comBase*acl,350);
+    const va=t-comBase;
     totalG+=t;
-    const ini=r.recruiter.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
-    return `<tr><td><div style="display:flex;align-items:center;gap:6px;"><div class="avatar sm" style="background:#059669;">${ini}</div><strong>${r.recruiter}</strong></div></td><td>${r.vagas.length}</td><td>${brl(r.totalBase)}</td><td><span class="badge badge-success">${acl}x</span></td><td>+ ${brl(va)}</td><td><strong style="color:#2563eb;">${brl(t)}</strong></td></tr>`;
+    return `<tr><td><div style="display:flex;align-items:center;gap:6px;"><div class="avatar sm" style="background:${cfg.color};">${cfg.ini}</div><strong>${cfg.nome}</strong></div></td><td>${r.vagasEntreguesM1||0}</td><td>${brl(comBase)}</td><td><span class="badge badge-success">${acl}x</span></td><td>+ ${brl(va)}</td><td><strong style="color:#2563eb;">${brl(t)}</strong></td></tr>`;
   }).join('');
 
-  document.getElementById('com-total').textContent=brl(totalG);
-  document.getElementById('com-tbody').innerHTML=rows||'<tr><td colspan="6" style="text-align:center;color:var(--text-muted);">Sem dados.</td></tr>';
+  document.getElementById('com-tot').textContent=brl(totalG);
+  document.getElementById('com-tbody').innerHTML=rows;
 
-  // Relatório financeiro (inclui bônus)
-  const rfRows=recs.map(r=>{
-    const t=Math.max(r.totalBase*acl,350);
-    const va=t-r.totalBase;
-    const bonusRec=bonusData.filter(b=>b.rec===r.recruiter).reduce((a,b)=>a+b.val,0);
-    const totalPagar=t+bonusRec;
-    return `<tr><td><strong>${r.recruiter}</strong></td><td>${r.vagas.length}</td><td>${brl(r.totalBase)}</td><td>${brl(va)} (${acl}x)</td><td>${bonusRec>0?brl(bonusRec):'—'}</td><td><strong style="color:#2563eb;">${brl(totalPagar)}</strong></td></tr>`;
+  // Relatório financeiro com bônus
+  const rfRows=['ms','aa','lg'].map(k=>{
+    const r=G.porRecrutador?.[k]; if(!r) return '';
+    const cfg=REC_CFG[k];
+    const {comBase}=calcRec(r);
+    const t=Math.max(comBase*acl,350);
+    const va=t-comBase;
+    const bon=bonusData.filter(b=>b.rec===cfg.nome).reduce((a,b)=>a+b.val,0);
+    const total=t+bon;
+    return `<tr><td><strong>${cfg.nome}</strong></td><td>${r.vagasEntreguesM1||0}</td><td>${brl(comBase)}</td><td>${brl(va)} (${acl}x)</td><td>${bon>0?brl(bon):'—'}</td><td><strong style="color:#2563eb;">${brl(total)}</strong></td></tr>`;
   }).join('');
-  const totalComBonus=recs.reduce((a,r)=>{
-    const t=Math.max(r.totalBase*acl,350);
-    const b=bonusData.filter(x=>x.rec===r.recruiter).reduce((s,x)=>s+x.val,0);
-    return a+t+b;
+  const totalComBon=['ms','aa','lg'].reduce((a,k)=>{
+    const r=G.porRecrutador?.[k];if(!r) return a;
+    const {comBase}=calcRec(r);
+    const t=Math.max(comBase*acl,350);
+    const bon=bonusData.filter(b=>b.rec===REC_CFG[k].nome).reduce((s,x)=>s+x.val,0);
+    return a+t+bon;
   },0);
-  if(document.getElementById('rel-fin-tbody')) {
-    document.getElementById('rel-fin-tbody').innerHTML=rfRows+
-      `<tr style="background:var(--primary-faint);"><td colspan="5"><strong>Total geral</strong></td><td><strong style="color:var(--primary);font-size:14px;">${brl(totalComBonus)}</strong></td></tr>`;
-  }
+  const rfEl=document.getElementById('rel-fin');
+  if(rfEl) rfEl.innerHTML=rfRows+`<tr style="background:var(--primary-faint);"><td colspan="5"><strong>Total geral</strong></td><td><strong style="color:var(--primary);font-size:14px;">${brl(totalComBon)}</strong></td></tr>`;
 }
 
 // ── RELATÓRIOS ──
-function renderRel() {
+function renderRel(){
   if(!G) return;
   const ent=G.entrevistas||[];
   const vag=G.vagas||[];
-  const com=G.comissao||[];
-  const metas=getMetas();
   const total=ent.length;
   const aprov=ent.filter(e=>(e.resultado||'').toUpperCase()==='APROVADO').length;
   const taxa=total>0?Math.round((aprov/total)*100):0;
   const abertas=vag.filter(v=>!isOffer(v)).length;
   const fechadas=vag.filter(isOffer).length;
-  const vagasEntreguesM1=G.vagasEntreguesM1||0;
-  const pct=metas.vagasTotal>0?Math.round((vagasEntreguesM1/metas.vagasTotal)*100):0;
-  const acl=calcAcl(pct);
-  const recs=agruparCom(com);
-  const totalBase=recs.reduce((a,r)=>a+r.totalBase,0);
-  const comFinal=Math.max(totalBase*acl,350);
+  const metas=getMetas();
+  const pctVag=metas.vagasTotal>0?Math.round(((G.vagasEntreguesM1||0)/metas.vagasTotal)*100):0;
+  const acl=calcAcl(pctVag);
+  let comTotal=0;
+  ['ms','aa','lg'].forEach(k=>{const r=G.porRecrutador?.[k];if(!r)return;const{comBase}=calcRec(r);comTotal+=Math.max(comBase*acl,350);});
 
   const geralEl=document.getElementById('rel-geral');
   if(geralEl) geralEl.innerHTML=`
-    <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Dados reais · ${document.getElementById('mes-atual').textContent}</div>
-    <div class="report-row"><span>Total de entrevistas</span><strong>${total}</strong></div>
-    <div class="report-row"><span>Total de aprovações</span><strong>${aprov}</strong></div>
-    <div class="report-row"><span>Taxa de aprovação</span><strong>${taxa}%</strong></div>
-    <div class="report-row"><span>Vagas abertas</span><strong>${abertas}</strong></div>
-    <div class="report-row"><span>Vagas fechadas</span><strong>${fechadas}</strong></div>
-    <div class="report-row"><span>Comissão total</span><strong style="color:#2563eb;">${brl(comFinal)}</strong></div>`;
+    <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">Dados reais · Abril 2026</div>
+    <div class="rr"><span>Total de entrevistas</span><strong>${total}</strong></div>
+    <div class="rr"><span>Total de aprovações</span><strong>${aprov}</strong></div>
+    <div class="rr"><span>Taxa de aprovação</span><strong>${taxa}%</strong></div>
+    <div class="rr"><span>Vagas abertas</span><strong>${abertas}</strong></div>
+    <div class="rr"><span>Vagas fechadas</span><strong>${fechadas}</strong></div>
+    <div class="rr"><span>Comissão total</span><strong style="color:#2563eb;">${brl(comTotal)}</strong></div>`;
   updateRelInd();
   renderCom();
 }
 
-function updateRelInd() {
+function updateRelInd(){
   if(!G) return;
-  const key=document.getElementById('rel-rec')?.value;
+  const k=document.getElementById('rel-rec-sel')?.value||'ms';
   const el=document.getElementById('rel-ind');
   if(!el) return;
-  if(key!=='ms'){el.innerHTML='<div style="font-size:12px;color:var(--text-muted);padding:10px;">Planilha desta recrutadora ainda não conectada.</div>';return;}
-  const ent=G.entrevistas||[];
-  const total=ent.length;
-  const aprov=ent.filter(e=>(e.resultado||'').toUpperCase()==='APROVADO').length;
-  const taxa=total>0?Math.round((aprov/total)*100):0;
+  const r=G.porRecrutador?.[k];
+  const cfg=REC_CFG[k];
+  if(!r){el.innerHTML='<div style="font-size:12px;color:var(--text-muted);padding:10px;">Sem dados.</div>';return;}
+  const{total,aprov,taxa,comBase}=calcRec(r);
   const metas=getMetas();
-  const vagasEntreguesM1=G.vagasEntreguesM1||0;
-  const pct=metas.vagasTotal>0?Math.round((vagasEntreguesM1/metas.vagasTotal)*100):0;
-  const acl=calcAcl(pct);
-  const com=G.comissao||[];
-  const recs=agruparCom(com);
-  const totalBase=recs.reduce((a,r)=>a+r.totalBase,0);
-  const comFinal=brl(Math.max(totalBase*acl,350));
-  const ating=taxa>=metas.aprov;
+  const pctVag=metas.vagasTotal>0?Math.round(((G.vagasEntreguesM1||0)/metas.vagasTotal)*100):0;
+  const acl=calcAcl(pctVag);
+  const comF=brl(Math.max(comBase*acl,350));
+  const metaA=metas.aprov;
+  const ating=taxa>=metaA;
   el.innerHTML=`
-    <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Matheus Souza · Dados reais</div>
-    <div class="report-row"><span>Entrevistas</span><strong>${total}</strong></div>
-    <div class="report-row"><span>Aprovações</span><strong>${aprov}</strong></div>
-    <div class="report-row"><span>Taxa de aprovação</span><strong>${taxa}%</strong></div>
-    <div class="report-row"><span>Meta</span><strong style="color:${ating?'#059669':'#d97706'};">${ating?'✓ Atingida':'Em progresso'} (${taxa}% / ${metas.aprov}%)</strong></div>
-    <div class="report-row"><span>Comissão</span><strong style="color:#2563eb;">${comFinal}</strong></div>`;
+    <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">${cfg.nome} · Dados reais</div>
+    <div class="rr"><span>Entrevistas</span><strong>${total}</strong></div>
+    <div class="rr"><span>Aprovações</span><strong>${aprov}</strong></div>
+    <div class="rr"><span>Taxa de aprovação</span><strong>${taxa}%</strong></div>
+    <div class="rr"><span>Meta</span><strong style="color:${ating?'#059669':'#d97706'};">${ating?'✓ Atingida':'Em progresso'} (${taxa}% / ${metaA}%)</strong></div>
+    <div class="rr"><span>Comissão</span><strong style="color:#2563eb;">${comF}</strong></div>`;
 }
 
-// ── EXPORTAR PDF ──
-function exportarPDF(tipo) {
-  window.print();
-  toast('Abrindo impressão — escolha "Salvar como PDF" no seu navegador');
+// ── BÔNUS ──
+function addBonus(){
+  const r=document.getElementById('bon-rec').value;
+  const v=parseFloat(document.getElementById('bon-val').value||0);
+  const m=document.getElementById('bon-mot').value;
+  if(!r||!v||!m){toast('Preencha todos os campos');return;}
+  bonusData.push({rec:r,val:v,mot:m});
+  const cfg=Object.values(REC_CFG).find(c=>c.nome===r)||{color:'#263C85',ini:'??'};
+  const div=document.createElement('div');
+  div.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;padding:9px 12px;background:var(--bg);border-radius:8px;font-size:13px;align-items:center;margin-top:8px;';
+  div.innerHTML=`<span><div class="avatar sm" style="background:${cfg.color};display:inline-flex;margin-right:6px;">${cfg.ini}</div>${r}</span><span style="font-weight:600;color:#2563eb;">${brl(v)}</span><span style="color:var(--text-muted);">${m}</span><span style="font-size:11px;color:var(--text-light);">${new Date().toLocaleDateString('pt-BR',{month:'short',year:'numeric'})}</span>`;
+  document.getElementById('bon-list').appendChild(div);
+  document.getElementById('bon-rec').value='';
+  document.getElementById('bon-val').value='';
+  document.getElementById('bon-mot').value='';
+  renderCom();
+  toast(`Bônus de ${brl(v)} salvo para ${r}!`);
 }
-function exportarExcel() {
+
+// ── EXPORTAR ──
+function exportPDF(){window.print();toast('Abrindo impressão — salve como PDF');}
+function exportCSV(){
   if(!G) return;
   const ent=G.entrevistas||[];
   const rows=[['Dia','Recruiter','Candidato','Resultado','Status'],...ent.map(e=>[e.dia,e.recruiter,e.candidato,e.resultado,e.status])];
   const csv=rows.map(r=>r.map(c=>'"'+(c||'')+'"').join(',')).join('\n');
   const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob);
-  const a=document.createElement('a'); a.href=url; a.download='saipos-entrevistas.csv'; a.click();
-  toast('Excel (CSV) baixado!');
-}
-
-// ── BÔNUS ──
-function addBonus() {
-  const r=document.getElementById('bonus-rec').value;
-  const v=parseFloat(document.getElementById('bonus-val').value||0);
-  const m=document.getElementById('bonus-mot').value;
-  if(!r||!v||!m){toast('Preencha todos os campos');return;}
-  bonusData.push({rec:r,val:v,mot:m});
-  const colors={'Matheus Souza':'#059669','Amanda Antunes':'#7c3aed','Lithielle Goulardt':'#0891b2'};
-  const inits={'Matheus Souza':'MS','Amanda Antunes':'AA','Lithielle Goulardt':'LG'};
-  const div=document.createElement('div');
-  div.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;padding:9px 12px;background:var(--bg);border-radius:8px;font-size:13px;align-items:center;margin-top:8px;';
-  div.innerHTML=`<span><div class="avatar sm" style="background:${colors[r]};display:inline-flex;margin-right:6px;">${inits[r]}</div>${r}</span><span style="font-weight:600;color:#2563eb;">${brl(v)}</span><span style="color:var(--text-muted);">${m}</span><span style="font-size:11px;color:var(--text-light);">${new Date().toLocaleDateString('pt-BR',{month:'short',year:'numeric'})}</span>`;
-  document.getElementById('bonus-list').appendChild(div);
-  document.getElementById('bonus-rec').value='';
-  document.getElementById('bonus-val').value='';
-  document.getElementById('bonus-mot').value='';
-  renderCom(); // atualiza relatório financeiro com bônus
-  toast(`Bônus de ${brl(v)} salvo para ${r}!`);
+  const a=document.createElement('a');a.href=url;a.download='saipos-entrevistas.csv';a.click();
+  toast('CSV baixado!');
 }
 
 // ── METAS EMAIL ──
-function enviarMetasPorEmail() {
+function enviarMetasEmail(){
   const metas=getMetas();
-  const ms=document.getElementById('meta-aprov-ms')?.value||70;
-  const aa=document.getElementById('meta-aprov-aa')?.value||70;
-  const lg=document.getElementById('meta-aprov-lg')?.value||70;
-  const assunto=encodeURIComponent(`Metas de Recrutamento · ${document.getElementById('mes-atual').textContent}`);
-  const corpo=encodeURIComponent(`Olá time!\n\nSegue as metas deste mês:\n\n📊 Metas individuais (taxa de aprovação):\n- Matheus Souza: ${ms}%\n- Amanda Antunes: ${aa}%\n- Lithielle Goulardt: ${lg}%\n\n🎯 Metas do time:\n- Entrevistas: ${metas.entrevistas}\n- Vagas a entregar: ${metas.vagasTotal}\n- Taxa de aprovação geral: 70%\n\nBom mês a todos!\nHeitor Kersting`);
-  window.open(`mailto:?subject=${assunto}&body=${corpo}`,'_blank');
-  toast('Abrindo cliente de e-mail...');
+  const ms=document.getElementById('m-ms')?.value||70;
+  const aa=document.getElementById('m-aa')?.value||70;
+  const lg=document.getElementById('m-lg')?.value||70;
+  const subj=encodeURIComponent('Metas de Recrutamento · Abril 2026');
+  const body=encodeURIComponent(`Olá time!\n\nMetas do mês:\n\n📊 Taxa de aprovação individual:\n- Matheus: ${ms}%\n- Amanda: ${aa}%\n- Lithielle: ${lg}%\n\n🎯 Metas do time:\n- Entrevistas: ${metas.entrevistas}\n- Vagas a entregar: ${metas.vagasTotal}\n\nBom mês!\nHeitor`);
+  window.open(`mailto:?subject=${subj}&body=${body}`,'_blank');
 }
-function salvarMetas() { toast('Metas salvas com sucesso!'); recalcular(); }
 
 // ── CONFIGURAÇÕES ──
-function salvarPerfil() {
+function salvarPerfil(){
   const nome=document.getElementById('lider-nome').value;
   const cargo=document.getElementById('lider-cargo').value;
   const email=document.getElementById('lider-email').value;
   const senha=document.getElementById('lider-senha').value;
-  if(nome) { document.getElementById('user-name').textContent=nome; document.getElementById('lider-nome-display').textContent=nome; }
-  if(cargo) document.getElementById('user-role').textContent=cargo;
-  if(email&&senha) { USERS[email]={...(USERS[email]||{}),senha,nome,role:cargo,initials:nome.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase(),color:'#3a54b0',isLider:true}; }
+  if(nome){document.getElementById('u-name').textContent=nome;document.getElementById('lider-name-d').textContent=nome;}
+  if(cargo) document.getElementById('u-role').textContent=cargo;
+  if(email&&senha) USERS[email]={...(USERS[email]||{}),senha,nome,role:cargo,initials:nome.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase(),color:'#3a54b0',isLider:true};
   toast('Perfil atualizado!');
 }
-
-function criarAcesso() {
-  const nome=document.getElementById('new-rec-nome').value;
-  const email=document.getElementById('new-rec-email').value;
-  const senha=document.getElementById('new-rec-senha').value;
-  const cargo=document.getElementById('new-rec-cargo').value;
+function criarAcesso(){
+  const nome=document.getElementById('nr-nome').value;
+  const email=document.getElementById('nr-email').value;
+  const senha=document.getElementById('nr-senha').value;
+  const cargo=document.getElementById('nr-cargo').value;
   if(!nome||!email||!senha){toast('Preencha nome, e-mail e senha');return;}
   USERS[email]={senha,nome,role:cargo||'Recrutador',initials:nome.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase(),color:'#7c3aed',isLider:false};
   const div=document.createElement('div');
-  div.style.cssText='display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--success-bg);border-radius:8px;font-size:13px;';
+  div.style.cssText='display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--success-bg);border-radius:8px;font-size:13px;';
   div.innerHTML=`<div class="avatar sm" style="background:#059669;">${USERS[email].initials}</div><div><strong>${nome}</strong> · ${email}</div><span class="badge badge-success" style="margin-left:auto;">Acesso criado</span>`;
-  document.getElementById('acessos-criados').appendChild(div);
-  document.getElementById('new-rec-nome').value='';
-  document.getElementById('new-rec-email').value='';
-  document.getElementById('new-rec-senha').value='';
-  document.getElementById('new-rec-cargo').value='';
+  document.getElementById('acessos-list').appendChild(div);
+  document.getElementById('nr-nome').value='';document.getElementById('nr-email').value='';document.getElementById('nr-senha').value='';document.getElementById('nr-cargo').value='';
   toast(`Acesso criado para ${nome}!`);
 }
-
-function updatePhoto(input, key) {
+function updatePhoto(input,key){
   if(!input.files||!input.files[0]) return;
   const reader=new FileReader();
   reader.onload=e=>{
-    ['cfg-'+key,'avatar-'+key].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el){el.innerHTML=`<img src="${e.target.result}" alt="">`;el.style.background='transparent';}
-    });
-    if(key==='lider') { document.getElementById('user-avatar').innerHTML=`<img src="${e.target.result}" alt="">`; document.getElementById('user-avatar').style.background='transparent'; }
+    ['cfg-'+key].forEach(id=>{const el=document.getElementById(id);if(el){el.innerHTML=`<img src="${e.target.result}" alt="">`;el.style.background='transparent';}});
+    if(key==='lider'){document.getElementById('u-avatar').innerHTML=`<img src="${e.target.result}" alt="">`;document.getElementById('u-avatar').style.background='transparent';}
   };
   reader.readAsDataURL(input.files[0]);
 }
-
-function toast(msg) {
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.style.opacity='1';
-  clearTimeout(t._t);
-  t._t=setTimeout(()=>{t.style.opacity='0';},3200);
-}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>{t.style.opacity='0';},3200);}
 </script>
 </body>
 </html>
