@@ -1,52 +1,32 @@
 const { google } = require('googleapis');
 
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET');
-
+async function getSheetData(sheets, sheetId, recruiterName) {
   try {
-    const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: process.env.GOOGLE_CLIENT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-      },
-      scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
-    });
-
-    const sheets = google.sheets({ version: 'v4', auth });
-    const sheetId = process.env.SHEET_ID_MATHEUS;
-
-    const [entrevistas, comissao, vagas, vagasMeta, vagasEntregues] = await Promise.all([
+    const [entrevistas, comissao, vagas, vagasTotalCell, vagasEntreguesCell] = await Promise.all([
       sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Entrevistas!A:F' }),
       sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Comissões!A:H' }),
       sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Abril!A:N' }),
-      // C1 = total de vagas do mês
       sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Abril!C1' }),
-      // M1 = vagas entregues
       sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Abril!M1' }),
     ]);
 
-    // Total vagas (célula C1)
     const totalVagasC1 = parseInt(
-      (vagasMeta.data.values?.[0]?.[0] || '0').toString().replace(/\D/g, '')
+      (vagasTotalCell.data.values?.[0]?.[0] || '0').toString().replace(/\D/g, '')
     ) || 0;
 
-    // Vagas entregues (célula M1)
     const vagasEntreguesM1 = parseInt(
-      (vagasEntregues.data.values?.[0]?.[0] || '0').toString().replace(/\D/g, '')
+      (vagasEntreguesCell.data.values?.[0]?.[0] || '0').toString().replace(/\D/g, '')
     ) || 0;
 
-    // Entrevistas (pula cabeçalho linha 1)
     const entrevistasData = (entrevistas.data.values || []).slice(1).map(row => ({
       dia:       row[0] || '',
-      recruiter: row[1] || '',
+      recruiter: row[1] || recruiterName,
       candidato: row[2] || '',
       linkedin:  row[3] || '',
       resultado: row[4] || '',
       status:    row[5] || '',
     })).filter(r => r.dia);
 
-    // Comissão (pula cabeçalho linha 1, ignora linha "RECRUITER")
     const comissaoData = (comissao.data.values || []).slice(1).map(row => ({
       recruiter:    row[0] || '',
       mes:          row[1] || '',
@@ -56,9 +36,8 @@ export default async function handler(req, res) {
       meta:         row[5] || '',
       entregue:     row[6] || '',
       percentual:   row[7] || '',
-    })).filter(r => r.recruiter && r.recruiter.toUpperCase() !== 'RECRUITER' && r.recruiter.toUpperCase() !== 'RECRUTADOR');
+    })).filter(r => r.recruiter && !['RECRUITER','RECRUTADOR'].includes((r.recruiter||'').toUpperCase().trim()));
 
-    // Vagas (pula 2 linhas de cabeçalho)
     const vagasData = (vagas.data.values || []).slice(2).map(row => ({
       mes:         row[0] || '',
       quantidade:  row[1] || '',
@@ -74,15 +53,105 @@ export default async function handler(req, res) {
       referencias: row[11] || '',
       comite:      row[12] || '',
       offer:       row[13] || '',
+      recruiter:   recruiterName,
     })).filter(r => r.vaga);
+
+    return { entrevistasData, comissaoData, vagasData, totalVagasC1, vagasEntreguesM1 };
+
+  } catch (error) {
+    console.error(`Erro ao ler planilha de ${recruiterName}:`, error.message);
+    return { entrevistasData: [], comissaoData: [], vagasData: [], totalVagasC1: 0, vagasEntreguesM1: 0 };
+  }
+}
+
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+
+  try {
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        client_email: process.env.GOOGLE_CLIENT_EMAIL,
+        private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      },
+      scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+    });
+
+    const sheets = google.sheets({ version: 'v4', auth });
+
+    // Lê as 3 planilhas em paralelo
+    const [matheus, amanda, lithielle] = await Promise.all([
+      getSheetData(sheets, process.env.SHEET_ID_MATHEUS,   'Matheus Souza'),
+      getSheetData(sheets, process.env.SHEET_ID_AMANDA,    'Amanda Antunes'),
+      getSheetData(sheets, process.env.SHEET_ID_LITHIELLE, 'Lithielle Goulardt'),
+    ]);
+
+    // Junta tudo
+    const entrevistas = [
+      ...matheus.entrevistasData,
+      ...amanda.entrevistasData,
+      ...lithielle.entrevistasData,
+    ];
+
+    const comissao = [
+      ...matheus.comissaoData,
+      ...amanda.comissaoData,
+      ...lithielle.comissaoData,
+    ];
+
+    const vagas = [
+      ...matheus.vagasData,
+      ...amanda.vagasData,
+      ...lithielle.vagasData,
+    ];
+
+    // Totais de vagas somados das 3 planilhas
+    const totalVagasC1 =
+      matheus.totalVagasC1 +
+      amanda.totalVagasC1 +
+      lithielle.totalVagasC1;
+
+    const vagasEntreguesM1 =
+      matheus.vagasEntreguesM1 +
+      amanda.vagasEntreguesM1 +
+      lithielle.vagasEntreguesM1;
+
+    // Dados individuais por recrutador (para a aba de recrutadores)
+    const porRecrutador = {
+      matheus: {
+        nome: 'Matheus Souza',
+        entrevistas: matheus.entrevistasData,
+        comissao: matheus.comissaoData,
+        vagas: matheus.vagasData,
+        totalVagasC1: matheus.totalVagasC1,
+        vagasEntreguesM1: matheus.vagasEntreguesM1,
+      },
+      amanda: {
+        nome: 'Amanda Antunes',
+        entrevistas: amanda.entrevistasData,
+        comissao: amanda.comissaoData,
+        vagas: amanda.vagasData,
+        totalVagasC1: amanda.totalVagasC1,
+        vagasEntreguesM1: amanda.vagasEntreguesM1,
+      },
+      lithielle: {
+        nome: 'Lithielle Goulardt',
+        entrevistas: lithielle.entrevistasData,
+        comissao: lithielle.comissaoData,
+        vagas: lithielle.vagasData,
+        totalVagasC1: lithielle.totalVagasC1,
+        vagasEntreguesM1: lithielle.vagasEntreguesM1,
+      },
+    };
 
     res.status(200).json({
       ok: true,
       totalVagasC1,
       vagasEntreguesM1,
-      entrevistas: entrevistasData,
-      comissao: comissaoData,
-      vagas: vagasData,
+      entrevistas,
+      comissao,
+      vagas,
+      porRecrutador,
     });
 
   } catch (error) {
