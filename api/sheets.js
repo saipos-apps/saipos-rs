@@ -5,9 +5,9 @@ async function getSheetData(sheets, sheetId, recruiterName) {
     const [entrevistas, comissao, vagas, vagasTotalCell, vagasEntreguesCell] = await Promise.all([
       sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Entrevistas!A:F' }),
       sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Comissões!A:H' }),
-      sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Abril!A:N' }),
-      sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Abril!C1' }),
-      sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Abril!M1' }),
+      sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Vagas!A:N' }),
+      sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Vagas!C1' }),
+      sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Vagas!M1' }),
     ]);
 
     const totalVagasC1 = parseInt(
