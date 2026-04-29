@@ -474,7 +474,7 @@ tbody tr:hover td { background:#f8faff; } tbody tr:last-child td { border-bottom
 
 <script>
 // ══════════════════════════════════════════════════════════════════════════
-// 🎯 DASHBOARD R&S SAIPOS - VERSÃO FIREBASE FUNCIONAL
+// 🎯 DASHBOARD R&S SAIPOS - FIREBASE FUNCIONAL (IDs CORRETOS)
 // ══════════════════════════════════════════════════════════════════════════
 
 let currentUser = null;
@@ -482,21 +482,30 @@ let selectedRecruiter = null;
 let bonusData = [];
 
 // ══════════════════════════════════════════════════════════════════════════
-// 🔐 FUNÇÃO DE LOGIN CORRIGIDA
+// 🔐 FUNÇÃO DE LOGIN - IDs CORRETOS: le (email) e lp (password)
 // ══════════════════════════════════════════════════════════════════════════
 
 async function doLogin() {
-  // Buscar campos de email e senha
-  const email = document.getElementById('email');
-  const password = document.getElementById('password');
+  console.log('🔐 Iniciando processo de login...');
   
-  if (!email || !password) {
-    alert('❌ Erro: Campos de login não encontrados');
+  // Buscar campos com IDs corretos
+  const emailInput = document.getElementById('le');  // ID correto: le
+  const passwordInput = document.getElementById('lp');  // ID correto: lp
+  
+  console.log('Campo email encontrado:', emailInput ? 'SIM ✅' : 'NÃO ❌');
+  console.log('Campo senha encontrado:', passwordInput ? 'SIM ✅' : 'NÃO ❌');
+  
+  if (!emailInput || !passwordInput) {
+    console.error('❌ Campos não encontrados!');
+    alert('❌ Erro: Campos de login não encontrados na página.');
     return;
   }
   
-  const emailValue = email.value.trim();
-  const passwordValue = password.value;
+  const emailValue = emailInput.value.trim();
+  const passwordValue = passwordInput.value;
+  
+  console.log('Email digitado:', emailValue);
+  console.log('Senha digitada:', passwordValue ? '***' : '(vazio)');
   
   // Validar campos
   if (!emailValue || !passwordValue) {
@@ -504,36 +513,43 @@ async function doLogin() {
     return;
   }
   
-  // Buscar botão
-  const btn = document.querySelector('.login-btn');
+  // Buscar botão de login
+  const btn = document.querySelector('.lbtn') || 
+             document.querySelector('button[onclick*="doLogin"]') ||
+             document.querySelector('.login-btn');
+  
   if (!btn) {
+    console.error('❌ Botão não encontrado!');
     alert('❌ Botão de login não encontrado');
     return;
   }
   
-  const originalText = btn.innerHTML;
+  const originalText = btn.innerHTML || btn.textContent;
   
   try {
     // Mostrar loading
     btn.innerHTML = '⏳ Entrando...';
     btn.disabled = true;
     
-    console.log('🔐 Tentando fazer login com:', emailValue);
+    console.log('🔄 Tentando fazer login com:', emailValue);
     
     // Verificar se Firebase está carregado
     if (typeof firebase === 'undefined') {
-      throw new Error('Firebase não está carregado. Verifique a conexão.');
+      throw new Error('Firebase não está carregado');
     }
     
     if (typeof loginUsuario !== 'function') {
-      throw new Error('Função loginUsuario não encontrada. Verifique firebase-config.js');
+      throw new Error('Função loginUsuario não encontrada no firebase-config.js');
     }
     
     // Fazer login via Firebase
+    console.log('📡 Chamando Firebase Authentication...');
     const usuario = await loginUsuario(emailValue, passwordValue);
     
-    console.log('✅ Login bem-sucedido!');
-    console.log('👤 Usuário:', usuario);
+    console.log('✅ LOGIN BEM-SUCEDIDO!');
+    console.log('👤 Usuário:', usuario.nome);
+    console.log('📧 Email:', usuario.email);
+    console.log('🔐 Role:', usuario.role);
     
     // Salvar usuário globalmente
     currentUser = usuario;
@@ -543,35 +559,38 @@ async function doLogin() {
     const loginScreen = document.getElementById('login-screen');
     if (loginScreen) {
       loginScreen.style.display = 'none';
+      console.log('✅ Tela de login escondida');
     }
     
-    // Mostrar tela de sucesso
+    // Mostrar dashboard de sucesso
     mostrarDashboard();
     
   } catch (error) {
-    console.error('❌ Erro no login:', error);
+    console.error('❌ ERRO NO LOGIN:', error);
+    console.error('Código do erro:', error.code);
+    console.error('Mensagem:', error.message);
     
     // Restaurar botão
     btn.innerHTML = originalText;
     btn.disabled = false;
     
     // Mensagens de erro amigáveis
-    let mensagem = 'Erro no login:\n\n';
+    let mensagem = '';
     
     if (error.code === 'auth/user-not-found') {
-      mensagem += '❌ Usuário não encontrado.\n\nVerifique se o email está correto ou peça para o administrador criar seu acesso.';
+      mensagem = '❌ Usuário não encontrado\n\nEste email não está cadastrado no sistema.\n\nPeça ao administrador para criar seu acesso.';
     } else if (error.code === 'auth/wrong-password') {
-      mensagem += '❌ Senha incorreta.\n\nTente novamente ou use "Esqueci minha senha".';
+      mensagem = '❌ Senha incorreta\n\nA senha digitada está incorreta.\n\nTente novamente ou use "Esqueci minha senha".';
     } else if (error.code === 'auth/invalid-email') {
-      mensagem += '❌ Email inválido.\n\nVerifique o formato do email.';
+      mensagem = '❌ Email inválido\n\nVerifique se o email foi digitado corretamente.';
     } else if (error.code === 'auth/too-many-requests') {
-      mensagem += '⚠️ Muitas tentativas de login.\n\nAguarde alguns minutos e tente novamente.';
+      mensagem = '⚠️ Muitas tentativas de login\n\nPor segurança, aguarde alguns minutos antes de tentar novamente.';
     } else if (error.message.includes('Firebase não está carregado')) {
-      mensagem += '❌ Firebase não carregado.\n\nVerifique sua conexão com a internet.';
+      mensagem = '❌ Erro de conexão\n\nFirebase não carregou.\n\nVerifique sua conexão com a internet e recarregue a página.';
     } else if (error.message.includes('firebase-config.js')) {
-      mensagem += '❌ Configuração do Firebase não encontrada.\n\nVerifique se o arquivo firebase-config.js está na pasta.';
+      mensagem = '❌ Erro de configuração\n\nArquivo firebase-config.js não foi carregado.\n\nContate o suporte técnico.';
     } else {
-      mensagem += error.message || 'Erro desconhecido.';
+      mensagem = '❌ Erro no login\n\n' + (error.message || 'Erro desconhecido');
     }
     
     alert(mensagem);
@@ -579,16 +598,18 @@ async function doLogin() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// 🎨 MOSTRAR DASHBOARD APÓS LOGIN
+// 🎨 MOSTRAR DASHBOARD APÓS LOGIN BEM-SUCEDIDO
 // ══════════════════════════════════════════════════════════════════════════
 
 function mostrarDashboard() {
-  // Criar tela de dashboard temporária (até integrar com o design original)
+  console.log('🎨 Mostrando dashboard de sucesso...');
+  
+  // Criar tela de dashboard
   document.body.innerHTML = `
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body {
-        font-family: 'Poppins', sans-serif;
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
         display: flex;
@@ -598,150 +619,209 @@ function mostrarDashboard() {
       }
       .dashboard {
         background: white;
-        border-radius: 20px;
+        border-radius: 24px;
         box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        padding: 40px;
-        max-width: 600px;
+        padding: 50px;
+        max-width: 700px;
         width: 100%;
-        animation: fadeIn 0.5s ease;
+        animation: fadeIn 0.6s ease;
       }
       @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
+        from { opacity: 0; transform: translateY(30px); }
         to { opacity: 1; transform: translateY(0); }
       }
-      h1 {
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+      .header h1 {
         color: #263C85;
         margin-bottom: 10px;
-        font-size: 28px;
+        font-size: 32px;
       }
-      .subtitle {
+      .header .subtitle {
         color: #666;
-        margin-bottom: 30px;
-        font-size: 14px;
+        font-size: 16px;
       }
-      .info-card {
+      .success-banner {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 16px;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 18px;
+        font-weight: 600;
+        box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
+      }
+      .success-banner .icon {
+        font-size: 48px;
+        margin-bottom: 10px;
+      }
+      .info-grid {
+        display: grid;
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+      .info-item {
         background: #f8f9fa;
         border-radius: 12px;
         padding: 20px;
-        margin-bottom: 20px;
-      }
-      .info-row {
         display: flex;
-        justify-content: space-between;
-        padding: 10px 0;
-        border-bottom: 1px solid #e0e0e0;
+        align-items: center;
+        gap: 15px;
+        transition: all 0.3s ease;
       }
-      .info-row:last-child {
-        border-bottom: none;
+      .info-item:hover {
+        background: #e9ecef;
+        transform: translateX(5px);
       }
-      .label {
-        font-weight: 600;
-        color: #333;
-      }
-      .value {
-        color: #666;
-      }
-      .success-badge {
-        background: #d1fae5;
-        color: #059669;
-        padding: 15px 20px;
-        border-radius: 10px;
+      .info-item .icon {
+        font-size: 28px;
+        min-width: 40px;
         text-align: center;
-        margin-bottom: 30px;
+      }
+      .info-item .content {
+        flex: 1;
+      }
+      .info-item .label {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+      }
+      .info-item .value {
+        font-size: 16px;
+        color: #333;
         font-weight: 600;
+      }
+      .next-steps {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+      }
+      .next-steps h3 {
+        color: #856404;
+        font-size: 18px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .next-steps ul {
+        color: #856404;
+        margin-left: 20px;
+        line-height: 1.8;
+      }
+      .next-steps li {
+        margin-bottom: 8px;
       }
       .btn-logout {
-        background: #263C85;
+        background: linear-gradient(135deg, #263C85 0%, #1a2a5e 100%);
         color: white;
         border: none;
-        padding: 12px 30px;
-        border-radius: 8px;
-        font-size: 16px;
+        padding: 16px 40px;
+        border-radius: 12px;
+        font-size: 18px;
         font-weight: 600;
         cursor: pointer;
         width: 100%;
         font-family: 'Poppins', sans-serif;
         transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(38, 60, 133, 0.3);
       }
       .btn-logout:hover {
-        background: #1a2a5e;
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(38, 60, 133, 0.3);
+        box-shadow: 0 10px 30px rgba(38, 60, 133, 0.4);
       }
-      .next-steps {
-        background: #fff3cd;
-        border-left: 4px solid #ffc107;
-        padding: 15px;
-        margin-top: 20px;
-        border-radius: 5px;
-      }
-      .next-steps h3 {
-        color: #856404;
-        font-size: 16px;
-        margin-bottom: 10px;
-      }
-      .next-steps ul {
-        color: #856404;
-        margin-left: 20px;
-        font-size: 14px;
-      }
-      .next-steps li {
-        margin-bottom: 5px;
+      .btn-logout:active {
+        transform: translateY(0);
       }
     </style>
     
     <div class="dashboard">
-      <h1>🎉 Login Realizado com Sucesso!</h1>
-      <p class="subtitle">Firebase está funcionando perfeitamente</p>
-      
-      <div class="success-badge">
-        ✅ Sistema de autenticação Firebase configurado e operacional!
+      <div class="header">
+        <h1>🎉 Login Realizado!</h1>
+        <p class="subtitle">Firebase funcionando perfeitamente</p>
       </div>
       
-      <div class="info-card">
-        <div class="info-row">
-          <span class="label">👤 Nome:</span>
-          <span class="value">${currentUser.nome || 'Não informado'}</span>
+      <div class="success-banner">
+        <div class="icon">✅</div>
+        <div>Sistema de Autenticação Firebase<br>Configurado e Operacional!</div>
+      </div>
+      
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="icon">👤</div>
+          <div class="content">
+            <div class="label">Nome Completo</div>
+            <div class="value">${currentUser.nome || 'Não informado'}</div>
+          </div>
         </div>
-        <div class="info-row">
-          <span class="label">📧 Email:</span>
-          <span class="value">${currentUser.email || 'Não informado'}</span>
+        
+        <div class="info-item">
+          <div class="icon">📧</div>
+          <div class="content">
+            <div class="label">Email</div>
+            <div class="value">${currentUser.email || 'Não informado'}</div>
+          </div>
         </div>
-        <div class="info-row">
-          <span class="label">🔐 Função:</span>
-          <span class="value">${currentUser.role || 'Não informado'}</span>
+        
+        <div class="info-item">
+          <div class="icon">🔐</div>
+          <div class="content">
+            <div class="label">Função no Sistema</div>
+            <div class="value">${currentUser.role === 'admin' ? '👨‍💼 Administrador' : '👤 Recrutador'}</div>
+          </div>
         </div>
-        <div class="info-row">
-          <span class="label">🆔 ID Usuário:</span>
-          <span class="value">${currentUser.uid || 'Não informado'}</span>
+        
+        <div class="info-item">
+          <div class="icon">📊</div>
+          <div class="content">
+            <div class="label">Nome na Planilha</div>
+            <div class="value">${currentUser.sheetName || 'Não configurado'}</div>
+          </div>
         </div>
-        <div class="info-row">
-          <span class="label">📊 Nome na Planilha:</span>
-          <span class="value">${currentUser.sheetName || 'Não informado'}</span>
+        
+        <div class="info-item">
+          <div class="icon">🆔</div>
+          <div class="content">
+            <div class="label">ID do Usuário</div>
+            <div class="value" style="font-size: 12px; font-family: monospace;">${currentUser.uid || 'Não disponível'}</div>
+          </div>
         </div>
-        <div class="info-row">
-          <span class="label">✅ Status:</span>
-          <span class="value">${currentUser.ativo ? 'Ativo' : 'Inativo'}</span>
+        
+        <div class="info-item">
+          <div class="icon">✅</div>
+          <div class="content">
+            <div class="label">Status</div>
+            <div class="value" style="color: #10b981;">${currentUser.ativo ? '● Ativo' : '○ Inativo'}</div>
+          </div>
         </div>
       </div>
       
       <div class="next-steps">
-        <h3>📋 Próximos passos:</h3>
+        <h3>📋 Próximos Passos</h3>
         <ul>
-          <li>✅ Firebase funcionando perfeitamente</li>
-          <li>✅ Login persistente configurado</li>
-          <li>✅ Dados do usuário sendo carregados</li>
-          <li>🔄 Próximo: Integrar dashboard completo</li>
-          <li>🔄 Próximo: Sistema de metas e bônus</li>
-          <li>🔄 Próximo: Integração com Google Sheets</li>
+          <li><strong>✅ Firebase autenticação:</strong> Funcionando perfeitamente!</li>
+          <li><strong>✅ Login persistente:</strong> Configurado e testado</li>
+          <li><strong>✅ Dados do usuário:</strong> Carregados com sucesso</li>
+          <li><strong>🔄 Próximo:</strong> Integrar dashboard completo com gráficos</li>
+          <li><strong>🔄 Próximo:</strong> Sistema de metas e bônus salvos</li>
+          <li><strong>🔄 Próximo:</strong> Conexão com Google Sheets</li>
         </ul>
       </div>
       
       <button class="btn-logout" onclick="fazerLogout()">
-        🚪 Fazer Logout
+        🚪 Fazer Logout e Testar Persistência
       </button>
     </div>
   `;
+  
+  console.log('✅ Dashboard exibido com sucesso!');
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -749,7 +829,7 @@ function mostrarDashboard() {
 // ══════════════════════════════════════════════════════════════════════════
 
 async function fazerLogout() {
-  if (!confirm('Tem certeza que deseja sair?')) {
+  if (!confirm('Tem certeza que deseja sair?\n\nVocê será redirecionado para a tela de login.')) {
     return;
   }
   
@@ -758,7 +838,14 @@ async function fazerLogout() {
     
     if (typeof logoutUsuario === 'function') {
       await logoutUsuario();
+      console.log('✅ Logout realizado no Firebase');
     }
+    
+    // Limpar dados
+    currentUser = null;
+    window.currentUser = null;
+    
+    console.log('🔄 Recarregando página...');
     
     // Recarregar página
     window.location.reload();
@@ -771,62 +858,89 @@ async function fazerLogout() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// 🚀 INICIALIZAÇÃO
+// 🚀 INICIALIZAÇÃO DO SISTEMA
 // ══════════════════════════════════════════════════════════════════════════
 
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('🚀 Inicializando Dashboard R&S Saipos...');
+  console.log('═══════════════════════════════════════════════════');
+  console.log('🚀 DASHBOARD R&S SAIPOS - INICIALIZANDO');
+  console.log('═══════════════════════════════════════════════════');
   
   // Verificar se Firebase está carregado
   if (typeof firebase === 'undefined') {
-    console.error('❌ Firebase não carregado!');
-    alert('Erro: Firebase não está carregado. Verifique sua conexão com a internet e se os scripts estão corretos.');
+    console.error('❌ ERRO: Firebase não está carregado!');
+    alert('Erro crítico: Firebase não está carregado.\n\nVerifique:\n1. Conexão com internet\n2. Scripts do Firebase no HTML\n3. Console do navegador para mais detalhes');
     return;
   }
   
-  console.log('✅ Firebase SDK carregado');
+  console.log('✅ Firebase SDK carregado com sucesso');
   
   // Verificar se firebase-config.js foi carregado
   if (typeof verificarAutenticacao !== 'function') {
-    console.error('❌ firebase-config.js não carregado!');
-    alert('Erro: Arquivo firebase-config.js não encontrado. Verifique se está na mesma pasta do index.html');
+    console.error('❌ ERRO: firebase-config.js não foi carregado!');
+    alert('Erro crítico: Configuração do Firebase não encontrada.\n\nVerifique se o arquivo firebase-config.js está na mesma pasta do index.html');
     return;
   }
   
-  console.log('✅ Firebase config carregado');
+  console.log('✅ Firebase config carregado com sucesso');
+  
+  // Verificar se os campos de login existem
+  const emailInput = document.getElementById('le');
+  const passwordInput = document.getElementById('lp');
+  
+  console.log('📋 Verificando campos de login:');
+  console.log('   Campo email (ID: le):', emailInput ? '✅ Encontrado' : '❌ Não encontrado');
+  console.log('   Campo senha (ID: lp):', passwordInput ? '✅ Encontrado' : '❌ Não encontrado');
   
   // Adicionar listener para Enter no campo de senha
-  const passwordInput = document.getElementById('password');
   if (passwordInput) {
     passwordInput.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
+        console.log('⌨️ Enter pressionado no campo senha - chamando doLogin()');
         doLogin();
       }
     });
     console.log('✅ Event listener adicionado ao campo senha');
   }
   
-  // Verificar se já existe sessão ativa
+  // Verificar se já existe sessão ativa (login persistente)
+  console.log('🔍 Verificando se existe sessão ativa...');
+  
   verificarAutenticacao((usuario) => {
     if (usuario) {
-      console.log('✅ Sessão ativa encontrada!');
-      console.log('👤 Usuário logado:', usuario.email);
+      console.log('═══════════════════════════════════════════════════');
+      console.log('✅ SESSÃO ATIVA ENCONTRADA!');
+      console.log('═══════════════════════════════════════════════════');
+      console.log('👤 Nome:', usuario.nome);
+      console.log('📧 Email:', usuario.email);
+      console.log('🔐 Role:', usuario.role);
+      console.log('🆔 UID:', usuario.uid);
+      
+      // Salvar usuário
       currentUser = usuario;
       window.currentUser = usuario;
       
-      // Esconder login e mostrar dashboard
+      // Esconder tela de login
       const loginScreen = document.getElementById('login-screen');
       if (loginScreen) {
         loginScreen.style.display = 'none';
       }
+      
+      // Mostrar dashboard
       mostrarDashboard();
+      
     } else {
-      console.log('ℹ️ Nenhuma sessão ativa - aguardando login');
+      console.log('ℹ️ Nenhuma sessão ativa encontrada');
+      console.log('👉 Aguardando login do usuário...');
     }
   });
+  
+  console.log('═══════════════════════════════════════════════════');
+  console.log('✅ INICIALIZAÇÃO CONCLUÍDA');
+  console.log('═══════════════════════════════════════════════════');
 });
 
-console.log('✅ JavaScript do Dashboard carregado');
+console.log('📦 JavaScript do Dashboard carregado');
 
 // ══════════════════════════════════════════════════════════════════════════
 </script></script>
