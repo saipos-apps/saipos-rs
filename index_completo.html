@@ -134,6 +134,14 @@ tbody tr:hover td { background:#f8faff; } tbody tr:last-child td { border-bottom
 .dlbl { font-size:13px; font-weight:700; padding-bottom:9px; border-bottom:1px solid var(--border); margin-bottom:13px; }
 #toast { position:fixed; bottom:20px; right:20px; background:var(--primary-dark); color:#fff; padding:10px 18px; border-radius:12px; font-size:13px; font-weight:500; box-shadow:var(--sh2); z-index:9999; opacity:0; transition:opacity .3s; pointer-events:none; }
 </style>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<!-- Configuração do Firebase -->
+<script src="firebase-config.js"></script>
 </head>
 <body>
 
@@ -465,516 +473,893 @@ tbody tr:hover td { background:#f8faff; } tbody tr:last-child td { border-bottom
 <div id="toast"></div>
 
 <script>
-// ── USUÁRIOS ──
-let USERS = { 'heitor@saipos.com':{ senha:'saipos2026', nome:'Heitor Kersting', role:'Líder de Recrutamento', ini:'HK', color:'#3a54b0', lider:true } };
+// ══════════════════════════════════════════════════════════════════════════
+// 🎯 DASHBOARD R&S SAIPOS - COM FIREBASE INTEGRADO
+// ══════════════════════════════════════════════════════════════════════════
+
+// ── VARIÁVEIS GLOBAIS ──
+let currentUser = null; // Usuário logado atual (Firebase)
+let selectedRecruiter = null; // Recrutador selecionado no admin
 let bonusData = [];
 let historico = [];
 let G = null;
 
+// Dados dos recrutadores (cores e iniciais para UI)
 const RC = {
-  ms:{ nome:'Matheus Souza',    color:'var(--ms)', ini:'MS' },
-  aa:{ nome:'Amanda Antunes',   color:'var(--aa)', ini:'AA' },
-  lg:{ nome:'Lithielle Goulardt',color:'var(--lg)',ini:'LG' },
+  ms: { nome: 'Matheus Souza', color: 'var(--ms)', ini: 'MS' },
+  aa: { nome: 'Amanda Antunes', color: 'var(--aa)', ini: 'AA' },
+  lg: { nome: 'Lithielle Goulardt', color: 'var(--lg)', ini: 'LG' },
 };
 
-// ── COMISSÃO: nova lógica ──
-// acelerador retorna o MULTIPLICADOR (ex: 1.4)
-// bônus do acelerador = comBase * (mult - 1)
-// se mult = 1, bônus = 0
-// total comissão = comBase + bonusAcel
-// se comBase = 0, total = 0
+// ── FUNÇÕES DE COMISSÃO (mantidas do original) ──
 function getAcelerador(pct) {
-  if (pct <= 60)  return 1;
-  if (pct <= 80)  return 1.2;
-  if (pct <= 90)  return 1.4;
-  if (pct <= 95)  return 1.8;
-  if (pct <= 100) return 2.0;
-  return 2.5;
-}
-function calcComissao(comBase, acl) {
-  if (comBase <= 0) return { comBase: 0, bonusAcel: 0, total: 0 };
-  const bonusAcel = comBase * (acl - 1);
-  return { comBase, bonusAcel, total: comBase + bonusAcel };
+  if (pct < 50) return 1;
+  if (pct < 75) return 1.1;
+  if (pct < 100) return 1.2;
+  if (pct < 125) return 1.3;
+  return 1.4;
 }
 
-// ── AUTH ──
-function doLogin() {
-  const em = document.getElementById('le').value.trim().toLowerCase();
-  const pw = document.getElementById('lp').value;
-  const u = USERS[em];
-  if (!u || u.senha !== pw) { document.getElementById('lerr').style.display = 'block'; return; }
-  document.getElementById('lerr').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
-  document.getElementById('u-nm').textContent = u.nome;
-  document.getElementById('u-rl').textContent = u.role;
-  document.getElementById('u-av').textContent = u.ini;
-  document.getElementById('u-av').style.background = u.color;
-  if (!u.lider) document.getElementById('nav-rec').style.display = 'none';
-  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  const mes = meses[new Date().getMonth()] + ' ' + new Date().getFullYear();
-  document.getElementById('dash-sub').textContent = 'Visão geral do time · ' + mes;
-  document.getElementById('mes-evol').textContent = mes;
-  document.getElementById('mes-rec').textContent = 'Desempenho individual · ' + mes;
-  document.getElementById('mes-com').textContent = mes;
-  loadData();
-}
-function doLogout() { document.getElementById('login-screen').style.display = 'flex'; document.getElementById('app').style.display = 'none'; }
-
-function showPanel(n, el) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.ni').forEach(x => x.classList.remove('active'));
-  document.getElementById('panel-' + n).classList.add('active');
-  if (el?.classList?.contains('ni')) el.classList.add('active');
+function getBonusAcel(comBase, pct) {
+  const mult = getAcelerador(pct);
+  return comBase * (mult - 1);
 }
 
-// ── LOAD ──
-async function loadData() {
-  document.getElementById('dash-load').style.display = 'flex';
-  document.getElementById('dash-body').style.display = 'none';
-  try {
-    const r = await fetch('/api/sheets');
-    const d = await r.json();
-    if (!d.ok) throw new Error(d.error);
-    G = d;
-    renderAll();
-    document.getElementById('dash-load').style.display = 'none';
-    document.getElementById('dash-body').style.display = 'block';
-  } catch(e) {
-    document.getElementById('dash-load').innerHTML = `<span style="color:var(--red)">Erro: ${e.message}</span>`;
+function getComissaoTotal(comBase, pct) {
+  if (comBase === 0) return 0;
+  return comBase + getBonusAcel(comBase, pct);
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// 🔐 AUTENTICAÇÃO E INICIALIZAÇÃO
+// ══════════════════════════════════════════════════════════════════════════
+
+// Inicializar app ao carregar a página
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('🚀 Inicializando Dashboard R&S Saipos...');
+  
+  // Verificar se Firebase está carregado
+  if (typeof firebase === 'undefined') {
+    console.error('❌ Firebase não carregado!');
+    showErrorMessage('Erro: Firebase não carregado. Verifique a configuração e credenciais.');
+    return;
+  }
+  
+  console.log('✅ Firebase SDK carregado');
+  
+  // Verificar se firebase-config.js foi carregado
+  if (typeof verificarAutenticacao !== 'function') {
+    console.error('❌ firebase-config.js não carregado!');
+    showErrorMessage('Erro: Configuração do Firebase não encontrada. Verifique se firebase-config.js está na pasta e configurado.');
+    return;
+  }
+  
+  console.log('✅ Firebase config carregado');
+  
+  // Adicionar event listener para Enter no campo senha
+  const passwordInput = document.getElementById('password');
+  if (passwordInput) {
+    passwordInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        doLogin();
+      }
+    });
+  }
+  
+  // Verificar autenticação
+  verificarAutenticacao((usuario) => {
+    if (usuario) {
+      console.log('✅ Usuário já logado:', usuario.email, '| Role:', usuario.role);
+      currentUser = usuario;
+      showMainContent();
+    } else {
+      console.log('ℹ️ Nenhum usuário logado - mostrando tela de login');
+      showLoginScreen();
+    }
+  });
+});
+
+// Mostrar mensagem de erro
+function showErrorMessage(message) {
+  const loginCard = document.querySelector('.lcard');
+  if (loginCard) {
+    loginCard.innerHTML = `
+      <div style="text-align: center; color: var(--red);">
+        <h2>❌ Erro de Configuração</h2>
+        <p style="margin: 20px 0; line-height: 1.5;">${message}</p>
+        <button onclick="location.reload()" style="padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer;">
+          Tentar Novamente
+        </button>
+      </div>
+    `;
   }
 }
-function recalc() { if (G) renderAll(); }
-function renderAll() { renderDash(); renderRec(); renderVag(); renderCom(); renderRel(); }
 
-// ── HELPERS ──
-function brl(v) { return 'R$ ' + parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-function isOffer(v) { return (v.offer||'').toString().toUpperCase().includes('ACEI'); }
-function getMetas() {
-  return {
-    aprov:   parseInt(document.getElementById('m-ms')?.value || 70),
-    ent:     parseInt(document.getElementById('m-ent')?.value || 100),
-    vag:     parseInt(document.getElementById('m-vag')?.value || 20),
-    vagRec:  parseInt(document.getElementById('m-vagrec')?.value || 7),
-  };
-}
-function calcStats(r) {
-  const ent = r?.entrevistas || [];
-  const com = r?.comissao || [];
-  const total = ent.length;
-  const aprov = ent.filter(e => (e.resultado||'').toUpperCase() === 'APROVADO').length;
-  const taxa = total > 0 ? Math.round((aprov/total)*100) : 0;
-  const pend = ent.filter(e => (e.status||'').toUpperCase() === 'AGUARDANDO').length;
-  const comBase = com.reduce((a, c) => a + (parseFloat(c.valor) || 0), 0);
-  return { total, aprov, taxa, pend, comBase, vagEnt: r?.vagasEntreguesM1||0, vagTot: r?.totalVagasC1||0 };
+// Mostrar tela de login
+function showLoginScreen() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('main-content').style.display = 'none';
+  
+  // Limpar campos
+  document.getElementById('email').value = '';
+  document.getElementById('password').value = '';
+  
+  // Restaurar botão de login
+  const btn = document.querySelector('.login-btn');
+  btn.innerHTML = 'Entrar';
+  btn.disabled = false;
 }
 
-// ── DASHBOARD ──
-let chEvol=null, chVmet=null;
-function renderDash() {
-  const ent = G.entrevistas || [];
-  const mt = getMetas();
-  const total = ent.length;
-  const aprov = ent.filter(e => (e.resultado||'').toUpperCase() === 'APROVADO').length;
-  const taxa = total > 0 ? Math.round((aprov/total)*100) : 0;
-  const vagEnt = G.vagasEntreguesM1 || 0;
-  const vagTot = G.totalVagasC1 || 0;
-  const vagAb = Math.max(vagTot - vagEnt, 0);
-  const pctVag = mt.vag > 0 ? Math.round((vagEnt/mt.vag)*100) : 0;
-  const aclMult = getAcelerador(pctVag);
-
-  // Comissão total
-  let comTotGeral = 0;
-  ['ms','aa','lg'].forEach(k => {
-    const s = calcStats(G.porRecrutador?.[k]);
-    const c = calcComissao(s.comBase, aclMult);
-    comTotGeral += c.total;
-  });
-
-  document.getElementById('k-ent').textContent = total;
-  document.getElementById('k-ent-d').textContent = `${aprov} aprovados`;
-  document.getElementById('k-tax').textContent = taxa + '%';
-  document.getElementById('k-tax-d').textContent = `${aprov} de ${total}`;
-  document.getElementById('k-vag').textContent = vagAb;
-  document.getElementById('k-vag-d').textContent = `${vagEnt} fechadas no mês`;
-  document.getElementById('k-com').textContent = brl(comTotGeral);
-  document.getElementById('k-com-d').textContent = aclMult > 1 ? `Acelerador ${aclMult}x ativo` : 'Sem acelerador';
-
-  if (document.getElementById('ref-ent')) document.getElementById('ref-ent').textContent = `Atual: ${total}`;
-  if (document.getElementById('ref-vag')) document.getElementById('ref-vag').textContent = `Atual: ${vagEnt} entregues`;
-  ['ms','aa','lg'].forEach((k,i) => {
-    const s = calcStats(G.porRecrutador?.[k]);
-    const el = document.getElementById('real-' + k);
-    if (el) el.textContent = `Realizado: ${s.taxa}%`;
-  });
-
-  // Gráfico evolução
-  if (chEvol) chEvol.destroy();
-  chEvol = new Chart(document.getElementById('ch-evol'), {
-    type:'line',
-    data:{ labels:['Abr','Mai','Jun','Jul','Ago','Set'],
-      datasets:[
-        { label:'Entrevistas', data:[total,null,null,null,null,null], borderColor:'#263C85', backgroundColor:'rgba(38,60,133,.08)', borderWidth:2.5, tension:.4, fill:true, pointBackgroundColor:'#263C85', pointRadius:5, spanGaps:false },
-        { label:'Aprovações',  data:[aprov,null,null,null,null,null], borderColor:'#10b981', backgroundColor:'rgba(16,185,129,.05)', borderWidth:2, tension:.4, fill:true, pointBackgroundColor:'#10b981', pointRadius:5, borderDash:[5,4], spanGaps:false }
-      ]},
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{grid:{color:'#e5e9f2'},ticks:{font:{family:'Poppins',size:10}}}, y:{grid:{color:'#e5e9f2'},ticks:{font:{family:'Poppins',size:10}}} } }
-  });
-
-  // Gráfico vagas meta
-  if (chVmet) chVmet.destroy();
-  chVmet = new Chart(document.getElementById('ch-vmet'), {
-    type:'doughnut',
-    data:{ labels:['Entregues','Restantes'], datasets:[{ data:[vagEnt, Math.max(mt.vag-vagEnt,0)], backgroundColor:['#263C85','#e5e9f2'], borderWidth:0, hoverOffset:4 }] },
-    options:{ responsive:true, maintainAspectRatio:false, cutout:'68%', plugins:{legend:{display:false}} }
-  });
-  document.getElementById('vmet-lbl').textContent = `${vagEnt} de ${mt.vag} vagas · ${pctVag}%`;
-
-  // Highlight acelerador
-  document.querySelectorAll('#acc-t tbody tr').forEach((tr,i) => {
-    tr.classList.remove('hi');
-    const ranges = [[0,60],[61,80],[81,90],[91,95],[96,100],[101,9999]];
-    if (pctVag >= ranges[i][0] && pctVag <= ranges[i][1]) tr.classList.add('hi');
-  });
-
-  // Comissão dash
-  const rows = ['ms','aa','lg'].map(k => {
-    const r = G.porRecrutador?.[k]; const cfg = RC[k];
-    const s = calcStats(r);
-    const c = calcComissao(s.comBase, aclMult);
-    return `<tr>
-      <td><div style="display:flex;align-items:center;gap:6px"><div class="av sm" style="background:${cfg.color}">${cfg.ini}</div><strong>${cfg.nome}</strong></div></td>
-      <td>${s.vagEnt}</td>
-      <td>${aclMult > 1 ? `<span class="badge b-ok">${aclMult}x</span>` : '<span class="badge b-gray">1x</span>'}</td>
-      <td><strong style="color:#2563eb">${brl(c.total)}</strong></td>
-    </tr>`;
-  }).join('');
-  document.getElementById('com-dash').innerHTML = `<table><thead><tr><th>Recrutador</th><th>Vagas fechadas</th><th>Acelerador</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table>`;
-
-  // Vagas abertas
-  const vagAbertas = (G.vagas||[]).filter(v => !isOffer(v));
-  document.getElementById('vag-dash').innerHTML = vagAbertas.length === 0
-    ? '<p style="font-size:13px;color:var(--muted)">Nenhuma vaga aberta.</p>'
-    : vagAbertas.map(v => {
-        const isMS=v.recruiter==='Matheus Souza', isAA=v.recruiter==='Amanda Antunes';
-        const c=isMS?'var(--ms)':isAA?'var(--aa)':'var(--lg)';
-        const ini=isMS?'MS':isAA?'AA':'LG';
-        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 11px;background:var(--bg);border-radius:8px">
-          <div><div style="font-size:13px;font-weight:600">${v.vaga}</div>
-          <div style="display:flex;align-items:center;gap:4px;margin-top:2px"><div class="av sm" style="background:${c};width:16px;height:16px;font-size:8px">${ini}</div><span style="font-size:11px;color:var(--muted)">${v.recruiter}</span></div></div>
-          <span class="badge b-pri">Aberta</span></div>`;
-      }).join('');
+// Mostrar conteúdo principal
+function showMainContent() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('main-content').style.display = 'flex';
+  
+  // Atualizar informações do usuário na UI
+  updateUserInfo();
+  
+  // Configurar interface baseada no role
+  if (currentUser.role === 'admin') {
+    showAdminView();
+  } else {
+    showRecruiterView();
+  }
+  
+  // Carregar dados iniciais
+  loadInitialData();
 }
 
-// ── RECRUTADORES ──
-let chRec=null, chEnt=null;
-function renderRec() {
-  if (!G) return;
-  const mt = getMetas();
-  const vagEnt = G.vagasEntreguesM1 || 0;
-  const pctVag = mt.vag > 0 ? Math.round((vagEnt/mt.vag)*100) : 0;
-  const aclMult = getAcelerador(pctVag);
-  const stats = ['ms','aa','lg'].map(k => ({ k, ...calcStats(G.porRecrutador?.[k]), ...RC[k] }));
-
-  if (chRec) chRec.destroy();
-  chRec = new Chart(document.getElementById('ch-rec'), {
-    type:'bar',
-    data:{ labels: stats.map(s => s.nome.split(' ')[0]),
-      datasets:[
-        { label:'Meta', data:stats.map(()=>mt.aprov), backgroundColor:'rgba(38,60,133,.15)', borderRadius:6, borderSkipped:false },
-        { label:'Realizado', data:stats.map(s=>s.taxa), backgroundColor:['#059669','#7c3aed','#0891b2'], borderRadius:6, borderSkipped:false }
-      ]},
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false},ticks:{font:{family:'Poppins',size:11}}}, y:{grid:{color:'#e5e9f2'},ticks:{font:{family:'Poppins',size:10},callback:v=>v+'%'},max:100} } }
+// Atualizar informações do usuário na UI
+function updateUserInfo() {
+  // Atualizar nome do usuário em todos os lugares
+  document.querySelectorAll('.user-name').forEach(el => {
+    el.textContent = currentUser.nome;
   });
+  
+  // Atualizar email se existir
+  document.querySelectorAll('.user-email').forEach(el => {
+    el.textContent = currentUser.email;
+  });
+  
+  // Atualizar avatar com iniciais
+  const initials = currentUser.nome.split(' ')
+    .map(n => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
+  
+  document.querySelectorAll('.user-avatar').forEach(el => {
+    el.textContent = initials;
+  });
+}
 
-  document.getElementById('rec-cards').innerHTML = stats.map(s => {
-    const prog = mt.aprov > 0 ? Math.min(Math.round((s.taxa/mt.aprov)*100), 100) : 0;
-    const tc = s.taxa>=mt.aprov?'#059669':s.taxa>=mt.aprov*.8?'#d97706':'#dc2626';
-    const bdg = s.taxa>=mt.aprov?'b-ok':s.taxa>=mt.aprov*.8?'b-warn':'b-err';
-    const pc = s.taxa>=mt.aprov?'#10b981':s.taxa>=mt.aprov*.8?'#f59e0b':'#ef4444';
-    const c = calcComissao(s.comBase, aclMult);
-    return `<div class="ccard" style="border-radius:var(--r)">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:11px;padding-bottom:11px;border-bottom:1px solid var(--border)">
-        <div class="av lg" style="background:${s.color}">${s.ini}</div>
-        <div style="flex:1"><div style="font-size:14px;font-weight:700">${s.nome}</div></div>
-        <span class="badge ${bdg}">${s.taxa}%</span>
+// Mostrar visão do admin
+function showAdminView() {
+  console.log('👨‍💼 Carregando dashboard admin');
+  
+  // Mostrar/esconder seções
+  const adminElements = document.querySelectorAll('.admin-only');
+  adminElements.forEach(el => el.style.display = 'block');
+  
+  const recruiterElements = document.querySelectorAll('.recruiter-only');
+  recruiterElements.forEach(el => el.style.display = 'none');
+  
+  // Carregar recrutadores
+  loadRecruiters();
+}
+
+// Mostrar visão do recrutador
+function showRecruiterView() {
+  console.log('👤 Carregando dashboard recrutador');
+  
+  // Mostrar/esconder seções
+  const adminElements = document.querySelectorAll('.admin-only');
+  adminElements.forEach(el => el.style.display = 'none');
+  
+  const recruiterElements = document.querySelectorAll('.recruiter-only');
+  recruiterElements.forEach(el => el.style.display = 'block');
+  
+  // Carregar dados pessoais do recrutador
+  loadPersonalData();
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// 🔑 FUNÇÕES DE LOGIN/LOGOUT
+// ══════════════════════════════════════════════════════════════════════════
+
+// Função de login
+async function doLogin() {
+  const email = document.getElementById('email').value.trim();
+  const senha = document.getElementById('password').value;
+  
+  // Validações básicas
+  if (!email) {
+    alert('⚠️ Por favor, digite seu email');
+    document.getElementById('email').focus();
+    return;
+  }
+  
+  if (!senha) {
+    alert('⚠️ Por favor, digite sua senha');
+    document.getElementById('password').focus();
+    return;
+  }
+  
+  const btn = document.querySelector('.login-btn');
+  const originalText = btn.innerHTML;
+  
+  try {
+    // Mostrar loading
+    btn.innerHTML = '⏳ Entrando...';
+    btn.disabled = true;
+    
+    console.log('🔐 Tentando login para:', email);
+    
+    // Fazer login via Firebase
+    const usuario = await loginUsuario(email, senha);
+    
+    console.log('✅ Login bem-sucedido!');
+    console.log('👤 Usuário:', usuario.nome);
+    console.log('📧 Email:', usuario.email);
+    console.log('🔐 Role:', usuario.role);
+    
+    // Salvar usuário atual
+    currentUser = usuario;
+    
+    // Redirecionar para dashboard
+    showMainContent();
+    
+  } catch (error) {
+    console.error('❌ Erro no login:', error);
+    
+    // Restaurar botão
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+    
+    // Mostrar erro amigável
+    let errorMessage = 'Erro no login: ';
+    
+    switch (error.code) {
+      case 'auth/user-not-found':
+        errorMessage += 'Usuário não encontrado. Verifique o email.';
+        break;
+      case 'auth/wrong-password':
+        errorMessage += 'Senha incorreta. Tente novamente.';
+        break;
+      case 'auth/invalid-email':
+        errorMessage += 'Email inválido. Verifique o formato.';
+        break;
+      case 'auth/too-many-requests':
+        errorMessage += 'Muitas tentativas incorretas. Aguarde alguns minutos.';
+        break;
+      case 'auth/network-request-failed':
+        errorMessage += 'Erro de conexão. Verifique sua internet.';
+        break;
+      default:
+        errorMessage += error.message || 'Erro desconhecido.';
+    }
+    
+    alert(errorMessage);
+    
+    // Focar no campo apropriado
+    if (error.code === 'auth/wrong-password') {
+      document.getElementById('password').focus();
+      document.getElementById('password').select();
+    } else {
+      document.getElementById('email').focus();
+      document.getElementById('email').select();
+    }
+  }
+}
+
+// Função de logout
+async function doLogout() {
+  if (!confirm('🤔 Tem certeza que deseja sair?')) {
+    return;
+  }
+  
+  try {
+    console.log('👋 Fazendo logout...');
+    
+    // Logout do Firebase
+    await logoutUsuario();
+    
+    // Limpar dados locais
+    currentUser = null;
+    selectedRecruiter = null;
+    bonusData = [];
+    historico = [];
+    G = null;
+    
+    // Mostrar tela de login
+    showLoginScreen();
+    
+    console.log('✅ Logout concluído');
+    
+  } catch (error) {
+    console.error('❌ Erro no logout:', error);
+    alert('Erro ao sair: ' + error.message);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// 👥 GERENCIAMENTO DE RECRUTADORES (ADMIN)
+// ══════════════════════════════════════════════════════════════════════════
+
+// Carregar lista de recrutadores
+async function loadRecruiters() {
+  try {
+    console.log('📋 Carregando recrutadores...');
+    
+    const recrutadores = await listarRecrutadores();
+    console.log(`✅ ${recrutadores.length} recrutadores encontrados`);
+    
+    // Atualizar UI com lista
+    displayRecruiters(recrutadores);
+    
+  } catch (error) {
+    console.error('❌ Erro ao carregar recrutadores:', error);
+    alert('Erro ao carregar recrutadores: ' + error.message);
+  }
+}
+
+// Exibir recrutadores na UI
+function displayRecruiters(recrutadores) {
+  const container = document.getElementById('recruiters-grid');
+  if (!container) {
+    console.warn('⚠️ Container #recruiters-grid não encontrado');
+    return;
+  }
+  
+  container.innerHTML = '';
+  
+  recrutadores.forEach(rec => {
+    const card = createRecruiterCard(rec);
+    container.appendChild(card);
+  });
+}
+
+// Criar card de recrutador
+function createRecruiterCard(recruiter) {
+  const card = document.createElement('div');
+  card.className = `recruiter-card ${!recruiter.ativo ? 'inactive' : ''}`;
+  card.dataset.userId = recruiter.id;
+  card.dataset.userName = recruiter.nome;
+  card.dataset.sheetName = recruiter.sheetName;
+  
+  const initials = recruiter.nome.split(' ')
+    .map(n => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
+  
+  card.innerHTML = `
+    <div class="recruiter-header">
+      <div class="recruiter-avatar" style="background: ${recruiter.color || '#3a54b0'}">
+        ${initials}
       </div>
-      <div style="display:flex;flex-direction:column;gap:5px">
-        <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Entrevistas</span><strong>${s.total}</strong></div>
-        <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Aprovações</span><strong>${s.aprov}</strong></div>
-        <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Taxa de aprovação</span><strong style="color:${tc}">${s.taxa}%</strong></div>
-        <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Retornos pendentes</span><strong style="color:${s.pend>0?'#dc2626':'#059669'}">${s.pend}</strong></div>
-        <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Comissão acumulada</span><strong style="color:#2563eb">${brl(c.total)}</strong></div>
+      <div class="recruiter-status ${recruiter.ativo ? 'active' : 'inactive'}">
+        ${recruiter.ativo ? '● Online' : '○ Inativo'}
       </div>
-      <div style="margin-top:10px">
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:3px"><span>Meta: ${mt.aprov}%</span><span>${s.taxa}%</span></div>
-        <div class="pbar"><div class="pfill" style="width:${prog}%;background:${pc}"></div></div>
-      </div>
-    </div>`;
-  }).join('');
+    </div>
+    <div class="recruiter-info">
+      <div class="recruiter-name">${recruiter.nome}</div>
+      <div class="recruiter-email">${recruiter.email}</div>
+      <div class="recruiter-sheet">Planilha: ${recruiter.sheetName}</div>
+    </div>
+    <div class="recruiter-actions">
+      <button onclick="selectRecruiter('${recruiter.id}')" class="btn-select">
+        📊 Selecionar
+      </button>
+    </div>
+  `;
+  
+  return card;
+}
 
-  const comPend = stats.filter(s => s.pend > 0);
-  document.getElementById('rec-pend').innerHTML = comPend.length === 0
-    ? '<div style="padding:10px;background:var(--green-bg);border-radius:8px;font-size:13px;color:#059669;font-weight:600">✓ Todas com retorno!</div>'
-    : comPend.map(s => `<div style="background:#fff;border-radius:8px;padding:9px 12px;border:1px solid var(--border);display:flex;align-items:center;gap:8px"><div class="av sm" style="background:${s.color}">${s.ini}</div><div><div style="font-size:13px;font-weight:600">${s.nome}</div><div style="font-size:12px;color:var(--muted)">${s.pend} aguardando retorno</div></div></div>`).join('');
+// Selecionar recrutador
+async function selectRecruiter(userId) {
+  try {
+    console.log('👉 Selecionando recrutador:', userId);
+    
+    // Buscar dados completos do recrutador
+    const recrutadores = await listarRecrutadores();
+    const recruiter = recrutadores.find(r => r.id === userId);
+    
+    if (!recruiter) {
+      alert('Recrutador não encontrado');
+      return;
+    }
+    
+    // Atualizar UI
+    document.querySelectorAll('.recruiter-card').forEach(card => {
+      card.classList.remove('selected');
+    });
+    
+    document.querySelector(`[data-user-id="${userId}"]`).classList.add('selected');
+    
+    // Salvar seleção
+    selectedRecruiter = recruiter;
+    
+    // Carregar dados do recrutador
+    await loadRecruiterDetails(recruiter);
+    
+    // Mostrar seção de detalhes
+    document.getElementById('recruiter-details').style.display = 'block';
+    
+  } catch (error) {
+    console.error('❌ Erro ao selecionar recrutador:', error);
+    alert('Erro ao selecionar recrutador: ' + error.message);
+  }
+}
 
-  if (chEnt) chEnt.destroy();
-  chEnt = new Chart(document.getElementById('ch-ent-c'), {
-    type:'bar',
-    data:{ labels: stats.map(s=>s.nome.split(' ')[0]),
-      datasets:[
-        { label:'Entrevistas', data:stats.map(s=>s.total), backgroundColor:['#059669','#7c3aed','#0891b2'], borderRadius:6 },
-        { label:'Aprovações',  data:stats.map(s=>s.aprov), backgroundColor:['rgba(16,185,129,.3)','rgba(124,58,237,.3)','rgba(8,145,178,.3)'], borderRadius:6 }
-      ]},
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false},ticks:{font:{family:'Poppins',size:10}}}, y:{grid:{color:'#e5e9f2'},ticks:{font:{family:'Poppins',size:10}}} } }
+// Carregar detalhes do recrutador
+async function loadRecruiterDetails(recruiter) {
+  console.log('📊 Carregando detalhes de:', recruiter.nome);
+  
+  // Atualizar nome na UI de detalhes
+  document.getElementById('selected-recruiter-name').textContent = recruiter.nome;
+  
+  // Carregar metas
+  await loadRecruiterGoals(recruiter.id);
+  
+  // Carregar bônus
+  await loadRecruiterBonus(recruiter.id);
+  
+  // Carregar dados da planilha
+  await loadRecruiterSheetData(recruiter.sheetName);
+}
+
+// Carregar metas do recrutador
+async function loadRecruiterGoals(userId) {
+  try {
+    const currentMonth = getCurrentMonth();
+    console.log(`🎯 Carregando metas de ${currentMonth}...`);
+    
+    const metas = await buscarMeta(userId, currentMonth);
+    
+    if (metas) {
+      console.log('✅ Metas encontradas:', metas);
+      
+      // Preencher campos
+      document.getElementById('meta-entrevistas').value = metas.entrevistas || 0;
+      document.getElementById('meta-admissoes').value = metas.admissoes || 0;
+      document.getElementById('meta-ligacoes').value = metas.ligacoes || 0;
+    } else {
+      console.log('ℹ️ Nenhuma meta definida para este mês');
+      
+      // Limpar campos
+      document.getElementById('meta-entrevistas').value = 0;
+      document.getElementById('meta-admissoes').value = 0;
+      document.getElementById('meta-ligacoes').value = 0;
+    }
+    
+  } catch (error) {
+    console.error('❌ Erro ao carregar metas:', error);
+  }
+}
+
+// Carregar bônus do recrutador
+async function loadRecruiterBonus(userId) {
+  try {
+    const currentMonth = getCurrentMonth();
+    console.log(`💰 Carregando bônus de ${currentMonth}...`);
+    
+    const bonus = await listarBonus(userId, currentMonth);
+    
+    console.log(`✅ ${bonus.length} bônus encontrados`);
+    
+    bonusData = bonus;
+    updateBonusDisplay();
+    
+  } catch (error) {
+    console.error('❌ Erro ao carregar bônus:', error);
+  }
+}
+
+// Atualizar exibição de bônus
+function updateBonusDisplay() {
+  const container = document.getElementById('bonus-list');
+  if (!container) return;
+  
+  container.innerHTML = '';
+  
+  let total = 0;
+  
+  bonusData.forEach(bonus => {
+    total += bonus.valor;
+    
+    const item = document.createElement('div');
+    item.className = 'bonus-item';
+    item.innerHTML = `
+      <div class="bonus-description">${bonus.descricao}</div>
+      <div class="bonus-value">R$ ${bonus.valor.toFixed(2)}</div>
+      <button onclick="removeBonus('${bonus.id}')" class="btn-remove" title="Remover bônus">
+        ❌
+      </button>
+    `;
+    
+    container.appendChild(item);
   });
+  
+  // Atualizar total
+  document.getElementById('total-bonus').textContent = `R$ ${total.toFixed(2)}`;
 }
 
-// ── VAGAS ──
-let filtroV = 'Aberta';
-function renderVag() { if (G) renderVagTab(); }
-function filtrar(s) {
-  filtroV = s;
-  ['ab','fe','to'].forEach(x => document.getElementById('f-'+x)?.classList.remove('on'));
-  document.getElementById({Aberta:'f-ab',Fechada:'f-fe',Todas:'f-to'}[s])?.classList.add('on');
-  renderVagTab();
+// ══════════════════════════════════════════════════════════════════════════
+// 💾 FUNÇÕES DE SALVAR/EDITAR (ADMIN)
+// ══════════════════════════════════════════════════════════════════════════
+
+// Salvar metas
+async function saveGoals() {
+  if (!selectedRecruiter) {
+    alert('⚠️ Selecione um recrutador primeiro');
+    return;
+  }
+  
+  const entrevistas = parseInt(document.getElementById('meta-entrevistas').value) || 0;
+  const admissoes = parseInt(document.getElementById('meta-admissoes').value) || 0;
+  const ligacoes = parseInt(document.getElementById('meta-ligacoes').value) || 0;
+  
+  try {
+    console.log('💾 Salvando metas...');
+    
+    await salvarMeta(selectedRecruiter.id, getCurrentMonth(), {
+      entrevistas,
+      admissoes,
+      ligacoes
+    });
+    
+    console.log('✅ Metas salvas com sucesso');
+    alert('✅ Metas salvas com sucesso!');
+    
+  } catch (error) {
+    console.error('❌ Erro ao salvar metas:', error);
+    alert('❌ Erro ao salvar metas: ' + error.message);
+  }
 }
-function renderVagTab() {
-  const all = G?.vagas || [];
-  const f = filtroV==='Todas'?all : filtroV==='Fechada'?all.filter(isOffer) : all.filter(v=>!isOffer(v));
-  const tb = document.getElementById('vag-tb');
-  if (!f.length) { tb.innerHTML='<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:18px">Nenhuma vaga.</td></tr>'; return; }
-  tb.innerHTML = f.map(v => {
-    const isMS=v.recruiter==='Matheus Souza', isAA=v.recruiter==='Amanda Antunes';
-    const c=isMS?'var(--ms)':isAA?'var(--aa)':'var(--lg)';
-    const ini=isMS?'MS':isAA?'AA':'LG';
-    return `<tr><td><strong>${v.vaga}</strong></td><td><div style="display:flex;align-items:center;gap:6px"><div class="av sm" style="background:${c}">${ini}</div>${v.recruiter}</div></td><td>${isOffer(v)?'<span class="badge b-ok">Fechada</span>':'<span class="badge b-pri">Aberta</span>'}</td></tr>`;
-  }).join('');
+
+// Adicionar bônus
+async function addBonus() {
+  if (!selectedRecruiter) {
+    alert('⚠️ Selecione um recrutador primeiro');
+    return;
+  }
+  
+  // Pedir dados do bônus
+  const descricao = prompt('📝 Descrição do bônus:');
+  if (!descricao) return;
+  
+  const valorStr = prompt('💰 Valor do bônus (apenas números):');
+  if (!valorStr) return;
+  
+  const valor = parseFloat(valorStr.replace(',', '.'));
+  
+  if (isNaN(valor) || valor <= 0) {
+    alert('⚠️ Valor inválido. Digite apenas números.');
+    return;
+  }
+  
+  try {
+    console.log('💰 Adicionando bônus...');
+    
+    await adicionarBonus(selectedRecruiter.id, getCurrentMonth(), descricao, valor);
+    
+    console.log('✅ Bônus adicionado');
+    alert('✅ Bônus adicionado com sucesso!');
+    
+    // Recarregar bônus
+    await loadRecruiterBonus(selectedRecruiter.id);
+    
+  } catch (error) {
+    console.error('❌ Erro ao adicionar bônus:', error);
+    alert('❌ Erro ao adicionar bônus: ' + error.message);
+  }
 }
 
-// ── COMISSÕES ──
-function renderCom() {
-  if (!G) return;
-  const mt = getMetas();
-  const vagEnt = G.vagasEntreguesM1 || 0;
-  const pctVag = mt.vag > 0 ? Math.round((vagEnt/mt.vag)*100) : 0;
-  const aclMult = getAcelerador(pctVag);
+// Remover bônus
+async function removeBonus(bonusId) {
+  if (!confirm('🤔 Tem certeza que deseja remover este bônus?')) {
+    return;
+  }
+  
+  try {
+    console.log('🗑️ Removendo bônus...');
+    
+    await removerBonus(bonusId);
+    
+    console.log('✅ Bônus removido');
+    
+    // Recarregar bônus
+    if (selectedRecruiter) {
+      await loadRecruiterBonus(selectedRecruiter.id);
+    }
+    
+  } catch (error) {
+    console.error('❌ Erro ao remover bônus:', error);
+    alert('❌ Erro ao remover bônus: ' + error.message);
+  }
+}
 
-  let totComissao = 0;
-  const rows = ['ms','aa','lg'].map(k => {
-    const r = G.porRecrutador?.[k]; const cfg = RC[k];
-    const s = calcStats(r);
-    const c = calcComissao(s.comBase, aclMult);
-    totComissao += c.total;
-    const aclLabel = aclMult > 1 ? `<span class="badge b-ok">${aclMult}x</span>` : '<span class="badge b-gray">1x</span>';
-    const bonusLabel = c.bonusAcel > 0 ? `<span style="color:#059669">+ ${brl(c.bonusAcel)}</span>` : '<span style="color:var(--muted)">R$ 0,00</span>';
-    return `<tr>
-      <td><div style="display:flex;align-items:center;gap:6px"><div class="av sm" style="background:${cfg.color}">${cfg.ini}</div><strong>${cfg.nome}</strong></div></td>
-      <td>${s.vagEnt}</td>
-      <td>${brl(s.comBase)}</td>
-      <td>${aclLabel}</td>
-      <td>${bonusLabel}</td>
-      <td><strong style="color:#2563eb;font-size:14px">${brl(c.total)}</strong></td>
-    </tr>`;
-  }).join('');
+// Criar novo recrutador
+async function createNewRecruiter() {
+  console.log('👤 Iniciando criação de recrutador...');
+  
+  // Coletar dados
+  const nome = prompt('👤 Nome completo do recrutador:');
+  if (!nome || nome.trim() === '') return;
+  
+  const email = prompt('📧 Email corporativo:');
+  if (!email || email.trim() === '') return;
+  
+  // Validar email
+  if (!email.includes('@') || !email.includes('.')) {
+    alert('⚠️ Email inválido. Use o formato: nome@empresa.com');
+    return;
+  }
+  
+  const sheetName = prompt('📊 Nome na planilha (exatamente como está no Google Sheets):');
+  if (!sheetName || sheetName.trim() === '') return;
+  
+  const senhaTemporaria = prompt('🔑 Senha temporária (mínimo 6 caracteres):');
+  if (!senhaTemporaria || senhaTemporaria.length < 6) {
+    alert('⚠️ Senha deve ter no mínimo 6 caracteres');
+    return;
+  }
+  
+  try {
+    console.log('🔄 Criando recrutador...');
+    
+    const userId = await criarRecrutador({
+      nome: nome.trim(),
+      email: email.trim().toLowerCase(),
+      sheetName: sheetName.trim(),
+      senhaTemporaria
+    });
+    
+    console.log('✅ Recrutador criado:', userId);
+    
+    alert(`✅ Recrutador criado com sucesso!
 
-  const totalBonus = bonusData.reduce((a,b) => a + b.v, 0);
-  const totalPagar = totComissao + totalBonus;
+📧 Um email foi enviado para ${email} para redefinir a senha.
 
-  document.getElementById('com-tot').textContent = brl(totComissao);
-  document.getElementById('com-acl-lbl').textContent = aclMult > 1 ? `Acelerador ${aclMult}x ativo` : 'Sem acelerador este mês';
-  document.getElementById('bon-tot').textContent = brl(totalBonus);
-  document.getElementById('bon-count-lbl').textContent = `${bonusData.length} bônus registrado(s)`;
-  document.getElementById('com-total-pagar').textContent = brl(totalPagar);
-  document.getElementById('com-tb').innerHTML = rows;
+ℹ️ O recrutador deve:
+1. Verificar a caixa de entrada (e spam)
+2. Clicar no link para redefinir senha
+3. Fazer login com a nova senha`);
+    
+    // Recarregar lista
+    await loadRecruiters();
+    
+  } catch (error) {
+    console.error('❌ Erro ao criar recrutador:', error);
+    
+    let errorMessage = '❌ Erro ao criar recrutador: ';
+    
+    switch (error.code) {
+      case 'auth/email-already-in-use':
+        errorMessage += 'Este email já está em uso.';
+        break;
+      case 'auth/invalid-email':
+        errorMessage += 'Email inválido.';
+        break;
+      case 'auth/weak-password':
+        errorMessage += 'Senha muito fraca. Use no mínimo 6 caracteres.';
+        break;
+      case 'auth/network-request-failed':
+        errorMessage += 'Erro de conexão. Verifique sua internet.';
+        break;
+      default:
+        errorMessage += error.message || 'Erro desconhecido.';
+    }
+    
+    alert(errorMessage);
+  }
+}
 
-  // Relatório financeiro
-  const rfRows = ['ms','aa','lg'].map(k => {
-    const r = G.porRecrutador?.[k]; const cfg = RC[k];
-    const s = calcStats(r);
-    const c = calcComissao(s.comBase, aclMult);
-    const bon = bonusData.filter(b => b.r === cfg.nome).reduce((x,b) => x+b.v, 0);
-    const tot = c.total + bon;
-    return `<tr>
-      <td><strong>${cfg.nome}</strong></td>
-      <td>${s.vagEnt}</td>
-      <td>${brl(s.comBase)}</td>
-      <td>${c.bonusAcel > 0 ? brl(c.bonusAcel)+' ('+aclMult+'x)' : '—'}</td>
-      <td>${bon > 0 ? brl(bon) : '—'}</td>
-      <td><strong style="color:#2563eb">${brl(tot)}</strong></td>
-    </tr>`;
-  }).join('');
-  const totFin = ['ms','aa','lg'].reduce((x,k) => {
-    const s = calcStats(G.porRecrutador?.[k]);
-    const c = calcComissao(s.comBase, aclMult);
-    const bon = bonusData.filter(b => b.r === RC[k].nome).reduce((s,b) => s+b.v, 0);
-    return x + c.total + bon;
-  }, 0);
-  const rfEl = document.getElementById('rel-fin');
-  if (rfEl) rfEl.innerHTML = rfRows + `<tr style="background:var(--primary-faint)"><td colspan="5"><strong>Total geral</strong></td><td><strong style="color:var(--primary);font-size:14px">${brl(totFin)}</strong></td></tr>`;
+// ══════════════════════════════════════════════════════════════════════════
+// 📊 CARREGAMENTO DE DADOS (GOOGLE SHEETS)
+// ══════════════════════════════════════════════════════════════════════════
 
-  // Highlight acelerador
-  document.querySelectorAll('#acc-t tbody tr').forEach((tr,i) => {
-    tr.classList.remove('hi');
-    const ranges = [[0,60],[61,80],[81,90],[91,95],[96,100],[101,9999]];
-    if (pctVag >= ranges[i][0] && pctVag <= ranges[i][1]) tr.classList.add('hi');
+// Carregar dados iniciais
+async function loadInitialData() {
+  console.log('📊 Carregando dados iniciais...');
+  
+  try {
+    if (currentUser.role === 'admin') {
+      // Admin: carregar dados de todos os recrutadores
+      await loadAdminData();
+    } else {
+      // Recrutador: carregar apenas dados pessoais
+      await loadPersonalData();
+    }
+  } catch (error) {
+    console.error('❌ Erro ao carregar dados iniciais:', error);
+  }
+}
+
+// Carregar dados do admin
+async function loadAdminData() {
+  console.log('👨‍💼 Carregando dados do admin...');
+  
+  // Esta função pode ser expandida para carregar:
+  // - Resumo geral do time
+  // - Estatísticas consolidadas
+  // - Relatórios mensais
+  // - etc.
+}
+
+// Carregar dados pessoais (recrutador)
+async function loadPersonalData() {
+  console.log('👤 Carregando dados pessoais...');
+  
+  // Carregar próprias metas
+  await loadPersonalGoals();
+  
+  // Carregar próprios bônus
+  await loadPersonalBonus();
+  
+  // Carregar dados da planilha
+  await loadRecruiterSheetData(currentUser.sheetName);
+}
+
+// Carregar metas pessoais
+async function loadPersonalGoals() {
+  try {
+    const currentMonth = getCurrentMonth();
+    const metas = await buscarMeta(currentUser.uid, currentMonth);
+    
+    if (metas) {
+      // Mostrar metas na UI do recrutador
+      displayPersonalGoals(metas);
+    }
+  } catch (error) {
+    console.error('❌ Erro ao carregar metas pessoais:', error);
+  }
+}
+
+// Carregar bônus pessoais
+async function loadPersonalBonus() {
+  try {
+    const currentMonth = getCurrentMonth();
+    const bonus = await listarBonus(currentUser.uid, currentMonth);
+    
+    // Mostrar bônus na UI do recrutador
+    displayPersonalBonus(bonus);
+  } catch (error) {
+    console.error('❌ Erro ao carregar bônus pessoais:', error);
+  }
+}
+
+// Carregar dados da planilha do recrutador
+async function loadRecruiterSheetData(sheetName) {
+  console.log('📈 Carregando dados da planilha para:', sheetName);
+  
+  // Aqui você mantém a integração original com Google Sheets
+  // Esta função busca dados de performance da planilha
+  
+  // Exemplo de implementação:
+  try {
+    // Fazer requisição para sua API que busca dados do Google Sheets
+    // const response = await fetch('/api/recruiter-data', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ recruiterName: sheetName })
+    // });
+    
+    // const data = await response.json();
+    // updateDashboardWithSheetData(data);
+    
+    console.log('ℹ️ Integração com Google Sheets - implementar aqui');
+    
+  } catch (error) {
+    console.error('❌ Erro ao carregar dados da planilha:', error);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// 🛠️ FUNÇÕES AUXILIARES
+// ══════════════════════════════════════════════════════════════════════════
+
+// Obter mês atual no formato YYYY-MM
+function getCurrentMonth() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  return `${year}-${month}`;
+}
+
+// Formatar data brasileira
+function formatDateBR(date) {
+  return new Date(date).toLocaleDateString('pt-BR');
+}
+
+// Formatar moeda brasileira
+function formatCurrency(value) {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(value);
+}
+
+// Exibir metas pessoais
+function displayPersonalGoals(metas) {
+  // Implementar exibição das metas na UI do recrutador
+  console.log('📊 Exibindo metas pessoais:', metas);
+}
+
+// Exibir bônus pessoais
+function displayPersonalBonus(bonus) {
+  // Implementar exibição dos bônus na UI do recrutador
+  console.log('💰 Exibindo bônus pessoais:', bonus);
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// 🎨 FUNÇÕES DE UI E INTERAÇÃO
+// ══════════════════════════════════════════════════════════════════════════
+
+// Função para mostrar/esconder seções
+function toggleSection(sectionId) {
+  const section = document.getElementById(sectionId);
+  if (section) {
+    section.style.display = section.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+// Função para atualizar histórico
+function addHistorico(action, description) {
+  const timestamp = new Date();
+  historico.unshift({
+    id: Date.now(),
+    action,
+    description,
+    timestamp,
+    user: currentUser.nome
   });
+  
+  console.log(`📝 Histórico: ${action} - ${description}`);
 }
 
-// ── RELATÓRIOS ──
-function renderRel() {
-  if (!G) return;
-  const ent = G.entrevistas || [];
-  const vag = G.vagas || [];
-  const mt = getMetas();
-  const total = ent.length;
-  const aprov = ent.filter(e => (e.resultado||'').toUpperCase() === 'APROVADO').length;
-  const taxa = total > 0 ? Math.round((aprov/total)*100) : 0;
-  const ab = vag.filter(v => !isOffer(v)).length;
-  const fe = vag.filter(isOffer).length;
-  const vagEnt = G.vagasEntreguesM1 || 0;
-  const pctVag = mt.vag > 0 ? Math.round((vagEnt/mt.vag)*100) : 0;
-  const aclMult = getAcelerador(pctVag);
-  let comTot = 0;
-  ['ms','aa','lg'].forEach(k => { const s=calcStats(G.porRecrutador?.[k]); const c=calcComissao(s.comBase,aclMult); comTot+=c.total; });
-  const totalBonus = bonusData.reduce((a,b) => a+b.v, 0);
-  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  const mesLabel = meses[new Date().getMonth()] + ' ' + new Date().getFullYear();
+// ══════════════════════════════════════════════════════════════════════════
+// 🔄 LISTENERS DE EVENTOS
+// ══════════════════════════════════════════════════════════════════════════
 
-  const gerEl = document.getElementById('rel-ger');
-  if (gerEl) gerEl.innerHTML = `
-    <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:9px">Dados reais · ${mesLabel}</div>
-    <div class="rr"><span>Total de entrevistas</span><strong>${total}</strong></div>
-    <div class="rr"><span>Total de aprovações</span><strong>${aprov}</strong></div>
-    <div class="rr"><span>Taxa de aprovação</span><strong>${taxa}%</strong></div>
-    <div class="rr"><span>Vagas abertas</span><strong>${ab}</strong></div>
-    <div class="rr"><span>Vagas fechadas</span><strong>${fe}</strong></div>
-    <div class="rr"><span>Comissão total</span><strong style="color:#2563eb">${brl(comTot)}</strong></div>
-    <div class="rr"><span>Total de bônus</span><strong style="color:#059669">${brl(totalBonus)}</strong></div>
-    <div class="rr"><span>Total a pagar</span><strong style="color:#d97706">${brl(comTot+totalBonus)}</strong></div>`;
-  updateRelInd();
-  renderCom();
-}
-function updateRelInd() {
-  if (!G) return;
-  const k = document.getElementById('rel-sel')?.value || 'ms';
-  const el = document.getElementById('rel-ind');
-  if (!el) return;
-  const r = G.porRecrutador?.[k];
-  const cfg = RC[k];
-  const s = calcStats(r);
-  const mt = getMetas();
-  const vagEnt = G.vagasEntreguesM1 || 0;
-  const pctVag = mt.vag > 0 ? Math.round((vagEnt/mt.vag)*100) : 0;
-  const aclMult = getAcelerador(pctVag);
-  const c = calcComissao(s.comBase, aclMult);
-  const bon = bonusData.filter(b => b.r === cfg.nome).reduce((x,b) => x+b.v, 0);
-  const ating = s.taxa >= mt.aprov;
-  el.innerHTML = `
-    <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:9px">${cfg.nome} · Dados reais</div>
-    <div class="rr"><span>Entrevistas</span><strong>${s.total}</strong></div>
-    <div class="rr"><span>Aprovações</span><strong>${s.aprov}</strong></div>
-    <div class="rr"><span>Taxa de aprovação</span><strong>${s.taxa}%</strong></div>
-    <div class="rr"><span>Meta</span><strong style="color:${ating?'#059669':'#d97706'}">${ating?'✓ Atingida':'Em progresso'} (${s.taxa}% / ${mt.aprov}%)</strong></div>
-    <div class="rr"><span>Comissão base</span><strong>${brl(s.comBase)}</strong></div>
-    <div class="rr"><span>Bônus acelerador</span><strong style="color:#059669">${brl(c.bonusAcel)}</strong></div>
-    <div class="rr"><span>Bônus extra</span><strong style="color:#059669">${bon>0?brl(bon):'—'}</strong></div>
-    <div class="rr"><span>Total a receber</span><strong style="color:#2563eb">${brl(c.total+bon)}</strong></div>`;
-}
+// Event listeners para formulários
+document.addEventListener('DOMContentLoaded', function() {
+  // Form de metas
+  const metasForm = document.getElementById('metas-form');
+  if (metasForm) {
+    metasForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      saveGoals();
+    });
+  }
+  
+  // Botão de adicionar bônus
+  const addBonusBtn = document.getElementById('add-bonus-btn');
+  if (addBonusBtn) {
+    addBonusBtn.addEventListener('click', addBonus);
+  }
+  
+  // Botão de criar recrutador
+  const createRecruiterBtn = document.getElementById('create-recruiter-btn');
+  if (createRecruiterBtn) {
+    createRecruiterBtn.addEventListener('click', createNewRecruiter);
+  }
+  
+  // Botão de logout
+  const logoutBtns = document.querySelectorAll('.logout-btn');
+  logoutBtns.forEach(btn => {
+    btn.addEventListener('click', doLogout);
+  });
+});
 
-// ── BÔNUS ──
-function addBonus() {
-  const r = document.getElementById('bon-r').value;
-  const v = parseFloat(document.getElementById('bon-v').value || 0);
-  const m = document.getElementById('bon-m').value;
-  if (!r||!v||!m) { toast('Preencha todos os campos'); return; }
-  bonusData.push({ r, v, m });
-  const cfg = Object.values(RC).find(c => c.nome === r) || { color:'#263C85', ini:'??' };
-  const div = document.createElement('div');
-  div.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;padding:8px 11px;background:var(--bg);border-radius:8px;font-size:13px;align-items:center;margin-top:7px';
-  div.innerHTML = `<span><div class="av sm" style="background:${cfg.color};display:inline-flex;margin-right:5px">${cfg.ini}</div>${r}</span><span style="font-weight:600;color:#2563eb">${brl(v)}</span><span style="color:var(--muted)">${m}</span><span style="font-size:11px;color:var(--light)">${new Date().toLocaleDateString('pt-BR',{month:'short',year:'numeric'})}</span>`;
-  document.getElementById('bon-list').appendChild(div);
-  document.getElementById('bon-r').value=''; document.getElementById('bon-v').value=''; document.getElementById('bon-m').value='';
-  renderCom();
-  toast(`Bônus de ${brl(v)} salvo para ${r}!`);
-}
+// ══════════════════════════════════════════════════════════════════════════
 
-// ── HISTÓRICO ──
-function addHistorico() {
-  const r = document.getElementById('hist-r').value;
-  const m = document.getElementById('hist-mes').value;
-  const v = parseFloat(document.getElementById('hist-val').value || 0);
-  if (!r||!m||!v) { toast('Preencha todos os campos'); return; }
-  historico.push({ r, m, v, data: new Date().toLocaleDateString('pt-BR') });
-  renderHistorico();
-  document.getElementById('hist-r').value=''; document.getElementById('hist-mes').value=''; document.getElementById('hist-val').value='';
-  toast(`Pagamento de ${brl(v)} registrado para ${r}!`);
-}
-function renderHistorico() {
-  const tb = document.getElementById('hist-tb');
-  if (!historico.length) { tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:16px">Nenhum pagamento registrado ainda.</td></tr>'; return; }
-  const cfg_map = {'Matheus Souza':RC.ms,'Amanda Antunes':RC.aa,'Lithielle Goulardt':RC.lg};
-  tb.innerHTML = historico.map(h => {
-    const cfg = cfg_map[h.r] || {color:'#263C85',ini:'??'};
-    return `<tr><td><div style="display:flex;align-items:center;gap:6px"><div class="av sm" style="background:${cfg.color}">${cfg.ini}</div>${h.r}</div></td><td>${h.m}</td><td><strong style="color:#2563eb">${brl(h.v)}</strong></td><td style="color:var(--muted)">${h.data}</td></tr>`;
-  }).join('');
-}
+console.log('✅ Dashboard R&S Saipos carregado - Firebase integrado');
+console.log('🚀 Aguardando inicialização...');
 
-// ── EXPORTAR ──
-function exportPDF() { window.print(); toast('Escolha "Salvar como PDF" na impressão'); }
-function exportCSV() {
-  if (!G) return;
-  const rows = [['Dia','Recruiter','Candidato','Resultado','Status'], ...(G.entrevistas||[]).map(e=>[e.dia,e.recruiter,e.candidato,e.resultado,e.status])];
-  const csv = rows.map(r => r.map(c => '"'+(c||'')+'"').join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));
-  a.download = 'saipos-entrevistas.csv'; a.click();
-  toast('CSV baixado!');
-}
-
-// ── METAS EMAIL ──
-function enviarMetasEmail() {
-  const mt = getMetas();
-  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  const mes = meses[new Date().getMonth()] + ' ' + new Date().getFullYear();
-  const s = encodeURIComponent(`Metas de Recrutamento · ${mes}`);
-  const b = encodeURIComponent(`Olá time!\n\nMetas de ${mes}:\n\n📊 Taxa de aprovação individual:\n• Matheus: ${document.getElementById('m-ms').value}%\n• Amanda: ${document.getElementById('m-aa').value}%\n• Lithielle: ${document.getElementById('m-lg').value}%\n\n🎯 Metas do time:\n• Entrevistas: ${mt.ent}\n• Vagas a entregar: ${mt.vag}\n\nBom mês!\nHeitor`);
-  window.open(`mailto:?subject=${s}&body=${b}`, '_blank');
-}
-
-// ── CONFIGURAÇÕES ──
-function salvarPerfil() {
-  const n = document.getElementById('l-nome').value;
-  const c = document.getElementById('l-cargo').value;
-  const e = document.getElementById('l-email').value;
-  const s = document.getElementById('l-senha').value;
-  if (n) { document.getElementById('u-nm').textContent=n; document.getElementById('lider-nd').textContent=n; }
-  if (c) document.getElementById('u-rl').textContent = c;
-  if (e && s) USERS[e] = { ...(USERS[e]||{}), senha:s, nome:n, role:c, ini:n.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase(), color:'#3a54b0', lider:true };
-  toast('Perfil atualizado!');
-}
-function criarAcesso() {
-  const n=document.getElementById('nr-n').value, e=document.getElementById('nr-e').value;
-  const s=document.getElementById('nr-s').value, c=document.getElementById('nr-c').value;
-  if (!n||!e||!s) { toast('Preencha nome, e-mail e senha'); return; }
-  USERS[e] = { senha:s, nome:n, role:c||'Recrutador', ini:n.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase(), color:'#7c3aed', lider:false };
-  const div = document.createElement('div');
-  div.style.cssText = 'display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--green-bg);border-radius:8px;font-size:13px';
-  div.innerHTML = `<div class="av sm" style="background:#059669">${USERS[e].ini}</div><div><strong>${n}</strong> · ${e}</div><span class="badge b-ok" style="margin-left:auto">Acesso criado</span>`;
-  document.getElementById('acessos').appendChild(div);
-  document.getElementById('nr-n').value=''; document.getElementById('nr-e').value=''; document.getElementById('nr-s').value=''; document.getElementById('nr-c').value='';
-  toast(`Acesso criado para ${n}!`);
-}
-function updatePhoto(input, key) {
-  if (!input.files||!input.files[0]) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const el = document.getElementById('cfg-'+key);
-    if (el) { el.innerHTML=`<img src="${e.target.result}" alt="">`; el.style.background='transparent'; }
-    if (key==='lider') { document.getElementById('u-av').innerHTML=`<img src="${e.target.result}" alt="">`; document.getElementById('u-av').style.background='transparent'; }
-  };
-  reader.readAsDataURL(input.files[0]);
-}
-function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.style.opacity='1'; clearTimeout(t._t); t._t=setTimeout(()=>t.style.opacity='0',3200); }
-</script>
+// ══════════════════════════════════════════════════════════════════════════
+</script></script>
 </body>
 </html>
