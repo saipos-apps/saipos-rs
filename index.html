@@ -142,6 +142,47 @@ tbody tr:hover td { background:#f8faff; } tbody tr:last-child td { border-bottom
 
 <!-- Configuração do Firebase -->
 <script src="firebase-config.js"></script>
+
+  <script>
+// Sobrescrever doLogin com versão corrigida
+async function doLogin() {
+  const email = document.getElementById('email');
+  const senha = document.getElementById('password');
+  
+  if (!email || !senha) {
+    alert('Erro: Campos não encontrados');
+    return;
+  }
+  
+  const emailValue = email.value.trim();
+  const senhaValue = senha.value;
+  
+  if (!emailValue || !senhaValue) {
+    alert('Por favor, preencha email e senha');
+    return;
+  }
+  
+  try {
+    console.log('🔐 Fazendo login...');
+    const usuario = await loginUsuario(emailValue, senhaValue);
+    
+    console.log('✅ Login OK:', usuario.nome);
+    alert('Login realizado com sucesso!\\n\\nUsuário: ' + usuario.nome + '\\nEmail: ' + usuario.email);
+    
+    // Salvar usuário
+    window.currentUser = usuario;
+    
+    // Esconder login
+    const loginScreen = document.getElementById('login-screen');
+    if (loginScreen) loginScreen.style.display = 'none';
+    
+  } catch (error) {
+    console.error('❌ Erro:', error);
+    alert('Erro no login: ' + (error.message || 'Verifique email e senha'));
+  }
+}
+</script>
+
 </head>
 <body>
 
