@@ -23,7 +23,7 @@
 }
 html,body { height:100%; font-family:'Poppins',sans-serif; background:var(--bg); color:var(--text); overflow:hidden; }
 
-/* ── LOGIN ── */
+/* LOGIN */
 #login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; background:url('https://i.imgur.com/uZRAIxu.jpeg') center/cover no-repeat; }
 #login-screen::before { content:''; position:absolute; inset:0; background:rgba(5,25,40,.62); z-index:0; }
 .lcard { background:var(--white); border-radius:22px; padding:42px; width:410px; box-shadow:0 20px 60px rgba(5,25,40,.4); position:relative; z-index:1; animation:fadeUp .5s ease; display:flex; flex-direction:column; align-items:center; }
@@ -40,7 +40,7 @@ html,body { height:100%; font-family:'Poppins',sans-serif; background:var(--bg);
 .lbtn { width:100%; padding:12px; background:var(--primary); color:#fff; border:none; border-radius:var(--rs); font-family:'Poppins',sans-serif; font-size:14px; font-weight:600; cursor:pointer; transition:background .2s; }
 .lbtn:hover { background:var(--primary-dark); }
 
-/* ── APP SHELL ── */
+/* APP */
 #app { display:none; height:100vh; width:100vw; overflow:hidden; }
 .sidebar { position:fixed; left:0; top:0; bottom:0; width:var(--sw); background:var(--primary-dark); display:flex; flex-direction:column; z-index:100; overflow:hidden; }
 .sb-head { padding:18px 16px; border-bottom:1px solid rgba(255,255,255,.06); display:flex; align-items:center; gap:10px; flex-shrink:0; }
@@ -64,8 +64,6 @@ html,body { height:100%; font-family:'Poppins',sans-serif; background:var(--bg);
 .av img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
 .av.sm { width:24px; height:24px; font-size:9px; }
 .av.lg { width:40px; height:40px; font-size:14px; }
-
-/* ── MAIN ── */
 .main { margin-left:var(--sw); height:100vh; overflow-y:auto; padding:20px 24px; }
 .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:10px; }
 .topbar h1 { font-size:19px; font-weight:700; }
@@ -80,8 +78,6 @@ html,body { height:100%; font-family:'Poppins',sans-serif; background:var(--bg);
 .bex.pdf { background:var(--red-bg); color:#dc2626; border-color:#fca5a5; }
 .bex.xls { background:var(--green-bg); color:#059669; border-color:#a7f3d0; }
 .bex.eml { background:var(--blue-bg); color:#2563eb; border-color:#93c5fd; }
-
-/* ── KPI ── */
 .kgrid { display:grid; grid-template-columns:repeat(4,1fr); gap:13px; margin-bottom:16px; }
 .kcard { background:#fff; border-radius:var(--r); padding:15px 17px; box-shadow:var(--sh); border:1px solid var(--border); transition:transform .15s; }
 .kcard:hover { transform:translateY(-2px); box-shadow:var(--sh2); }
@@ -93,8 +89,6 @@ html,body { height:100%; font-family:'Poppins',sans-serif; background:var(--bg);
 .kdelta.dn { background:var(--red-bg); color:var(--red); }
 .kico { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
 .kico svg { width:16px; height:16px; }
-
-/* ── CARDS ── */
 .card { background:#fff; border-radius:var(--r); padding:17px 19px; box-shadow:var(--sh); border:1px solid var(--border); }
 .stitle { font-size:14px; font-weight:700; color:var(--text); margin-bottom:11px; display:flex; align-items:center; gap:7px; }
 .g21 { display:grid; grid-template-columns:2fr 1fr; gap:13px; margin-bottom:16px; }
@@ -110,6 +104,7 @@ tbody tr:hover td { background:#f8faff; } tbody tr:last-child td { border-bottom
 .b-warn { background:var(--yellow-bg); color:#d97706; }
 .b-err { background:var(--red-bg); color:#dc2626; }
 .b-pri { background:var(--primary-faint); color:var(--primary); }
+.b-gray { background:#f3f4f6; color:#6b7280; }
 .panel { display:none; }
 .panel.active { display:block; animation:slin .2s ease; }
 @keyframes slin { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
@@ -165,7 +160,7 @@ tbody tr:hover td { background:#f8faff; } tbody tr:last-child td { border-bottom
       <span class="sb-brand">Gestão de R&S</span>
     </div>
     <div class="sb-user" onclick="showPanel('cfg',null)">
-      <div class="av" style="background:#3a54b0;" id="u-av">HK</div>
+      <div class="av" style="background:#3a54b0" id="u-av">HK</div>
       <div><div class="sb-name" id="u-nm">Heitor Kersting</div><div class="sb-role" id="u-rl">Líder de Recrutamento</div></div>
     </div>
     <div class="sb-nav">
@@ -191,11 +186,11 @@ tbody tr:hover td { background:#f8faff; } tbody tr:last-child td { border-bottom
     <!-- DASHBOARD -->
     <div id="panel-dash" class="panel active">
       <div class="topbar">
-        <div><h1>Dashboard</h1><p id="dash-sub">Visão geral do time · Abril 2026</p></div>
+        <div><h1>Dashboard</h1><p id="dash-sub">Visão geral do time</p></div>
         <div class="tr"><div class="chip" onclick="loadData()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Atualizar</div></div>
       </div>
       <div id="dash-load" class="spin-wrap"><div class="spinner"></div>Carregando dados das planilhas...</div>
-      <div id="dash-body" style="display:none;">
+      <div id="dash-body" style="display:none">
         <div class="kgrid">
           <div class="kcard"><div class="kico" style="background:#e8ecf7"><svg viewBox="0 0 24 24" fill="none" stroke="#263C85" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="klbl">Entrevistas no mês</div><div class="kval" id="k-ent">—</div><span class="kdelta up" id="k-ent-d"></span></div>
           <div class="kcard"><div class="kico" style="background:#d1fae5"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="klbl">Taxa de aprovação</div><div class="kval" style="color:#059669" id="k-tax">—</div><span class="kdelta up" id="k-tax-d"></span></div>
@@ -204,14 +199,14 @@ tbody tr:hover td { background:#f8faff; } tbody tr:last-child td { border-bottom
         </div>
         <div class="g21">
           <div class="card">
-            <div class="stitle">Evolução · <span id="mes-label-evol">Abril 2026</span> em diante</div>
-            <div style="display:flex;gap:14px;margin-bottom:8px;font-size:11px;">
-              <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:3px;background:#263C85;border-radius:2px;display:inline-block"></span>Entrevistas</span>
-              <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:3px;background:#10b981;border-radius:2px;display:inline-block"></span>Aprovações</span>
+            <div class="stitle">Evolução · <span id="mes-evol"></span> em diante</div>
+            <div style="display:flex;gap:14px;margin-bottom:8px;font-size:11px">
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:3px;background:#263C85;border-radius:2px;display:inline-block"></span>Entrevistas</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:3px;background:#10b981;border-radius:2px;display:inline-block"></span>Aprovações</span>
             </div>
             <div style="position:relative;height:170px"><canvas id="ch-evol"></canvas></div>
           </div>
-          <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center">
             <div class="stitle">Vagas entregues vs Meta</div>
             <div style="position:relative;height:155px;width:100%"><canvas id="ch-vmet"></canvas></div>
             <div id="vmet-lbl" style="font-size:12px;color:var(--muted);margin-top:6px;text-align:center"></div>
@@ -226,7 +221,7 @@ tbody tr:hover td { background:#f8faff; } tbody tr:last-child td { border-bottom
 
     <!-- RECRUTADORES -->
     <div id="panel-rec" class="panel">
-      <div class="topbar"><div><h1>Recrutadores</h1><p>Desempenho individual · <span id="mes-rec"></span></p></div></div>
+      <div class="topbar"><div><h1>Recrutadores</h1><p id="mes-rec"></p></div></div>
       <div class="card" style="margin-bottom:14px">
         <div class="stitle">Taxa de aprovação vs Meta (%)</div>
         <div style="position:relative;height:190px"><canvas id="ch-rec"></canvas></div>
@@ -256,16 +251,40 @@ tbody tr:hover td { background:#f8faff; } tbody tr:last-child td { border-bottom
 
     <!-- COMISSÕES -->
     <div id="panel-com" class="panel">
-      <div class="topbar"><div><h1>Comissões</h1><p><span id="mes-com"></span></p></div></div>
-      <div class="kgrid" style="grid-template-columns:1fr 1fr;margin-bottom:14px">
-        <div class="kcard"><div class="klbl">Total do time</div><div class="kval" style="color:#2563eb;font-size:21px" id="com-tot">—</div></div>
-        <div class="kcard"><div class="klbl">Segurança mínima</div><div class="kval" style="font-size:21px">R$ 350</div><span class="kdelta up">Garantida a todos</span></div>
+      <div class="topbar"><div><h1>Comissões</h1><p id="mes-com"></p></div></div>
+
+      <!-- KPIs comissão -->
+      <div class="kgrid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px">
+        <div class="kcard">
+          <div class="kico" style="background:#dbeafe"><svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+          <div class="klbl">Total de comissões</div>
+          <div class="kval" style="color:#2563eb;font-size:21px" id="com-tot">—</div>
+          <span class="kdelta ok" id="com-acl-lbl"></span>
+        </div>
+        <div class="kcard">
+          <div class="kico" style="background:#d1fae5"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div class="klbl">Total de bônus</div>
+          <div class="kval" style="color:#059669;font-size:21px" id="bon-tot">R$ 0,00</div>
+          <span class="kdelta up" id="bon-count-lbl"></span>
+        </div>
+        <div class="kcard">
+          <div class="kico" style="background:#fef3c7"><svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
+          <div class="klbl">Total a pagar</div>
+          <div class="kval" style="color:#d97706;font-size:21px" id="com-total-pagar">—</div>
+          <span class="kdelta ok">Comissão + bônus</span>
+        </div>
       </div>
+
+      <!-- Detalhamento -->
       <div class="card" style="margin-bottom:14px">
         <div class="stitle">Detalhamento por recrutador</div>
-        <table><thead><tr><th>Recrutador</th><th>Vagas fechadas</th><th>Comissão base</th><th>Multiplicador</th><th>Acelerador</th><th>Total a receber</th></tr></thead>
-        <tbody id="com-tb"></tbody></table>
+        <table>
+          <thead><tr><th>Recrutador</th><th>Vagas fechadas</th><th>Comissão base</th><th>Acelerador</th><th>Bônus do acelerador</th><th>Total comissão</th></tr></thead>
+          <tbody id="com-tb"></tbody>
+        </table>
       </div>
+
+      <!-- Bônus -->
       <div class="card" style="margin-bottom:14px">
         <div class="stitle">🎁 Bônus extras</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:11px">
@@ -276,17 +295,36 @@ tbody tr:hover td { background:#f8faff; } tbody tr:last-child td { border-bottom
         </div>
         <div id="bon-list"></div>
       </div>
+
+      <!-- Histórico de pagamentos -->
+      <div class="card" style="margin-bottom:14px">
+        <div class="stitle">📅 Histórico de pagamentos</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Registre os pagamentos realizados para controle histórico.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:11px">
+          <div><label class="fl">Recrutador</label><select class="fi" id="hist-r"><option value="">Selecione...</option><option>Matheus Souza</option><option>Amanda Antunes</option><option>Lithielle Goulardt</option></select></div>
+          <div><label class="fl">Mês de referência</label><input type="text" class="fi" id="hist-mes" placeholder="Ex: Abril 2026"></div>
+          <div><label class="fl">Valor pago (R$)</label><input type="number" class="fi" id="hist-val" placeholder="540"></div>
+          <button class="btn" onclick="addHistorico()" style="height:39px">Registrar</button>
+        </div>
+        <div id="hist-list">
+          <table><thead><tr><th>Recrutador</th><th>Mês</th><th>Valor pago</th><th>Registrado em</th></tr></thead>
+          <tbody id="hist-tb"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:16px">Nenhum pagamento registrado ainda.</td></tr></tbody></table>
+        </div>
+      </div>
+
+      <!-- Tabela acelerador -->
       <div class="card">
         <div class="stitle">📊 Tabela de acelerador</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:10px">O acelerador é um bônus percentual sobre a comissão base. Acelerador 1x = sem bônus.</p>
         <table class="acc-tbl" id="acc-t">
-          <thead><tr><th>Fechamento de vagas</th><th>Multiplicador</th></tr></thead>
+          <thead><tr><th>Fechamento de vagas</th><th>Acelerador</th><th>Bônus sobre a comissão</th></tr></thead>
           <tbody>
-            <tr><td>Até 60%</td><td>—</td></tr>
-            <tr><td>61% – 80%</td><td>1.2x</td></tr>
-            <tr><td>81% – 90%</td><td>1.4x</td></tr>
-            <tr><td>91% – 95%</td><td>1.8x</td></tr>
-            <tr><td>96% – 100%</td><td>2.0x</td></tr>
-            <tr><td>+ 100%</td><td>2.5x</td></tr>
+            <tr><td>Até 60%</td><td>1x</td><td style="color:var(--muted)">Sem bônus</td></tr>
+            <tr><td>61% – 80%</td><td>1.2x</td><td style="color:#059669">+ 20% da comissão base</td></tr>
+            <tr><td>81% – 90%</td><td>1.4x</td><td style="color:#059669">+ 40% da comissão base</td></tr>
+            <tr><td>91% – 95%</td><td>1.8x</td><td style="color:#059669">+ 80% da comissão base</td></tr>
+            <tr><td>96% – 100%</td><td>2.0x</td><td style="color:#059669">+ 100% da comissão base</td></tr>
+            <tr><td>+ 100%</td><td>2.5x</td><td style="color:#059669">+ 150% da comissão base</td></tr>
           </tbody>
         </table>
       </div>
@@ -297,7 +335,7 @@ tbody tr:hover td { background:#f8faff; } tbody tr:last-child td { border-bottom
       <div class="topbar">
         <div><h1>Metas</h1><p>Configure e envie as metas mensais</p></div>
         <div class="tr">
-          <button class="bex eml" onclick="enviarMetasEmail()">Enviar metas por e-mail</button>
+          <button class="bex eml" onclick="enviarMetasEmail()">Enviar por e-mail</button>
           <button class="btn" onclick="toast('Metas salvas!')">Salvar metas</button>
         </div>
       </div>
@@ -325,9 +363,21 @@ tbody tr:hover td { background:#f8faff; } tbody tr:last-child td { border-bottom
       <div class="card">
         <div class="stitle">🎯 Metas do time</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
-          <div style="padding:12px 14px;background:var(--bg);border-radius:10px"><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Entrevistas/mês</div><div style="display:flex;align-items:center;gap:6px"><input type="number" value="100" id="m-ent" style="width:70px;padding:6px 9px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;color:var(--primary);outline:none" onchange="recalc()"><span style="font-size:12px;color:var(--muted)">entrevistas</span></div><div style="font-size:11px;color:var(--muted);margin-top:6px" id="ref-ent"></div></div>
-          <div style="padding:12px 14px;background:var(--bg);border-radius:10px"><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Vagas entregues</div><div style="display:flex;align-items:center;gap:6px"><input type="number" value="20" id="m-vag" style="width:70px;padding:6px 9px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;color:var(--primary);outline:none" onchange="recalc()"><span style="font-size:12px;color:var(--muted)">vagas</span></div><div style="font-size:11px;color:var(--muted);margin-top:6px" id="ref-vag"></div></div>
-          <div style="padding:12px 14px;background:var(--bg);border-radius:10px"><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Vagas por recrutador</div><div style="display:flex;align-items:center;gap:6px"><input type="number" value="7" id="m-vagrec" style="width:70px;padding:6px 9px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;color:var(--primary);outline:none" onchange="recalc()"><span style="font-size:12px;color:var(--muted)">vagas/rec</span></div><div style="font-size:11px;color:var(--muted);margin-top:6px">Usado no acelerador</div></div>
+          <div style="padding:12px 14px;background:var(--bg);border-radius:10px">
+            <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Entrevistas/mês</div>
+            <div style="display:flex;align-items:center;gap:6px"><input type="number" value="100" id="m-ent" style="width:70px;padding:6px 9px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;color:var(--primary);outline:none" onchange="recalc()"><span style="font-size:12px;color:var(--muted)">entrevistas</span></div>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px" id="ref-ent"></div>
+          </div>
+          <div style="padding:12px 14px;background:var(--bg);border-radius:10px">
+            <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Vagas entregues</div>
+            <div style="display:flex;align-items:center;gap:6px"><input type="number" value="20" id="m-vag" style="width:70px;padding:6px 9px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;color:var(--primary);outline:none" onchange="recalc()"><span style="font-size:12px;color:var(--muted)">vagas</span></div>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px" id="ref-vag"></div>
+          </div>
+          <div style="padding:12px 14px;background:var(--bg);border-radius:10px">
+            <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Vagas por recrutador</div>
+            <div style="display:flex;align-items:center;gap:6px"><input type="number" value="7" id="m-vagrec" style="width:70px;padding:6px 9px;border:1.5px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;color:var(--primary);outline:none" onchange="recalc()"><span style="font-size:12px;color:var(--muted)">vagas/rec</span></div>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px">Usado no acelerador</div>
+          </div>
         </div>
       </div>
     </div>
@@ -359,7 +409,7 @@ tbody tr:hover td { background:#f8faff; } tbody tr:last-child td { border-bottom
       <div class="card">
         <div class="stitle">💸 Relatório de Comissões · Financeiro</div>
         <div style="background:var(--bg);border-radius:9px;padding:13px;margin-bottom:11px;border:1px solid var(--border)">
-          <table><thead><tr><th>Recrutador</th><th>Vagas fechadas</th><th>Comissão base</th><th>Acelerador</th><th>Bônus</th><th>Total a pagar</th></tr></thead>
+          <table><thead><tr><th>Recrutador</th><th>Vagas fechadas</th><th>Comissão base</th><th>Bônus acelerador</th><th>Bônus extra</th><th>Total a pagar</th></tr></thead>
           <tbody id="rel-fin"></tbody></table>
         </div>
         <div style="display:flex;gap:8px">
@@ -418,202 +468,230 @@ tbody tr:hover td { background:#f8faff; } tbody tr:last-child td { border-bottom
 // ── USUÁRIOS ──
 let USERS = { 'heitor@saipos.com':{ senha:'saipos2026', nome:'Heitor Kersting', role:'Líder de Recrutamento', ini:'HK', color:'#3a54b0', lider:true } };
 let bonusData = [];
+let historico = [];
 let G = null;
 
 const RC = {
-  ms:{ nome:'Matheus Souza',   color:'var(--ms)', ini:'MS' },
-  aa:{ nome:'Amanda Antunes',  color:'var(--aa)', ini:'AA' },
+  ms:{ nome:'Matheus Souza',    color:'var(--ms)', ini:'MS' },
+  aa:{ nome:'Amanda Antunes',   color:'var(--aa)', ini:'AA' },
   lg:{ nome:'Lithielle Goulardt',color:'var(--lg)',ini:'LG' },
 };
 
+// ── COMISSÃO: nova lógica ──
+// acelerador retorna o MULTIPLICADOR (ex: 1.4)
+// bônus do acelerador = comBase * (mult - 1)
+// se mult = 1, bônus = 0
+// total comissão = comBase + bonusAcel
+// se comBase = 0, total = 0
+function getAcelerador(pct) {
+  if (pct <= 60)  return 1;
+  if (pct <= 80)  return 1.2;
+  if (pct <= 90)  return 1.4;
+  if (pct <= 95)  return 1.8;
+  if (pct <= 100) return 2.0;
+  return 2.5;
+}
+function calcComissao(comBase, acl) {
+  if (comBase <= 0) return { comBase: 0, bonusAcel: 0, total: 0 };
+  const bonusAcel = comBase * (acl - 1);
+  return { comBase, bonusAcel, total: comBase + bonusAcel };
+}
+
 // ── AUTH ──
-function doLogin(){
-  const em=document.getElementById('le').value.trim().toLowerCase();
-  const pw=document.getElementById('lp').value;
-  const u=USERS[em];
-  if(!u||u.senha!==pw){document.getElementById('lerr').style.display='block';return;}
-  document.getElementById('lerr').style.display='none';
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app').style.display='flex';
-  document.getElementById('u-nm').textContent=u.nome;
-  document.getElementById('u-rl').textContent=u.role;
-  document.getElementById('u-av').textContent=u.ini;
-  document.getElementById('u-av').style.background=u.color;
-  if(!u.lider) document.getElementById('nav-rec').style.display='none';
-  const meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  const mes=meses[new Date().getMonth()]+' '+new Date().getFullYear();
-  document.querySelectorAll('.mes-ref,[id^="mes-"]').forEach(el=>{if(el.tagName!=='INPUT')el.textContent=mes;});
-  document.getElementById('dash-sub').textContent='Visão geral do time · '+mes;
-  document.getElementById('mes-label-evol').textContent=mes;
-  if(document.getElementById('mes-rec')) document.getElementById('mes-rec').textContent=mes;
-  if(document.getElementById('mes-com')) document.getElementById('mes-com').textContent=mes;
+function doLogin() {
+  const em = document.getElementById('le').value.trim().toLowerCase();
+  const pw = document.getElementById('lp').value;
+  const u = USERS[em];
+  if (!u || u.senha !== pw) { document.getElementById('lerr').style.display = 'block'; return; }
+  document.getElementById('lerr').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('u-nm').textContent = u.nome;
+  document.getElementById('u-rl').textContent = u.role;
+  document.getElementById('u-av').textContent = u.ini;
+  document.getElementById('u-av').style.background = u.color;
+  if (!u.lider) document.getElementById('nav-rec').style.display = 'none';
+  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const mes = meses[new Date().getMonth()] + ' ' + new Date().getFullYear();
+  document.getElementById('dash-sub').textContent = 'Visão geral do time · ' + mes;
+  document.getElementById('mes-evol').textContent = mes;
+  document.getElementById('mes-rec').textContent = 'Desempenho individual · ' + mes;
+  document.getElementById('mes-com').textContent = mes;
   loadData();
 }
-function doLogout(){document.getElementById('login-screen').style.display='flex';document.getElementById('app').style.display='none';}
+function doLogout() { document.getElementById('login-screen').style.display = 'flex'; document.getElementById('app').style.display = 'none'; }
 
-function showPanel(n,el){
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));
-  document.getElementById('panel-'+n).classList.add('active');
-  if(el?.classList?.contains('ni')) el.classList.add('active');
+function showPanel(n, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(x => x.classList.remove('active'));
+  document.getElementById('panel-' + n).classList.add('active');
+  if (el?.classList?.contains('ni')) el.classList.add('active');
 }
 
 // ── LOAD ──
-async function loadData(){
-  document.getElementById('dash-load').style.display='flex';
-  document.getElementById('dash-body').style.display='none';
-  try{
-    const r=await fetch('/api/sheets');
-    const d=await r.json();
-    if(!d.ok) throw new Error(d.error);
-    G=d;
+async function loadData() {
+  document.getElementById('dash-load').style.display = 'flex';
+  document.getElementById('dash-body').style.display = 'none';
+  try {
+    const r = await fetch('/api/sheets');
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error);
+    G = d;
     renderAll();
-    document.getElementById('dash-load').style.display='none';
-    document.getElementById('dash-body').style.display='block';
-  }catch(e){
-    document.getElementById('dash-load').innerHTML=`<span style="color:var(--red)">Erro ao carregar: ${e.message}</span>`;
+    document.getElementById('dash-load').style.display = 'none';
+    document.getElementById('dash-body').style.display = 'block';
+  } catch(e) {
+    document.getElementById('dash-load').innerHTML = `<span style="color:var(--red)">Erro: ${e.message}</span>`;
   }
 }
-function recalc(){if(G) renderAll();}
-function renderAll(){renderDash();renderRec();renderVag();renderCom();renderRel();}
+function recalc() { if (G) renderAll(); }
+function renderAll() { renderDash(); renderRec(); renderVag(); renderCom(); renderRel(); }
 
 // ── HELPERS ──
-function brl(v){return 'R$ '+parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function acl(pct){if(pct<=60)return 1;if(pct<=80)return 1.2;if(pct<=90)return 1.4;if(pct<=95)return 1.8;if(pct<=100)return 2.0;return 2.5;}
-function isOffer(v){return(v.offer||'').toString().toUpperCase().includes('ACEI');}
-function getMetas(){
-  return{
-    aprov:parseInt(document.getElementById('m-ms')?.value||70),
-    ent:parseInt(document.getElementById('m-ent')?.value||100),
-    vag:parseInt(document.getElementById('m-vag')?.value||20),
-    vagRec:parseInt(document.getElementById('m-vagrec')?.value||7),
+function brl(v) { return 'R$ ' + parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function isOffer(v) { return (v.offer||'').toString().toUpperCase().includes('ACEI'); }
+function getMetas() {
+  return {
+    aprov:   parseInt(document.getElementById('m-ms')?.value || 70),
+    ent:     parseInt(document.getElementById('m-ent')?.value || 100),
+    vag:     parseInt(document.getElementById('m-vag')?.value || 20),
+    vagRec:  parseInt(document.getElementById('m-vagrec')?.value || 7),
   };
 }
-function calcStats(r){
-  const ent=r?.entrevistas||[];
-  const com=r?.comissao||[];
-  const total=ent.length;
-  const aprov=ent.filter(e=>(e.resultado||'').toUpperCase()==='APROVADO').length;
-  const taxa=total>0?Math.round((aprov/total)*100):0;
-  // Pendentes = AGUARDANDO (sem resultado ainda, mas que já terminou)
-  const pend=ent.filter(e=>!(e.resultado||'').trim()||(e.status||'').toUpperCase()==='AGUARDANDO').length;
-  // Comissão base = soma dos valores já convertidos para número na API
-  const comBase=com.reduce((a,c)=>a+(parseFloat(c.valor)||0),0);
-  const vagAb=(r?.vagas||[]).filter(v=>!isOffer(v)).length;
-  const vagFe=(r?.vagas||[]).filter(isOffer).length;
-  return{total,aprov,taxa,pend,comBase,vagAb,vagFe,vagEnt:r?.vagasEntreguesM1||0,vagTot:r?.totalVagasC1||0};
+function calcStats(r) {
+  const ent = r?.entrevistas || [];
+  const com = r?.comissao || [];
+  const total = ent.length;
+  const aprov = ent.filter(e => (e.resultado||'').toUpperCase() === 'APROVADO').length;
+  const taxa = total > 0 ? Math.round((aprov/total)*100) : 0;
+  const pend = ent.filter(e => (e.status||'').toUpperCase() === 'AGUARDANDO').length;
+  const comBase = com.reduce((a, c) => a + (parseFloat(c.valor) || 0), 0);
+  return { total, aprov, taxa, pend, comBase, vagEnt: r?.vagasEntreguesM1||0, vagTot: r?.totalVagasC1||0 };
 }
 
 // ── DASHBOARD ──
-let chEvol=null,chVmet=null;
-function renderDash(){
-  const ent=G.entrevistas||[];
-  const mt=getMetas();
-  const total=ent.length;
-  const aprov=ent.filter(e=>(e.resultado||'').toUpperCase()==='APROVADO').length;
-  const taxa=total>0?Math.round((aprov/total)*100):0;
-  const vagEnt=G.vagasEntreguesM1||0;
-  const vagTot=G.totalVagasC1||0;
-  const vagAb=vagTot-vagEnt;
-  const pctVag=mt.vag>0?Math.round((vagEnt/mt.vag)*100):0;
-  const a=acl(pctVag);
+let chEvol=null, chVmet=null;
+function renderDash() {
+  const ent = G.entrevistas || [];
+  const mt = getMetas();
+  const total = ent.length;
+  const aprov = ent.filter(e => (e.resultado||'').toUpperCase() === 'APROVADO').length;
+  const taxa = total > 0 ? Math.round((aprov/total)*100) : 0;
+  const vagEnt = G.vagasEntreguesM1 || 0;
+  const vagTot = G.totalVagasC1 || 0;
+  const vagAb = Math.max(vagTot - vagEnt, 0);
+  const pctVag = mt.vag > 0 ? Math.round((vagEnt/mt.vag)*100) : 0;
+  const aclMult = getAcelerador(pctVag);
 
-  // Comissão total dos 3
-  let comTot=0;
-  ['ms','aa','lg'].forEach(k=>{const s=calcStats(G.porRecrutador?.[k]);comTot+=Math.max(s.comBase*a,350);});
+  // Comissão total
+  let comTotGeral = 0;
+  ['ms','aa','lg'].forEach(k => {
+    const s = calcStats(G.porRecrutador?.[k]);
+    const c = calcComissao(s.comBase, aclMult);
+    comTotGeral += c.total;
+  });
 
-  document.getElementById('k-ent').textContent=total;
-  document.getElementById('k-ent-d').textContent=`${aprov} aprovados`;
-  document.getElementById('k-tax').textContent=taxa+'%';
-  document.getElementById('k-tax-d').textContent=`${aprov} de ${total}`;
-  document.getElementById('k-vag').textContent=vagAb<0?0:vagAb;
-  document.getElementById('k-vag-d').textContent=`${vagEnt} fechadas no mês`;
-  document.getElementById('k-com').textContent=brl(comTot);
-  document.getElementById('k-com-d').textContent=`Acelerador: ${a}x`;
-  if(document.getElementById('ref-ent')) document.getElementById('ref-ent').textContent=`Atual: ${total}`;
-  if(document.getElementById('ref-vag')) document.getElementById('ref-vag').textContent=`Atual: ${vagEnt} entregues`;
-  document.querySelectorAll('#real-ms,#real-aa,#real-lg').forEach((el,i)=>{
-    const k=['ms','aa','lg'][i];
-    const s=calcStats(G.porRecrutador?.[k]);
-    el.textContent=`Realizado: ${s.taxa}%`;
+  document.getElementById('k-ent').textContent = total;
+  document.getElementById('k-ent-d').textContent = `${aprov} aprovados`;
+  document.getElementById('k-tax').textContent = taxa + '%';
+  document.getElementById('k-tax-d').textContent = `${aprov} de ${total}`;
+  document.getElementById('k-vag').textContent = vagAb;
+  document.getElementById('k-vag-d').textContent = `${vagEnt} fechadas no mês`;
+  document.getElementById('k-com').textContent = brl(comTotGeral);
+  document.getElementById('k-com-d').textContent = aclMult > 1 ? `Acelerador ${aclMult}x ativo` : 'Sem acelerador';
+
+  if (document.getElementById('ref-ent')) document.getElementById('ref-ent').textContent = `Atual: ${total}`;
+  if (document.getElementById('ref-vag')) document.getElementById('ref-vag').textContent = `Atual: ${vagEnt} entregues`;
+  ['ms','aa','lg'].forEach((k,i) => {
+    const s = calcStats(G.porRecrutador?.[k]);
+    const el = document.getElementById('real-' + k);
+    if (el) el.textContent = `Realizado: ${s.taxa}%`;
   });
 
   // Gráfico evolução
-  if(chEvol) chEvol.destroy();
-  chEvol=new Chart(document.getElementById('ch-evol'),{type:'line',
-    data:{labels:['Abr','Mai','Jun','Jul','Ago','Set'],
+  if (chEvol) chEvol.destroy();
+  chEvol = new Chart(document.getElementById('ch-evol'), {
+    type:'line',
+    data:{ labels:['Abr','Mai','Jun','Jul','Ago','Set'],
       datasets:[
-        {label:'Entrevistas',data:[total,null,null,null,null,null],borderColor:'#263C85',backgroundColor:'rgba(38,60,133,.08)',borderWidth:2.5,tension:.4,fill:true,pointBackgroundColor:'#263C85',pointRadius:5,spanGaps:false},
-        {label:'Aprovações',data:[aprov,null,null,null,null,null],borderColor:'#10b981',backgroundColor:'rgba(16,185,129,.05)',borderWidth:2,tension:.4,fill:true,pointBackgroundColor:'#10b981',pointRadius:5,borderDash:[5,4],spanGaps:false}
+        { label:'Entrevistas', data:[total,null,null,null,null,null], borderColor:'#263C85', backgroundColor:'rgba(38,60,133,.08)', borderWidth:2.5, tension:.4, fill:true, pointBackgroundColor:'#263C85', pointRadius:5, spanGaps:false },
+        { label:'Aprovações',  data:[aprov,null,null,null,null,null], borderColor:'#10b981', backgroundColor:'rgba(16,185,129,.05)', borderWidth:2, tension:.4, fill:true, pointBackgroundColor:'#10b981', pointRadius:5, borderDash:[5,4], spanGaps:false }
       ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#e5e9f2'},ticks:{font:{family:'Poppins',size:10}}},y:{grid:{color:'#e5e9f2'},ticks:{font:{family:'Poppins',size:10}}}}}
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{grid:{color:'#e5e9f2'},ticks:{font:{family:'Poppins',size:10}}}, y:{grid:{color:'#e5e9f2'},ticks:{font:{family:'Poppins',size:10}}} } }
   });
 
   // Gráfico vagas meta
-  if(chVmet) chVmet.destroy();
-  chVmet=new Chart(document.getElementById('ch-vmet'),{type:'doughnut',
-    data:{labels:['Entregues','Restantes'],datasets:[{data:[vagEnt,Math.max(mt.vag-vagEnt,0)],backgroundColor:['#263C85','#e5e9f2'],borderWidth:0,hoverOffset:4}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}
+  if (chVmet) chVmet.destroy();
+  chVmet = new Chart(document.getElementById('ch-vmet'), {
+    type:'doughnut',
+    data:{ labels:['Entregues','Restantes'], datasets:[{ data:[vagEnt, Math.max(mt.vag-vagEnt,0)], backgroundColor:['#263C85','#e5e9f2'], borderWidth:0, hoverOffset:4 }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'68%', plugins:{legend:{display:false}} }
   });
-  document.getElementById('vmet-lbl').textContent=`${vagEnt} de ${mt.vag} vagas · ${pctVag}%`;
+  document.getElementById('vmet-lbl').textContent = `${vagEnt} de ${mt.vag} vagas · ${pctVag}%`;
 
-  // Acelerador highlight
-  document.querySelectorAll('#acc-t tbody tr').forEach((tr,i)=>{
+  // Highlight acelerador
+  document.querySelectorAll('#acc-t tbody tr').forEach((tr,i) => {
     tr.classList.remove('hi');
-    const ranges=[[0,60],[61,80],[81,90],[91,95],[96,100],[101,9999]];
-    if(pctVag>=ranges[i][0]&&pctVag<=ranges[i][1]) tr.classList.add('hi');
+    const ranges = [[0,60],[61,80],[81,90],[91,95],[96,100],[101,9999]];
+    if (pctVag >= ranges[i][0] && pctVag <= ranges[i][1]) tr.classList.add('hi');
   });
 
   // Comissão dash
-  const comDash=document.getElementById('com-dash');
-  const rows=['ms','aa','lg'].map(k=>{
-    const r=G.porRecrutador?.[k];const cfg=RC[k];
-    const s=calcStats(r);
-    const t=brl(Math.max(s.comBase*a,350));
-    return `<tr><td><div style="display:flex;align-items:center;gap:6px"><div class="av sm" style="background:${cfg.color}">${cfg.ini}</div><strong>${cfg.nome}</strong></div></td><td>${s.vagEnt}</td><td><span class="badge b-ok">${a}x</span></td><td><strong style="color:#2563eb">${t}</strong></td></tr>`;
+  const rows = ['ms','aa','lg'].map(k => {
+    const r = G.porRecrutador?.[k]; const cfg = RC[k];
+    const s = calcStats(r);
+    const c = calcComissao(s.comBase, aclMult);
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:6px"><div class="av sm" style="background:${cfg.color}">${cfg.ini}</div><strong>${cfg.nome}</strong></div></td>
+      <td>${s.vagEnt}</td>
+      <td>${aclMult > 1 ? `<span class="badge b-ok">${aclMult}x</span>` : '<span class="badge b-gray">1x</span>'}</td>
+      <td><strong style="color:#2563eb">${brl(c.total)}</strong></td>
+    </tr>`;
   }).join('');
-  comDash.innerHTML=`<table><thead><tr><th>Recrutador</th><th>Vagas fechadas</th><th>Acelerador</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table>`;
+  document.getElementById('com-dash').innerHTML = `<table><thead><tr><th>Recrutador</th><th>Vagas fechadas</th><th>Acelerador</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table>`;
 
-  // Vagas abertas dash
-  const vagAbertas=(G.vagas||[]).filter(v=>!isOffer(v));
-  document.getElementById('vag-dash').innerHTML=vagAbertas.length===0
-    ?'<p style="font-size:13px;color:var(--muted)">Nenhuma vaga aberta.</p>'
-    :vagAbertas.map(v=>{
-      const isMS=v.recruiter==='Matheus Souza',isAA=v.recruiter==='Amanda Antunes';
-      const c=isMS?'var(--ms)':isAA?'var(--aa)':'var(--lg)';
-      const ini=isMS?'MS':isAA?'AA':'LG';
-      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 11px;background:var(--bg);border-radius:8px"><div><div style="font-size:13px;font-weight:600">${v.vaga}</div><div style="display:flex;align-items:center;gap:4px;margin-top:2px"><div class="av sm" style="background:${c};width:16px;height:16px;font-size:8px">${ini}</div><span style="font-size:11px;color:var(--muted)">${v.recruiter}</span></div></div><span class="badge b-pri">Aberta</span></div>`;
-    }).join('');
+  // Vagas abertas
+  const vagAbertas = (G.vagas||[]).filter(v => !isOffer(v));
+  document.getElementById('vag-dash').innerHTML = vagAbertas.length === 0
+    ? '<p style="font-size:13px;color:var(--muted)">Nenhuma vaga aberta.</p>'
+    : vagAbertas.map(v => {
+        const isMS=v.recruiter==='Matheus Souza', isAA=v.recruiter==='Amanda Antunes';
+        const c=isMS?'var(--ms)':isAA?'var(--aa)':'var(--lg)';
+        const ini=isMS?'MS':isAA?'AA':'LG';
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 11px;background:var(--bg);border-radius:8px">
+          <div><div style="font-size:13px;font-weight:600">${v.vaga}</div>
+          <div style="display:flex;align-items:center;gap:4px;margin-top:2px"><div class="av sm" style="background:${c};width:16px;height:16px;font-size:8px">${ini}</div><span style="font-size:11px;color:var(--muted)">${v.recruiter}</span></div></div>
+          <span class="badge b-pri">Aberta</span></div>`;
+      }).join('');
 }
 
 // ── RECRUTADORES ──
-let chRec=null,chEnt=null;
-function renderRec(){
-  if(!G) return;
-  const mt=getMetas();
-  const vagEnt=G.vagasEntreguesM1||0;
-  const pctVag=mt.vag>0?Math.round((vagEnt/mt.vag)*100):0;
-  const a=acl(pctVag);
-  const stats=['ms','aa','lg'].map(k=>({k,...calcStats(G.porRecrutador?.[k]),...RC[k]}));
+let chRec=null, chEnt=null;
+function renderRec() {
+  if (!G) return;
+  const mt = getMetas();
+  const vagEnt = G.vagasEntreguesM1 || 0;
+  const pctVag = mt.vag > 0 ? Math.round((vagEnt/mt.vag)*100) : 0;
+  const aclMult = getAcelerador(pctVag);
+  const stats = ['ms','aa','lg'].map(k => ({ k, ...calcStats(G.porRecrutador?.[k]), ...RC[k] }));
 
-  // Gráfico barras
-  if(chRec) chRec.destroy();
-  chRec=new Chart(document.getElementById('ch-rec'),{type:'bar',
-    data:{labels:stats.map(s=>s.nome.split(' ')[0]),
+  if (chRec) chRec.destroy();
+  chRec = new Chart(document.getElementById('ch-rec'), {
+    type:'bar',
+    data:{ labels: stats.map(s => s.nome.split(' ')[0]),
       datasets:[
-        {label:'Meta',data:stats.map(()=>mt.aprov),backgroundColor:'rgba(38,60,133,.15)',borderRadius:6,borderSkipped:false},
-        {label:'Realizado',data:stats.map(s=>s.taxa),backgroundColor:['#059669','#7c3aed','#0891b2'],borderRadius:6,borderSkipped:false}
+        { label:'Meta', data:stats.map(()=>mt.aprov), backgroundColor:'rgba(38,60,133,.15)', borderRadius:6, borderSkipped:false },
+        { label:'Realizado', data:stats.map(s=>s.taxa), backgroundColor:['#059669','#7c3aed','#0891b2'], borderRadius:6, borderSkipped:false }
       ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{family:'Poppins',size:11}}},y:{grid:{color:'#e5e9f2'},ticks:{font:{family:'Poppins',size:10},callback:v=>v+'%'},max:100}}}
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false},ticks:{font:{family:'Poppins',size:11}}}, y:{grid:{color:'#e5e9f2'},ticks:{font:{family:'Poppins',size:10},callback:v=>v+'%'},max:100} } }
   });
 
-  // Cards
-  document.getElementById('rec-cards').innerHTML=stats.map(s=>{
-    const prog=mt.aprov>0?Math.min(Math.round((s.taxa/mt.aprov)*100),100):0;
-    const tc=s.taxa>=mt.aprov?'#059669':s.taxa>=mt.aprov*.8?'#d97706':'#dc2626';
-    const bdg=s.taxa>=mt.aprov?'b-ok':s.taxa>=mt.aprov*.8?'b-warn':'b-err';
-    const pc=s.taxa>=mt.aprov?'#10b981':s.taxa>=mt.aprov*.8?'#f59e0b':'#ef4444';
-    const cf=brl(Math.max(s.comBase*a,350));
+  document.getElementById('rec-cards').innerHTML = stats.map(s => {
+    const prog = mt.aprov > 0 ? Math.min(Math.round((s.taxa/mt.aprov)*100), 100) : 0;
+    const tc = s.taxa>=mt.aprov?'#059669':s.taxa>=mt.aprov*.8?'#d97706':'#dc2626';
+    const bdg = s.taxa>=mt.aprov?'b-ok':s.taxa>=mt.aprov*.8?'b-warn':'b-err';
+    const pc = s.taxa>=mt.aprov?'#10b981':s.taxa>=mt.aprov*.8?'#f59e0b':'#ef4444';
+    const c = calcComissao(s.comBase, aclMult);
     return `<div class="ccard" style="border-radius:var(--r)">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:11px;padding-bottom:11px;border-bottom:1px solid var(--border)">
         <div class="av lg" style="background:${s.color}">${s.ini}</div>
@@ -625,7 +703,7 @@ function renderRec(){
         <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Aprovações</span><strong>${s.aprov}</strong></div>
         <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Taxa de aprovação</span><strong style="color:${tc}">${s.taxa}%</strong></div>
         <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Retornos pendentes</span><strong style="color:${s.pend>0?'#dc2626':'#059669'}">${s.pend}</strong></div>
-        <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Comissão acumulada</span><strong style="color:#2563eb">${cf}</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Comissão acumulada</span><strong style="color:#2563eb">${brl(c.total)}</strong></div>
       </div>
       <div style="margin-top:10px">
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:3px"><span>Meta: ${mt.aprov}%</span><span>${s.taxa}%</span></div>
@@ -634,40 +712,39 @@ function renderRec(){
     </div>`;
   }).join('');
 
-  // Pendentes
-  const comPend=stats.filter(s=>s.pend>0);
-  document.getElementById('rec-pend').innerHTML=comPend.length===0
-    ?'<div style="padding:10px;background:var(--green-bg);border-radius:8px;font-size:13px;color:#059669;font-weight:600">✓ Todas com retorno!</div>'
-    :comPend.map(s=>`<div style="background:#fff;border-radius:8px;padding:9px 12px;border:1px solid var(--border);display:flex;align-items:center;gap:8px"><div class="av sm" style="background:${s.color}">${s.ini}</div><div><div style="font-size:13px;font-weight:600">${s.nome}</div><div style="font-size:12px;color:var(--muted)">${s.pend} aguardando retorno</div></div></div>`).join('');
+  const comPend = stats.filter(s => s.pend > 0);
+  document.getElementById('rec-pend').innerHTML = comPend.length === 0
+    ? '<div style="padding:10px;background:var(--green-bg);border-radius:8px;font-size:13px;color:#059669;font-weight:600">✓ Todas com retorno!</div>'
+    : comPend.map(s => `<div style="background:#fff;border-radius:8px;padding:9px 12px;border:1px solid var(--border);display:flex;align-items:center;gap:8px"><div class="av sm" style="background:${s.color}">${s.ini}</div><div><div style="font-size:13px;font-weight:600">${s.nome}</div><div style="font-size:12px;color:var(--muted)">${s.pend} aguardando retorno</div></div></div>`).join('');
 
-  // Gráfico comparativo
-  if(chEnt) chEnt.destroy();
-  chEnt=new Chart(document.getElementById('ch-ent-c'),{type:'bar',
-    data:{labels:stats.map(s=>s.nome.split(' ')[0]),
+  if (chEnt) chEnt.destroy();
+  chEnt = new Chart(document.getElementById('ch-ent-c'), {
+    type:'bar',
+    data:{ labels: stats.map(s=>s.nome.split(' ')[0]),
       datasets:[
-        {label:'Entrevistas',data:stats.map(s=>s.total),backgroundColor:['#059669','#7c3aed','#0891b2'],borderRadius:6},
-        {label:'Aprovações',data:stats.map(s=>s.aprov),backgroundColor:['rgba(16,185,129,.3)','rgba(124,58,237,.3)','rgba(8,145,178,.3)'],borderRadius:6}
+        { label:'Entrevistas', data:stats.map(s=>s.total), backgroundColor:['#059669','#7c3aed','#0891b2'], borderRadius:6 },
+        { label:'Aprovações',  data:stats.map(s=>s.aprov), backgroundColor:['rgba(16,185,129,.3)','rgba(124,58,237,.3)','rgba(8,145,178,.3)'], borderRadius:6 }
       ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{family:'Poppins',size:10}}},y:{grid:{color:'#e5e9f2'},ticks:{font:{family:'Poppins',size:10}}}}}
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false},ticks:{font:{family:'Poppins',size:10}}}, y:{grid:{color:'#e5e9f2'},ticks:{font:{family:'Poppins',size:10}}} } }
   });
 }
 
 // ── VAGAS ──
-let filtroV='Aberta';
-function renderVag(){if(G) renderVagTab();}
-function filtrar(s){
-  filtroV=s;
-  ['ab','fe','to'].forEach(x=>document.getElementById('f-'+x)?.classList.remove('on'));
+let filtroV = 'Aberta';
+function renderVag() { if (G) renderVagTab(); }
+function filtrar(s) {
+  filtroV = s;
+  ['ab','fe','to'].forEach(x => document.getElementById('f-'+x)?.classList.remove('on'));
   document.getElementById({Aberta:'f-ab',Fechada:'f-fe',Todas:'f-to'}[s])?.classList.add('on');
   renderVagTab();
 }
-function renderVagTab(){
-  const all=G?.vagas||[];
-  const f=filtroV==='Todas'?all:filtroV==='Fechada'?all.filter(isOffer):all.filter(v=>!isOffer(v));
-  const tb=document.getElementById('vag-tb');
-  if(!f.length){tb.innerHTML='<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:18px">Nenhuma vaga.</td></tr>';return;}
-  tb.innerHTML=f.map(v=>{
-    const isMS=v.recruiter==='Matheus Souza',isAA=v.recruiter==='Amanda Antunes';
+function renderVagTab() {
+  const all = G?.vagas || [];
+  const f = filtroV==='Todas'?all : filtroV==='Fechada'?all.filter(isOffer) : all.filter(v=>!isOffer(v));
+  const tb = document.getElementById('vag-tb');
+  if (!f.length) { tb.innerHTML='<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:18px">Nenhuma vaga.</td></tr>'; return; }
+  tb.innerHTML = f.map(v => {
+    const isMS=v.recruiter==='Matheus Souza', isAA=v.recruiter==='Amanda Antunes';
     const c=isMS?'var(--ms)':isAA?'var(--aa)':'var(--lg)';
     const ini=isMS?'MS':isAA?'AA':'LG';
     return `<tr><td><strong>${v.vaga}</strong></td><td><div style="display:flex;align-items:center;gap:6px"><div class="av sm" style="background:${c}">${ini}</div>${v.recruiter}</div></td><td>${isOffer(v)?'<span class="badge b-ok">Fechada</span>':'<span class="badge b-pri">Aberta</span>'}</td></tr>`;
@@ -675,184 +752,229 @@ function renderVagTab(){
 }
 
 // ── COMISSÕES ──
-function renderCom(){
-  if(!G) return;
-  const mt=getMetas();
-  const vagEnt=G.vagasEntreguesM1||0;
-  const pctVag=mt.vag>0?Math.round((vagEnt/mt.vag)*100):0;
-  const a=acl(pctVag);
-  let totG=0;
+function renderCom() {
+  if (!G) return;
+  const mt = getMetas();
+  const vagEnt = G.vagasEntreguesM1 || 0;
+  const pctVag = mt.vag > 0 ? Math.round((vagEnt/mt.vag)*100) : 0;
+  const aclMult = getAcelerador(pctVag);
 
-  const rows=['ms','aa','lg'].map(k=>{
-    const r=G.porRecrutador?.[k];const cfg=RC[k];
-    const s=calcStats(r);
-    const t=Math.max(s.comBase*a,350);
-    const va=t-s.comBase;
-    totG+=t;
-    return `<tr><td><div style="display:flex;align-items:center;gap:6px"><div class="av sm" style="background:${cfg.color}">${cfg.ini}</div><strong>${cfg.nome}</strong></div></td><td>${s.vagEnt}</td><td>${brl(s.comBase)}</td><td><span class="badge b-ok">${a}x</span></td><td>+ ${brl(va)}</td><td><strong style="color:#2563eb">${brl(t)}</strong></td></tr>`;
+  let totComissao = 0;
+  const rows = ['ms','aa','lg'].map(k => {
+    const r = G.porRecrutador?.[k]; const cfg = RC[k];
+    const s = calcStats(r);
+    const c = calcComissao(s.comBase, aclMult);
+    totComissao += c.total;
+    const aclLabel = aclMult > 1 ? `<span class="badge b-ok">${aclMult}x</span>` : '<span class="badge b-gray">1x</span>';
+    const bonusLabel = c.bonusAcel > 0 ? `<span style="color:#059669">+ ${brl(c.bonusAcel)}</span>` : '<span style="color:var(--muted)">R$ 0,00</span>';
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:6px"><div class="av sm" style="background:${cfg.color}">${cfg.ini}</div><strong>${cfg.nome}</strong></div></td>
+      <td>${s.vagEnt}</td>
+      <td>${brl(s.comBase)}</td>
+      <td>${aclLabel}</td>
+      <td>${bonusLabel}</td>
+      <td><strong style="color:#2563eb;font-size:14px">${brl(c.total)}</strong></td>
+    </tr>`;
   }).join('');
-  document.getElementById('com-tot').textContent=brl(totG);
-  document.getElementById('com-tb').innerHTML=rows;
 
-  // Relatório financeiro com bônus
-  const rfRows=['ms','aa','lg'].map(k=>{
-    const r=G.porRecrutador?.[k];const cfg=RC[k];
-    const s=calcStats(r);
-    const t=Math.max(s.comBase*a,350);
-    const va=t-s.comBase;
-    const bon=bonusData.filter(b=>b.r===cfg.nome).reduce((x,b)=>x+b.v,0);
-    const tot=t+bon;
-    return `<tr><td><strong>${cfg.nome}</strong></td><td>${s.vagEnt}</td><td>${brl(s.comBase)}</td><td>${brl(va)} (${a}x)</td><td>${bon>0?brl(bon):'—'}</td><td><strong style="color:#2563eb">${brl(tot)}</strong></td></tr>`;
+  const totalBonus = bonusData.reduce((a,b) => a + b.v, 0);
+  const totalPagar = totComissao + totalBonus;
+
+  document.getElementById('com-tot').textContent = brl(totComissao);
+  document.getElementById('com-acl-lbl').textContent = aclMult > 1 ? `Acelerador ${aclMult}x ativo` : 'Sem acelerador este mês';
+  document.getElementById('bon-tot').textContent = brl(totalBonus);
+  document.getElementById('bon-count-lbl').textContent = `${bonusData.length} bônus registrado(s)`;
+  document.getElementById('com-total-pagar').textContent = brl(totalPagar);
+  document.getElementById('com-tb').innerHTML = rows;
+
+  // Relatório financeiro
+  const rfRows = ['ms','aa','lg'].map(k => {
+    const r = G.porRecrutador?.[k]; const cfg = RC[k];
+    const s = calcStats(r);
+    const c = calcComissao(s.comBase, aclMult);
+    const bon = bonusData.filter(b => b.r === cfg.nome).reduce((x,b) => x+b.v, 0);
+    const tot = c.total + bon;
+    return `<tr>
+      <td><strong>${cfg.nome}</strong></td>
+      <td>${s.vagEnt}</td>
+      <td>${brl(s.comBase)}</td>
+      <td>${c.bonusAcel > 0 ? brl(c.bonusAcel)+' ('+aclMult+'x)' : '—'}</td>
+      <td>${bon > 0 ? brl(bon) : '—'}</td>
+      <td><strong style="color:#2563eb">${brl(tot)}</strong></td>
+    </tr>`;
   }).join('');
-  const totComBon=['ms','aa','lg'].reduce((x,k)=>{
-    const s=calcStats(G.porRecrutador?.[k]);
-    const t=Math.max(s.comBase*a,350);
-    const bon=bonusData.filter(b=>b.r===RC[k].nome).reduce((s,b)=>s+b.v,0);
-    return x+t+bon;
-  },0);
-  const rfEl=document.getElementById('rel-fin');
-  if(rfEl) rfEl.innerHTML=rfRows+`<tr style="background:var(--primary-faint)"><td colspan="5"><strong>Total geral</strong></td><td><strong style="color:var(--primary);font-size:14px">${brl(totComBon)}</strong></td></tr>`;
+  const totFin = ['ms','aa','lg'].reduce((x,k) => {
+    const s = calcStats(G.porRecrutador?.[k]);
+    const c = calcComissao(s.comBase, aclMult);
+    const bon = bonusData.filter(b => b.r === RC[k].nome).reduce((s,b) => s+b.v, 0);
+    return x + c.total + bon;
+  }, 0);
+  const rfEl = document.getElementById('rel-fin');
+  if (rfEl) rfEl.innerHTML = rfRows + `<tr style="background:var(--primary-faint)"><td colspan="5"><strong>Total geral</strong></td><td><strong style="color:var(--primary);font-size:14px">${brl(totFin)}</strong></td></tr>`;
 
-  // Acelerador highlight
-  document.querySelectorAll('#acc-t tbody tr').forEach((tr,i)=>{
+  // Highlight acelerador
+  document.querySelectorAll('#acc-t tbody tr').forEach((tr,i) => {
     tr.classList.remove('hi');
-    const ranges=[[0,60],[61,80],[81,90],[91,95],[96,100],[101,9999]];
-    if(pctVag>=ranges[i][0]&&pctVag<=ranges[i][1]) tr.classList.add('hi');
+    const ranges = [[0,60],[61,80],[81,90],[91,95],[96,100],[101,9999]];
+    if (pctVag >= ranges[i][0] && pctVag <= ranges[i][1]) tr.classList.add('hi');
   });
 }
 
 // ── RELATÓRIOS ──
-function renderRel(){
-  if(!G) return;
-  const ent=G.entrevistas||[];
-  const vag=G.vagas||[];
-  const mt=getMetas();
-  const total=ent.length;
-  const aprov=ent.filter(e=>(e.resultado||'').toUpperCase()==='APROVADO').length;
-  const taxa=total>0?Math.round((aprov/total)*100):0;
-  const ab=vag.filter(v=>!isOffer(v)).length;
-  const fe=vag.filter(isOffer).length;
-  const vagEnt=G.vagasEntreguesM1||0;
-  const pctVag=mt.vag>0?Math.round((vagEnt/mt.vag)*100):0;
-  const a=acl(pctVag);
-  let comTot=0;
-  ['ms','aa','lg'].forEach(k=>{const s=calcStats(G.porRecrutador?.[k]);comTot+=Math.max(s.comBase*a,350);});
-  const meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  const mesLabel=meses[new Date().getMonth()]+' '+new Date().getFullYear();
+function renderRel() {
+  if (!G) return;
+  const ent = G.entrevistas || [];
+  const vag = G.vagas || [];
+  const mt = getMetas();
+  const total = ent.length;
+  const aprov = ent.filter(e => (e.resultado||'').toUpperCase() === 'APROVADO').length;
+  const taxa = total > 0 ? Math.round((aprov/total)*100) : 0;
+  const ab = vag.filter(v => !isOffer(v)).length;
+  const fe = vag.filter(isOffer).length;
+  const vagEnt = G.vagasEntreguesM1 || 0;
+  const pctVag = mt.vag > 0 ? Math.round((vagEnt/mt.vag)*100) : 0;
+  const aclMult = getAcelerador(pctVag);
+  let comTot = 0;
+  ['ms','aa','lg'].forEach(k => { const s=calcStats(G.porRecrutador?.[k]); const c=calcComissao(s.comBase,aclMult); comTot+=c.total; });
+  const totalBonus = bonusData.reduce((a,b) => a+b.v, 0);
+  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const mesLabel = meses[new Date().getMonth()] + ' ' + new Date().getFullYear();
 
-  const gerEl=document.getElementById('rel-ger');
-  if(gerEl) gerEl.innerHTML=`
+  const gerEl = document.getElementById('rel-ger');
+  if (gerEl) gerEl.innerHTML = `
     <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:9px">Dados reais · ${mesLabel}</div>
     <div class="rr"><span>Total de entrevistas</span><strong>${total}</strong></div>
     <div class="rr"><span>Total de aprovações</span><strong>${aprov}</strong></div>
     <div class="rr"><span>Taxa de aprovação</span><strong>${taxa}%</strong></div>
     <div class="rr"><span>Vagas abertas</span><strong>${ab}</strong></div>
     <div class="rr"><span>Vagas fechadas</span><strong>${fe}</strong></div>
-    <div class="rr"><span>Comissão total</span><strong style="color:#2563eb">${brl(comTot)}</strong></div>`;
+    <div class="rr"><span>Comissão total</span><strong style="color:#2563eb">${brl(comTot)}</strong></div>
+    <div class="rr"><span>Total de bônus</span><strong style="color:#059669">${brl(totalBonus)}</strong></div>
+    <div class="rr"><span>Total a pagar</span><strong style="color:#d97706">${brl(comTot+totalBonus)}</strong></div>`;
   updateRelInd();
   renderCom();
 }
-function updateRelInd(){
-  if(!G) return;
-  const k=document.getElementById('rel-sel')?.value||'ms';
-  const el=document.getElementById('rel-ind');
-  if(!el) return;
-  const r=G.porRecrutador?.[k];
-  const cfg=RC[k];
-  const s=calcStats(r);
-  const mt=getMetas();
-  const vagEnt=G.vagasEntreguesM1||0;
-  const pctVag=mt.vag>0?Math.round((vagEnt/mt.vag)*100):0;
-  const a=acl(pctVag);
-  const cf=brl(Math.max(s.comBase*a,350));
-  const ating=s.taxa>=mt.aprov;
-  el.innerHTML=`
+function updateRelInd() {
+  if (!G) return;
+  const k = document.getElementById('rel-sel')?.value || 'ms';
+  const el = document.getElementById('rel-ind');
+  if (!el) return;
+  const r = G.porRecrutador?.[k];
+  const cfg = RC[k];
+  const s = calcStats(r);
+  const mt = getMetas();
+  const vagEnt = G.vagasEntreguesM1 || 0;
+  const pctVag = mt.vag > 0 ? Math.round((vagEnt/mt.vag)*100) : 0;
+  const aclMult = getAcelerador(pctVag);
+  const c = calcComissao(s.comBase, aclMult);
+  const bon = bonusData.filter(b => b.r === cfg.nome).reduce((x,b) => x+b.v, 0);
+  const ating = s.taxa >= mt.aprov;
+  el.innerHTML = `
     <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:9px">${cfg.nome} · Dados reais</div>
     <div class="rr"><span>Entrevistas</span><strong>${s.total}</strong></div>
     <div class="rr"><span>Aprovações</span><strong>${s.aprov}</strong></div>
     <div class="rr"><span>Taxa de aprovação</span><strong>${s.taxa}%</strong></div>
     <div class="rr"><span>Meta</span><strong style="color:${ating?'#059669':'#d97706'}">${ating?'✓ Atingida':'Em progresso'} (${s.taxa}% / ${mt.aprov}%)</strong></div>
-    <div class="rr"><span>Comissão</span><strong style="color:#2563eb">${cf}</strong></div>`;
+    <div class="rr"><span>Comissão base</span><strong>${brl(s.comBase)}</strong></div>
+    <div class="rr"><span>Bônus acelerador</span><strong style="color:#059669">${brl(c.bonusAcel)}</strong></div>
+    <div class="rr"><span>Bônus extra</span><strong style="color:#059669">${bon>0?brl(bon):'—'}</strong></div>
+    <div class="rr"><span>Total a receber</span><strong style="color:#2563eb">${brl(c.total+bon)}</strong></div>`;
 }
 
 // ── BÔNUS ──
-function addBonus(){
-  const r=document.getElementById('bon-r').value;
-  const v=parseFloat(document.getElementById('bon-v').value||0);
-  const m=document.getElementById('bon-m').value;
-  if(!r||!v||!m){toast('Preencha todos os campos');return;}
-  bonusData.push({r,v,m});
-  const cfg=Object.values(RC).find(c=>c.nome===r)||{color:'#263C85',ini:'??'};
-  const div=document.createElement('div');
-  div.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;padding:8px 11px;background:var(--bg);border-radius:8px;font-size:13px;align-items:center;margin-top:7px';
-  div.innerHTML=`<span><div class="av sm" style="background:${cfg.color};display:inline-flex;margin-right:5px">${cfg.ini}</div>${r}</span><span style="font-weight:600;color:#2563eb">${brl(v)}</span><span style="color:var(--muted)">${m}</span><span style="font-size:11px;color:var(--light)">${new Date().toLocaleDateString('pt-BR',{month:'short',year:'numeric'})}</span>`;
+function addBonus() {
+  const r = document.getElementById('bon-r').value;
+  const v = parseFloat(document.getElementById('bon-v').value || 0);
+  const m = document.getElementById('bon-m').value;
+  if (!r||!v||!m) { toast('Preencha todos os campos'); return; }
+  bonusData.push({ r, v, m });
+  const cfg = Object.values(RC).find(c => c.nome === r) || { color:'#263C85', ini:'??' };
+  const div = document.createElement('div');
+  div.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;padding:8px 11px;background:var(--bg);border-radius:8px;font-size:13px;align-items:center;margin-top:7px';
+  div.innerHTML = `<span><div class="av sm" style="background:${cfg.color};display:inline-flex;margin-right:5px">${cfg.ini}</div>${r}</span><span style="font-weight:600;color:#2563eb">${brl(v)}</span><span style="color:var(--muted)">${m}</span><span style="font-size:11px;color:var(--light)">${new Date().toLocaleDateString('pt-BR',{month:'short',year:'numeric'})}</span>`;
   document.getElementById('bon-list').appendChild(div);
-  document.getElementById('bon-r').value='';document.getElementById('bon-v').value='';document.getElementById('bon-m').value='';
+  document.getElementById('bon-r').value=''; document.getElementById('bon-v').value=''; document.getElementById('bon-m').value='';
   renderCom();
   toast(`Bônus de ${brl(v)} salvo para ${r}!`);
 }
 
+// ── HISTÓRICO ──
+function addHistorico() {
+  const r = document.getElementById('hist-r').value;
+  const m = document.getElementById('hist-mes').value;
+  const v = parseFloat(document.getElementById('hist-val').value || 0);
+  if (!r||!m||!v) { toast('Preencha todos os campos'); return; }
+  historico.push({ r, m, v, data: new Date().toLocaleDateString('pt-BR') });
+  renderHistorico();
+  document.getElementById('hist-r').value=''; document.getElementById('hist-mes').value=''; document.getElementById('hist-val').value='';
+  toast(`Pagamento de ${brl(v)} registrado para ${r}!`);
+}
+function renderHistorico() {
+  const tb = document.getElementById('hist-tb');
+  if (!historico.length) { tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:16px">Nenhum pagamento registrado ainda.</td></tr>'; return; }
+  const cfg_map = {'Matheus Souza':RC.ms,'Amanda Antunes':RC.aa,'Lithielle Goulardt':RC.lg};
+  tb.innerHTML = historico.map(h => {
+    const cfg = cfg_map[h.r] || {color:'#263C85',ini:'??'};
+    return `<tr><td><div style="display:flex;align-items:center;gap:6px"><div class="av sm" style="background:${cfg.color}">${cfg.ini}</div>${h.r}</div></td><td>${h.m}</td><td><strong style="color:#2563eb">${brl(h.v)}</strong></td><td style="color:var(--muted)">${h.data}</td></tr>`;
+  }).join('');
+}
+
 // ── EXPORTAR ──
-function exportPDF(){window.print();toast('Escolha "Salvar como PDF" na impressão');}
-function exportCSV(){
-  if(!G) return;
-  const rows=[['Dia','Recruiter','Candidato','Resultado','Status'],...(G.entrevistas||[]).map(e=>[e.dia,e.recruiter,e.candidato,e.resultado,e.status])];
-  const csv=rows.map(r=>r.map(c=>'"'+(c||'')+'"').join(',')).join('\n');
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));
-  a.download='saipos-entrevistas.csv';a.click();
+function exportPDF() { window.print(); toast('Escolha "Salvar como PDF" na impressão'); }
+function exportCSV() {
+  if (!G) return;
+  const rows = [['Dia','Recruiter','Candidato','Resultado','Status'], ...(G.entrevistas||[]).map(e=>[e.dia,e.recruiter,e.candidato,e.resultado,e.status])];
+  const csv = rows.map(r => r.map(c => '"'+(c||'')+'"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));
+  a.download = 'saipos-entrevistas.csv'; a.click();
   toast('CSV baixado!');
 }
 
 // ── METAS EMAIL ──
-function enviarMetasEmail(){
-  const mt=getMetas();
-  const ms=document.getElementById('m-ms')?.value||70;
-  const aa=document.getElementById('m-aa')?.value||70;
-  const lg=document.getElementById('m-lg')?.value||70;
-  const meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  const mes=meses[new Date().getMonth()]+' '+new Date().getFullYear();
-  const s=encodeURIComponent(`Metas de Recrutamento · ${mes}`);
-  const b=encodeURIComponent(`Olá time!\n\nMetas de ${mes}:\n\n📊 Taxa de aprovação individual:\n• Matheus: ${ms}%\n• Amanda: ${aa}%\n• Lithielle: ${lg}%\n\n🎯 Metas do time:\n• Entrevistas: ${mt.ent}\n• Vagas a entregar: ${mt.vag}\n\nBom mês!\nHeitor`);
-  window.open(`mailto:?subject=${s}&body=${b}`,'_blank');
+function enviarMetasEmail() {
+  const mt = getMetas();
+  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const mes = meses[new Date().getMonth()] + ' ' + new Date().getFullYear();
+  const s = encodeURIComponent(`Metas de Recrutamento · ${mes}`);
+  const b = encodeURIComponent(`Olá time!\n\nMetas de ${mes}:\n\n📊 Taxa de aprovação individual:\n• Matheus: ${document.getElementById('m-ms').value}%\n• Amanda: ${document.getElementById('m-aa').value}%\n• Lithielle: ${document.getElementById('m-lg').value}%\n\n🎯 Metas do time:\n• Entrevistas: ${mt.ent}\n• Vagas a entregar: ${mt.vag}\n\nBom mês!\nHeitor`);
+  window.open(`mailto:?subject=${s}&body=${b}`, '_blank');
 }
 
 // ── CONFIGURAÇÕES ──
-function salvarPerfil(){
-  const n=document.getElementById('l-nome').value;
-  const c=document.getElementById('l-cargo').value;
-  const e=document.getElementById('l-email').value;
-  const s=document.getElementById('l-senha').value;
-  if(n){document.getElementById('u-nm').textContent=n;document.getElementById('lider-nd').textContent=n;}
-  if(c) document.getElementById('u-rl').textContent=c;
-  if(e&&s) USERS[e]={...(USERS[e]||{}),senha:s,nome:n,role:c,ini:n.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase(),color:'#3a54b0',lider:true};
+function salvarPerfil() {
+  const n = document.getElementById('l-nome').value;
+  const c = document.getElementById('l-cargo').value;
+  const e = document.getElementById('l-email').value;
+  const s = document.getElementById('l-senha').value;
+  if (n) { document.getElementById('u-nm').textContent=n; document.getElementById('lider-nd').textContent=n; }
+  if (c) document.getElementById('u-rl').textContent = c;
+  if (e && s) USERS[e] = { ...(USERS[e]||{}), senha:s, nome:n, role:c, ini:n.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase(), color:'#3a54b0', lider:true };
   toast('Perfil atualizado!');
 }
-function criarAcesso(){
-  const n=document.getElementById('nr-n').value;
-  const e=document.getElementById('nr-e').value;
-  const s=document.getElementById('nr-s').value;
-  const c=document.getElementById('nr-c').value;
-  if(!n||!e||!s){toast('Preencha nome, e-mail e senha');return;}
-  USERS[e]={senha:s,nome:n,role:c||'Recrutador',ini:n.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase(),color:'#7c3aed',lider:false};
-  const div=document.createElement('div');
-  div.style.cssText='display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--green-bg);border-radius:8px;font-size:13px;';
-  div.innerHTML=`<div class="av sm" style="background:#059669">${USERS[e].ini}</div><div><strong>${n}</strong> · ${e}</div><span class="badge b-ok" style="margin-left:auto">Acesso criado</span>`;
+function criarAcesso() {
+  const n=document.getElementById('nr-n').value, e=document.getElementById('nr-e').value;
+  const s=document.getElementById('nr-s').value, c=document.getElementById('nr-c').value;
+  if (!n||!e||!s) { toast('Preencha nome, e-mail e senha'); return; }
+  USERS[e] = { senha:s, nome:n, role:c||'Recrutador', ini:n.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase(), color:'#7c3aed', lider:false };
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--green-bg);border-radius:8px;font-size:13px';
+  div.innerHTML = `<div class="av sm" style="background:#059669">${USERS[e].ini}</div><div><strong>${n}</strong> · ${e}</div><span class="badge b-ok" style="margin-left:auto">Acesso criado</span>`;
   document.getElementById('acessos').appendChild(div);
-  document.getElementById('nr-n').value='';document.getElementById('nr-e').value='';document.getElementById('nr-s').value='';document.getElementById('nr-c').value='';
+  document.getElementById('nr-n').value=''; document.getElementById('nr-e').value=''; document.getElementById('nr-s').value=''; document.getElementById('nr-c').value='';
   toast(`Acesso criado para ${n}!`);
 }
-function updatePhoto(input,key){
-  if(!input.files||!input.files[0]) return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    const el=document.getElementById('cfg-'+key);
-    if(el){el.innerHTML=`<img src="${e.target.result}" alt="">`;el.style.background='transparent';}
-    if(key==='lider'){document.getElementById('u-av').innerHTML=`<img src="${e.target.result}" alt="">`;document.getElementById('u-av').style.background='transparent';}
+function updatePhoto(input, key) {
+  if (!input.files||!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const el = document.getElementById('cfg-'+key);
+    if (el) { el.innerHTML=`<img src="${e.target.result}" alt="">`; el.style.background='transparent'; }
+    if (key==='lider') { document.getElementById('u-av').innerHTML=`<img src="${e.target.result}" alt="">`; document.getElementById('u-av').style.background='transparent'; }
   };
   reader.readAsDataURL(input.files[0]);
 }
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',3200);}
+function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.style.opacity='1'; clearTimeout(t._t); t._t=setTimeout(()=>t.style.opacity='0',3200); }
 </script>
 </body>
 </html>
