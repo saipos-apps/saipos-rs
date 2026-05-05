@@ -587,7 +587,7 @@ auth.onAuthStateChanged(async user => {
     // Busca os dados do perfil no Firestore
     const snap = await db.collection('users').doc(user.uid).get();
     
-    if (!snap.exists()) { 
+    if (!snap.exists) { 
       // Se o email/senha valem, mas não tem cadastro no banco de dados
       errEl.textContent = 'Usuário autenticado, mas sem perfil no sistema.';
       errEl.style.display = 'block';
