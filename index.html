@@ -567,20 +567,92 @@ const RC = {
   lg:{ nome:'Lithielle Goulardt',color:'var(--lg-c)', ini:'LG', bg:'#0891b2' },
 };
 
-// ── AUTH OBSERVER ──
+/// ── AUTH OBSERVER (VERSÃO FINAL) ──
 auth.onAuthStateChanged(async user => {
+  const btn = document.getElementById('lbtn');
+  const errEl = document.getElementById('lerr');
+
   if (!user) {
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
+    // Se não há usuário, garantimos que o botão de login esteja ativo
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+    }
     return;
   }
+
   try {
+    // Busca os dados do perfil no Firestore
     const snap = await db.collection('users').doc(user.uid).get();
-    if (!snap.exists()) { await auth.signOut(); return; }
+    
+    if (!snap.exists()) { 
+      // Se o email/senha valem, mas não tem cadastro no banco de dados
+      errEl.textContent = 'Usuário autenticado, mas sem perfil no sistema.';
+      errEl.style.display = 'block';
+      if (btn) { btn.disabled = false; btn.textContent = 'Entrar'; }
+      await auth.signOut(); // Desloga por segurança
+      return; 
+    }
+    
     currentUser = { uid: user.uid, ...snap.data() };
     initApp();
-  } catch(e) { console.error(e); }
+    
+  } catch(e) { 
+    console.error("Erro ao carregar perfil:", e);
+    errEl.textContent = 'Erro de permissão ou conexão com o banco.';
+    errEl.style.display = 'block';
+    if (btn) { btn.disabled = false; btn.textContent = 'Entrar'; }
+  }
 });
+
+// ── FUNÇÃO DE LOGIN AJUSTADA ──
+async function doLogin() {
+  const em = document.getElementById('le').value.trim();
+  const pw = document.getElementById('lp').value;
+  const btn = document.getElementById('lbtn');
+  const errEl = document.getElementById('lerr');
+
+  if(!em || !pw) return;
+
+  btn.disabled = true; 
+  btn.textContent = 'Entrando...';
+  errEl.style.display = 'none';
+
+  try {
+    await auth.signInWithEmailAndPassword(em, pw);
+    // O onAuthStateChanged cuidará do resto se o login for sucesso
+  } catch(e) {
+    console.error("Erro no login:", e.code);
+    btn.disabled = false; 
+    btn.textContent = 'Entrar';
+    
+    // Mensagens amigáveis
+    if(e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password') {
+        errEl.textContent = 'E-mail ou senha incorretos.';
+    } else if (e.code === 'auth/invalid-credential') {
+        errEl.textContent = 'Credenciais inválidas.';
+    } else {
+        errEl.textContent = 'Erro ao tentar entrar. Tente novamente.';
+    }
+    errEl.style.display = 'block';
+  }
+}
+// ── BYPASS PROVISÓRIO PARA APRESENTAÇÃO ──
+window.onload = () => {
+  // 1. Criamos um usuário falso com perfil 'admin' para liberar a tela de Recrutadores
+  currentUser = {
+    uid: "admin-demo",
+    nome: "Líder (Demonstração)",
+    role: "admin",
+    email: "lider@demo.com",
+    cargo: "Líder de Recrutamento"
+  };
+  
+  // 2. Chamamos a função de iniciar o App diretamente
+  initApp();
+};
 
 function initApp() {
   const u = currentUser;
